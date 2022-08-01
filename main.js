@@ -1,24 +1,5 @@
 class Values {
-  static devMode = false;
-  static viewRatioX = 0.5;
-  static viewRatioY = 0.4;
-  static viewWidth = 1600;
-  static viewHeight = 900;
-  static playerWidth = 50;
-  static playerHeight = 100;
-  static propTypes = {
-    default: 'default',
-    grass: 'grass',
-    dirt: 'dirt'
-  }
-  static defaultColor = '#0000FF';
-  static maxPlayerWalkSpeed = 0.6;
-  static maxPlayerRunSpeed = 1.0;
-  static playerSpeedGrowthX = 0.002;
-  static maxPlayerSpeedY = -1.3;
-  static playerSpeedGrowthY = 0.1;
-  static jumpTime = 300.0;
-  static maxJumpHeight = 220.0;
+  static blockSize = 50;
   static coinSize = 30;
   static controls = {
     'ArrowLeft': 'left',
@@ -29,6 +10,22 @@ class Values {
     'KeyW': 'jump',
     'ShiftLeft': 'run'
   }
+  static defaultColor = '#0000FF';
+  static devMode = false;
+  static jumpTime = 300.0;
+  static maxJumpHeight = 220.0;
+  static maxPlayerRunSpeed = 1.0;
+  static maxPlayerSpeedY = -1.3;
+  static maxPlayerWalkSpeed = 0.6;
+  static playerHeight = 100;
+  static playerSpeedGrowthX = 0.002;
+  static playerSpeedGrowthY = 0.1;
+  static playerWidth = 50;
+  static propDefault = 'default';
+  static viewRatioX = 0.5;
+  static viewRatioY = 0.4;
+  static viewWidth = 1600;
+  static viewHeight = 900;
 }
 
 class Prop {
@@ -50,6 +47,7 @@ class StaticProp extends Prop {
     this.ground = ground;
   }
 }
+
 class InteractableProp extends Prop {
   constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight) {
     super(id, x, y, width, height);
@@ -88,7 +86,16 @@ class Player extends Prop {
 
 class Coin extends InteractableProp {
   constructor(id, x, y) {
-    super(id, x, y, 50, 50, x + (50 - Values.coinSize) / 2, y + (50 - Values.coinSize) / 2, Values.coinSize, Values.coinSize);
+    super(id, x, y, Values.blockSize, Values.blockSize, x + (Values.blockSize - Values.coinSize) / 2, y + (Values.blockSize - Values.coinSize) / 2, Values.coinSize, Values.coinSize);
+  }
+}
+
+class Block extends StaticProp {
+  constructor(id, x, y, type, breakable, hasCoin) {
+    super(id, x, y, Values.blockSize, Values.blockSize, type, true, true);
+    this.breakable = breakable;
+    this.hit = false;
+    this.hasCoin = hasCoin;
   }
 }
 
@@ -102,8 +109,13 @@ class World {
       this.height = data.world.height;
       this.props = [];
       for (let prop of data.staticProps) {
-        const type = prop.type || Values.propTypes.default;
-        this.props.push(new StaticProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground));
+        const type = prop.type || Values.propDefault;
+        if (prop.class === 'Block') {
+          this.props.push(new Block(prop.id, prop.x, prop.y, type, prop.breakable, prop.hasCoin));
+        }
+        else {
+          this.props.push(new StaticProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground));
+        }
       }
       this.coins = [];
       for (let coin of data.coins) {
@@ -231,30 +243,53 @@ class Game {
     }
     // Check for collisions with solid props
     else {
+      const blocks = {
+        oldY: player.y,
+        oldSpeedY: player.speedY,
+        hits: []
+      };
+      let breakLoop = false;
       for (let prop of this.world.props) {
         if (!prop.solid) continue;
         if (groundResult && groundResult.ground == prop) continue;
-        const collision = this.checkPlayerCollision(prop);
+        const collision = breakLoop ? this.checkCollision({ x: player.x, y: blocks.oldY, width: player.width, height: player.height }, prop) : this.checkPlayerCollision(prop);
         if (!collision) continue;
         // Top collision
+        if (blocks.oldSpeedY > 0 && prop.y > player.lastY + player.height && prop instanceof Block && !prop.hit) blocks.hits.push(prop);
+        if (breakLoop) continue;
         if (player.speedY > 0 && prop.y > player.lastY + player.height) {
           player.speedY = 0.0;
           player.y = prop.y - player.height - 1;
-          break;
+          breakLoop = true;
+          continue;
         }
         // X-axis collisions
         if (player.speedX > 0) { // Player is going forward
           player.speedX = 0.0;
           player.x = prop.x - player.width - 1;
           if (groundResult && !this.checkPlayerCollision(groundResult.ground)) groundResult.valid = false;
-          break;
+          breakLoop = true;
         }
         else if (player.speedX < 0) { // Player is going backward
           player.speedX = 0.0;
           player.x = prop.x + prop.width + 1;
           if (groundResult && !this.checkPlayerCollision(groundResult.ground)) groundResult.valid = false;
-          break;
+          breakLoop = true;
         }
+      }
+      if (blocks.hits.length > 0) {
+        const playerCenter = player.x + (player.width / 2);
+        let hit = null,
+            distance = 1000; // Big number as starting point
+        for (let i = 0; i < blocks.hits.length; i++) {
+          const blockCenter = blocks.hits[i].x + (blocks.hits[i].width / 2),
+                blockDistance = Math.abs(playerCenter - blockCenter);
+          if (blockDistance < distance) {
+            hit = blocks.hits[i];
+            distance = blockDistance;
+          }
+        }
+        this.handleBlockCollision(hit);
       }
     }
     if (groundResult && groundResult.valid) {
@@ -284,7 +319,34 @@ class Game {
 
   checkPlayerCollision(prop) {
     const player = this.world.player;
-    return player.x <= prop.x + prop.width && player.x + player.width >= prop.x && player.y <= prop.y + prop.height && player.y + player.height >= prop.y;
+    return this.checkCollision(player, prop);
+  }
+
+  checkCollision(p1, p2) {
+    return p1.x <= p2.x + p2.width && p1.x + p1.width >= p2.x && p1.y <= p2.y + p2.height && p1.y + p1.height >= p2.y;
+  }
+
+  handleBlockCollision(block) {
+    if (block.breakable) {
+      block.remove = true;
+    }
+    else {
+      if (block.hasCoin) {
+        this.coins++;
+        this.stats.setCoins(this.coins);
+      }
+      block.hit = true;
+    }
+  }
+
+  garbageCollection() {
+    const staticProps = this.world.props;
+    for (let i = staticProps.length - 1; i >= 0; i--) {
+      const prop = staticProps[i];
+      if (prop.remove) {
+        staticProps.splice(staticProps.indexOf(prop), 1);
+      }
+    }
   }
 
   render() {
@@ -324,6 +386,7 @@ class Game {
     this.processPhysics();
     if (!this.running) return;
     this.processInteractions();
+    this.garbageCollection();
     this.world.calcViewPosition();
     this.render();
     this.stats.setFps(this.deltaTime);
@@ -377,17 +440,17 @@ class Graphics {
   drawProp(prop) {
     const {x, y} = this.transformToView(prop);
     if (prop instanceof StaticProp) {
-      if (prop.type === Values.propTypes.default) {
+      if (prop.type === Values.propDefault) {
         this.context.fillStyle = Values.defaultColor;
         this.context.fillRect(x, y, prop.width, prop.height);
       }
       else {
-        const texture = this.getTexture(prop.type);
+        const texture = prop.hit ? this.getTexture(prop.type + 'hit') : this.getTexture(prop.type);
         for (let ix = 0; ix < prop.width; ix += texture.width) {
           for (let iy = 0; iy < prop.height; iy += texture.height) {
             const tx = Math.min(100, prop.width - ix),
                   ty = Math.min(100, prop.height - iy);
-            this.context.drawImage(texture, 0, 0, 100 - tx % 100, 100 - ty % 100, x + ix, y + iy, 100 - tx % 100, 100 - ty % 100);
+            this.context.drawImage(texture, 0, 0, 100, 100, x + ix, y + iy, texture.width - tx % texture.width, texture.height - ty % texture.height);
           }
         }
       }

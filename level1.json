@@ -19,7 +19,8 @@
             "height": 100,
             "type": "grass",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "floor2",
@@ -29,7 +30,8 @@
             "height": 100,
             "type": "grass",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick1",
@@ -37,9 +39,28 @@
             "y": 350,
             "width": 350,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "block1",
+            "x": 200,
+            "y": 350,
+            "type": "brick",
+            "breakable": true,
+            "hasCoin": false,
+            "class": "Block"
+        },
+        {
+            "id": "block2",
+            "x": 250,
+            "y": 350,
+            "type": "itemblock",
+            "breakable": false,
+            "hasCoin": true,
+            "class": "Block"
         },
         {
             "id": "brick2",
@@ -47,9 +68,10 @@
             "y": 350,
             "width": 400,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "hill1.1",
@@ -59,7 +81,8 @@
             "height": 200,
             "type": "dirt",
             "solid": false,
-            "ground": false
+            "ground": false,
+            "class": "StaticProp"
         },
         {
             "id": "hill1.2",
@@ -69,7 +92,8 @@
             "height": 100,
             "type": "grass",
             "solid": false,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "hill1.3",
@@ -79,7 +103,8 @@
             "height": 200,
             "type": "dirt",
             "solid": false,
-            "ground": false
+            "ground": false,
+            "class": "StaticProp"
         },
         {
             "id": "hill1.4",
@@ -89,7 +114,8 @@
             "height": 100,
             "type": "grass",
             "solid": false,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick3",
@@ -97,9 +123,10 @@
             "y": 850,
             "width": 200,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick4",
@@ -107,9 +134,10 @@
             "y": 550,
             "width": 200,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick5",
@@ -117,9 +145,10 @@
             "y": 250,
             "width": 200,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick6",
@@ -127,9 +156,10 @@
             "y": 100,
             "width": 400,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick7",
@@ -137,9 +167,10 @@
             "y": 150,
             "width": 350,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick8",
@@ -147,9 +178,10 @@
             "y": 200,
             "width": 300,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick9",
@@ -157,9 +189,10 @@
             "y": 250,
             "width": 250,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick15",
@@ -167,9 +200,10 @@
             "y": 300,
             "width": 200,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick16",
@@ -177,9 +211,10 @@
             "y": 350,
             "width": 150,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick10",
@@ -187,9 +222,10 @@
             "y": 100,
             "width": 400,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick11",
@@ -197,9 +233,10 @@
             "y": 150,
             "width": 350,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick12",
@@ -207,9 +244,10 @@
             "y": 200,
             "width": 300,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick13",
@@ -217,9 +255,10 @@
             "y": 250,
             "width": 250,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick14",
@@ -227,9 +266,10 @@
             "y": 300,
             "width": 200,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         },
         {
             "id": "brick17",
@@ -237,9 +277,10 @@
             "y": 350,
             "width": 150,
             "height": 50,
-            "type": "brick",
+            "type": "solidblock",
             "solid": true,
-            "ground": true
+            "ground": true,
+            "class": "StaticProp"
         }
     ],
     "coins": [
@@ -297,6 +338,30 @@
             "id": "coin11",
             "x": 3200,
             "y": 600
+        }
+    ],
+    "enemies": [
+        {
+            "id": "spike1",
+            "x": 1500,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "jumpable": false,
+            "moving": true,
+            "forward": false,
+            "type": "enemy1"
+        },
+        {
+            "id": "normal1",
+            "x": 1200,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "jumpable": false,
+            "moving": true,
+            "forward": false,
+            "type": "enemy1"
         }
     ]
 }
