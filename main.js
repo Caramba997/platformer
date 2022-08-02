@@ -11,7 +11,11 @@ class Values {
     'ShiftLeft': 'run'
   }
   static defaultColor = '#0000FF';
-  static devMode = false;
+  static devMode = true;
+  static finishGroundHeight = 50;
+  static finishHeight = 400;
+  static finishHitboxWidth = 10;
+  static finishWidth = 100;
   static jumpTime = 300.0;
   static maxJumpHeight = 220.0;
   static maxPlayerRunSpeed = 1.0;
@@ -62,13 +66,14 @@ class InteractableProp extends Prop {
 
 class Finish extends InteractableProp {
   constructor(x, y) {
-    super('finish', x, y, width, height);
+    super('finish', x, y, Values.finishWidth, Values.finishHeight);
     this.hitbox = {
-      x: hitx,
-      y: hity,
-      width: hitwidth,
-      height: hitheight
+      x: x + ((Values.finishWidth - Values.finishHitboxWidth) / 2),
+      y: y,
+      width: Values.finishHitboxWidth,
+      height: Values.finishHeight
     };
+    this.type = 'finishflag';
   }
 }
 
@@ -121,6 +126,8 @@ class World {
       for (let coin of data.coins) {
         this.coins.push(new Coin(coin.id, coin.x, coin.y));
       }
+      this.finish = new Finish(data.finish.x, data.finish.y + Values.finishGroundHeight);
+      this.props.push(new StaticProp('finishground', data.finish.x, data.finish.y, Values.finishWidth, Values.finishGroundHeight, 'finishground', true, true));
       this.player = new Player(data.player.x, data.player.y);
       this.view = {
         width: Values.viewWidth,
@@ -356,6 +363,7 @@ class Game {
     for (let prop of this.world.props) {
       graphics.drawProp(prop);
     }
+    graphics.drawProp(this.world.finish);
     for (let coin of this.world.coins) {
       graphics.drawCoin(coin);
     }
@@ -439,26 +447,24 @@ class Graphics {
 
   drawProp(prop) {
     const {x, y} = this.transformToView(prop);
-    if (prop instanceof StaticProp) {
-      if (prop.type === Values.propDefault) {
-        this.context.fillStyle = Values.defaultColor;
-        this.context.fillRect(x, y, prop.width, prop.height);
-      }
-      else {
-        const texture = prop.hit ? this.getTexture(prop.type + 'hit') : this.getTexture(prop.type);
-        for (let ix = 0; ix < prop.width; ix += texture.width) {
-          for (let iy = 0; iy < prop.height; iy += texture.height) {
-            const tx = Math.min(100, prop.width - ix),
-                  ty = Math.min(100, prop.height - iy);
-            this.context.drawImage(texture, 0, 0, 100, 100, x + ix, y + iy, texture.width - tx % texture.width, texture.height - ty % texture.height);
-          }
+    if (prop.type === Values.propDefault) {
+      this.context.fillStyle = Values.defaultColor;
+      this.context.fillRect(x, y, prop.width, prop.height);
+    }
+    else {
+      const texture = prop.hit ? this.getTexture(prop.type + 'hit') : this.getTexture(prop.type);
+      for (let ix = 0; ix < prop.width; ix += texture.width) {
+        for (let iy = 0; iy < prop.height; iy += texture.height) {
+          const tx = Math.min(100, prop.width - ix),
+                ty = Math.min(100, prop.height - iy);
+          this.context.drawImage(texture, 0, 0, texture.getAttribute('data-width'), texture.getAttribute('data-height'), x + ix, y + iy, texture.width - tx % texture.width, texture.height - ty % texture.height);
         }
       }
-      if (Values.devMode) {
-        this.context.font = '16px Courier New';
-        this.context.fillStyle = '#FFFFFF';
-        this.context.fillText(prop.id, x, y + prop.height - 5);
-      }
+    }
+    if (Values.devMode) {
+      this.context.font = '16px Courier New';
+      this.context.fillStyle = '#FFFFFF';
+      this.context.fillText(prop.id, x, y + prop.height - 5);
     }
   }
 
