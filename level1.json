@@ -2,6 +2,7 @@
     "meta": {
         "name": "1 - Test"
     },
+    "time": 180000,
     "world": {
         "width": 20000,
         "height": 4000
@@ -11,7 +12,7 @@
         "y": 100
     },
     "finish": {
-        "x": 500,
+        "x": 5000,
         "y": 100
     },
     "staticProps": [
@@ -30,7 +31,7 @@
             "id": "floor2",
             "x": 3300,
             "y": 0,
-            "width": 1000,
+            "width": 2500,
             "height": 100,
             "type": "grass",
             "solid": true,
@@ -55,6 +56,7 @@
             "type": "brick",
             "breakable": true,
             "hasCoin": false,
+            "invisible": false,
             "class": "Block"
         },
         {
@@ -64,6 +66,17 @@
             "type": "itemblock",
             "breakable": false,
             "hasCoin": true,
+            "invisible": false,
+            "class": "Block"
+        },
+        {
+            "id": "block3",
+            "x": 370,
+            "y": 250,
+            "type": "itemblock",
+            "breakable": false,
+            "hasCoin": true,
+            "invisible": true,
             "class": "Block"
         },
         {
@@ -129,6 +142,28 @@
             "height": 50,
             "type": "solidblock",
             "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "cloud1",
+            "x": 2100,
+            "y": 1000,
+            "width": 200,
+            "height": 50,
+            "type": "cloud",
+            "solid": false,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "cloud2",
+            "x": 2500,
+            "y": 1000,
+            "width": 200,
+            "height": 50,
+            "type": "cloud",
+            "solid": false,
             "ground": true,
             "class": "StaticProp"
         },
@@ -347,25 +382,115 @@
     "enemies": [
         {
             "id": "spike1",
-            "x": 1500,
+            "x": 2100,
             "y": 100,
             "width": 50,
             "height": 50,
+            "hitx": 0,
+            "hity": 0,
+            "hitwidth": 50,
+            "hitheight": 50,
             "jumpable": false,
             "moving": true,
-            "forward": false,
-            "type": "enemy1"
+            "initialForward": false,
+            "speedFactor": 1.0, 
+            "type": "spike"
         },
         {
             "id": "normal1",
-            "x": 1200,
+            "x": 1700,
             "y": 100,
             "width": 50,
             "height": 50,
-            "jumpable": false,
+            "hitx": 0,
+            "hity": 0,
+            "hitwidth": 50,
+            "hitheight": 50,
+            "jumpable": true,
             "moving": true,
-            "forward": false,
-            "type": "enemy1"
+            "initialForward": false,
+            "speedFactor": 1.0, 
+            "type": "bubble"
+        },
+        {
+            "id": "normal2",
+            "x": 1750,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitx": 0,
+            "hity": 0,
+            "hitwidth": 50,
+            "hitheight": 50,
+            "jumpable": true,
+            "moving": true,
+            "initialForward": true,
+            "speedFactor": 1.0, 
+            "type": "bubble"
+        },
+        {
+            "id": "plant1",
+            "x": 1900,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitx": 5,
+            "hity": 0,
+            "hitwidth": 40,
+            "hitheight": 45,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0, 
+            "type": "toxicplant"
+        },
+        {
+            "id": "plant2",
+            "x": 1950,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitx": 5,
+            "hity": 0,
+            "hitwidth": 40,
+            "hitheight": 45,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0, 
+            "type": "toxicplant"
+        },
+        {
+            "id": "plant3",
+            "x": 2000,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitx": 5,
+            "hity": 0,
+            "hitwidth": 40,
+            "hitheight": 45,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0, 
+            "type": "toxicplant"
+        },
+        {
+            "id": "plant4",
+            "x": 2050,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitx": 5,
+            "hity": 0,
+            "hitwidth": 40,
+            "hitheight": 45,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0, 
+            "type": "toxicplant"
         }
     ]
 }
