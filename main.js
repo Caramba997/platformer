@@ -12,7 +12,6 @@ const VALUES = {
   },
   defaultColor: '#0000FF',
   devMode: false,
-  enemySpeedGrowth: 0.001,
   finishGroundHeight: 50,
   finishHeight: 400,
   finishHitboxWidth: 10,
@@ -20,6 +19,18 @@ const VALUES = {
   gravity: 0.001,
   invincibleOpacity: 0.5,
   invincibleTime: 1000,
+  items: {
+    mushroom: {
+      powerup: 'super',
+      moving: true
+    }
+  },
+  itemSize: 50,
+  itemSpeed: 0.1,
+  itemStates: {
+    spawn: 0,
+    move: 1
+  },
   jumpTime: 300.0,
   maxEnemySpeed: 0.1,
   maxJumpHeight: 220.0,
@@ -37,7 +48,8 @@ const VALUES = {
   playerWidthSuper: 50,
   points: {
     coin: 10,
-    enemy: 100
+    enemy: 100,
+    item: 1000
   },
   propDefault: 'default',
   viewRatioX: 0.5,
@@ -121,12 +133,26 @@ class Coin extends InteractableProp {
 }
 
 class Block extends StaticProp {
-  constructor(id, x, y, type, breakable, hasCoin, invisible) {
+  constructor(id, x, y, type, breakable, hasCoin, invisible, item) {
     super(id, x, y, VALUES.blockSize, VALUES.blockSize, type, true, true);
     this.breakable = breakable;
     this.hit = false;
     this.hasCoin = hasCoin;
     this.invisible = invisible;
+    this.item = item;
+  }
+}
+
+class Item extends InteractableProp {
+  constructor(id, x, y, type, moving, powerup, block) {
+    super(id, x, y, VALUES.itemSize, VALUES.itemSize, 0, 0, VALUES.itemSize, VALUES.itemSize, type);
+    this.moving = moving;
+    this.powerup = powerup;
+    this.state = VALUES.itemStates.spawn;
+    this.block = block;
+    this.lastY = 0;
+    this.speedX = VALUES.itemSpeed;
+    this.speedY = 0.0;
   }
 }
 
@@ -142,7 +168,7 @@ class World {
       for (let prop of data.staticProps) {
         const type = prop.type || VALUES.propDefault;
         if (prop.class === 'Block') {
-          this.props.push(new Block(prop.id, prop.x, prop.y, type, prop.breakable, prop.hasCoin, prop.invisible));
+          this.props.push(new Block(prop.id, prop.x, prop.y, type, prop.breakable, prop.hasCoin, prop.invisible, prop.item));
         }
         else {
           this.props.push(new StaticProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground));
@@ -156,6 +182,7 @@ class World {
       for (let enemy of data.enemies) {
         this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitx, enemy.hity, enemy.hitwidth, enemy.hitheight, enemy.type, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor));
       }
+      this.items = [];
       this.finish = new Finish(data.finish.x, data.finish.y);
       this.props.push(new StaticProp('finishground', data.finish.x, data.finish.y, VALUES.finishWidth, VALUES.finishGroundHeight, 'finishground', true, true));
       this.player = new Player(data.player.x, data.player.y);
@@ -302,16 +329,6 @@ class Game {
       player.x = this.world.width - player.width;
     }
     else {
-      // Check for collisions with enemies
-      if (player.invincible === 0) {
-        for (let enemy of this.world.enemies) {
-          if (enemy.remove) continue;
-          if (this.checkPlayerCollision(enemy)) {
-            this.playerDamage();
-            if (!this.running) return;
-          }
-        }
-      }
       // Check for collisions with solid props
       const blocks = {
         oldY: player.y,
@@ -373,6 +390,20 @@ class Game {
   }
 
   processPropActions() {
+    for (let item of this.world.items) {
+      if (item.state === VALUES.itemStates.spawn) {
+        item.y += this.deltaTime * VALUES.itemSpeed;
+        if (!this.checkCollision(item, item.block)) {
+          item.state = VALUES.itemStates.move;
+        }
+      }
+      else if (!item.moving) {
+        continue;
+      }
+      else {
+        this.processPropPhysics(item);
+      }
+    }
     for (let enemy of this.world.enemies) {
       if (!enemy.moving) continue;
       this.processPropPhysics(enemy);
@@ -481,6 +512,31 @@ class Game {
       this.levelFinished();
       return;
     }
+    // Check for collisions with items
+    for (let item of this.world.items) {
+      if (item.remove || item.state === VALUES.itemStates.spawn) continue;
+      if (this.checkPlayerCollision(item)) {
+        if (this.world.player.state !== VALUES.playerStates[item.powerup]) {
+          this.setPlayerState(VALUES.playerStates[item.powerup]);
+        }
+        else {
+          this.world.points += VALUES.points.item;
+          this.stats.setPoints(this.world.points);
+        }
+        item.remove = true;
+      }
+    }
+    // Check for collisions with enemies
+    if (player.invincible === 0) {
+      for (let enemy of this.world.enemies) {
+        if (enemy.remove) continue;
+        if (this.checkPlayerCollision(enemy)) {
+          this.playerDamage();
+          if (!this.running) return;
+        }
+      }
+    }
+    // Check for collisions with coins
     for (let coin of this.world.coinProps) {
       if (this.checkPlayerCollision(this.calcHitbox(coin))) {
         removeCoins.push(this.world.coinProps.indexOf(coin));
@@ -520,7 +576,10 @@ class Game {
       block.remove = true;
     }
     else {
-      if (block.hasCoin) {
+      if (block.item) {
+        this.world.items.push(new Item(block.id + 'item', block.x, block.y, block.item, VALUES.items[block.item].moving, VALUES.items[block.item].powerup, block));
+      }
+      else if (block.hasCoin) {
         this.addCoin();
       }
       if (block.invisible) {
@@ -582,6 +641,13 @@ class Game {
         staticProps.splice(staticProps.indexOf(prop), 1);
       }
     }
+    const items = this.world.items;
+    for (let i = items.length - 1; i >= 0; i--) {
+      const prop = items[i];
+      if (prop.remove) {
+        items.splice(items.indexOf(prop), 1);
+      }
+    }
     const enemies = this.world.enemies;
     for (let i = enemies.length - 1; i >= 0; i--) {
       const prop = enemies[i];
@@ -596,6 +662,10 @@ class Game {
     graphics.clear();
     graphics.setView(this.world.view);
     graphics.drawProp(this.world.finish);
+    for (let item of this.world.items) {
+      if (item.state !== VALUES.itemStates.spawn) continue;
+      graphics.drawProp(item);
+    }
     for (let prop of this.world.props) {
       graphics.drawProp(prop);
     }
@@ -604,6 +674,10 @@ class Game {
     }
     for (let enemy of this.world.enemies) {
       graphics.drawMoving(enemy);
+    }
+    for (let item of this.world.items) {
+      if (item.state === VALUES.itemStates.spawn) continue;
+      graphics.drawProp(item);
     }
     graphics.drawMoving(this.world.player);
   }

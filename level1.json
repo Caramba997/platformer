@@ -57,6 +57,7 @@
             "breakable": true,
             "hasCoin": false,
             "invisible": false,
+            "item": false,
             "class": "Block"
         },
         {
@@ -67,6 +68,7 @@
             "breakable": false,
             "hasCoin": true,
             "invisible": false,
+            "item": "mushroom",
             "class": "Block"
         },
         {
@@ -77,6 +79,7 @@
             "breakable": false,
             "hasCoin": true,
             "invisible": true,
+            "item": false,
             "class": "Block"
         },
         {
