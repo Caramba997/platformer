@@ -4,15 +4,7 @@ html {
 }
 body {
     margin: 0;
-}
-.background {
-    background-image: url(Background.png);
-    position: absolute;
-    z-index: 0;
-    width: 100vw;
-    height: 100vh;
-    background-size: cover;
-    background-position: center;
+    background: black;
 }
 
 #canvas {
@@ -23,7 +15,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 5px solid black;
+    border: 5px solid white;
 }
 
 .stats {
@@ -32,6 +24,10 @@ body {
     left: 0;
     padding: 10px;
     display: flex;
-    gap: 50px;
+    gap: 10px;
     font-weight: bold;
+    color: white;
+}
+.stats div {
+    width: 12vw;
 }

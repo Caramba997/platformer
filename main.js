@@ -27,7 +27,7 @@ const VALUES = {
   },
   gravity: 0.001,
   invincibleOpacity: 0.5,
-  invincibleTime: 1000,
+  invincibleTime: 1500,
   items: {
     mushroom: {
       powerup: 'super',
@@ -51,6 +51,7 @@ const VALUES = {
   maxPlayerRunSpeed: 0.8,
   maxFallSpeed: -1.3,
   maxPlayerWalkSpeed: 0.5,
+  parallaxFactor: 0.5,
   playerHeight: 60,
   playerHeightSuper: 100,
   playerSpeedGrowth: 0.002,
@@ -443,8 +444,21 @@ class Game {
     }
     for (let shot of this.world.shots) {
       shot.x += this.deltaTime * shot.speedX;
+      if (shot.x < 0 || shot.x > this.world.width) {
+        shot.remove = true;
+        continue;
+      }
+      const shotHitbox = this.calcHitbox(shot);
+      for (let prop of this.world.props) {
+        if (!prop.solid || prop.invisible) continue;
+        if (this.checkCollision(shotHitbox, prop)) {
+          shot.remove = true;
+          break;
+        }
+      }
+      if (shot.remove) continue;
       for (let enemy of this.world.enemies) {
-        if (this.checkCollision(this.calcHitbox(shot), enemy)) {
+        if (this.checkCollision(shotHitbox, enemy)) {
           shot.remove = true;
           if (!enemy.invincible) enemy.remove = true;
           break;
@@ -554,7 +568,6 @@ class Game {
 
   processInteractions() {
     const player = this.world.player;
-    let removeCoins = [];
     if (this.checkCollision({ x: player.x, y: player.y, width: player.width / 2, height: player.height }, this.calcHitbox(this.world.finish))) {
       this.levelFinished();
       return;
@@ -705,6 +718,7 @@ class Game {
     const graphics = this.graphics;
     graphics.clear();
     graphics.setView(this.world.view);
+    graphics.drawBackground(this.world);
     graphics.drawProp(this.world.finish);
     for (let item of this.world.items) {
       if (item.state !== VALUES.itemStates.spawn) continue;
@@ -814,6 +828,19 @@ class Graphics {
 
   getTexture(type) {
     return this.textures.get(type);
+  }
+
+  drawBackground(world) {
+    const texture = this.getTexture('background'),
+          tx = Math.ceil(this.view.x * VALUES.parallaxFactor) % this.view.width,
+          ty = Math.ceil(this.view.height - this.view.y * texture.height / world.height);
+    if (tx === 0) {
+      this.context.drawImage(texture, 0, ty, this.view.width, this.view.height, 0, 0, this.view.width, this.view.height);
+    }
+    else {
+      this.context.drawImage(texture, tx, ty, this.view.width - tx, this.view.height, 0, 0, this.view.width - tx, this.view.height);
+      this.context.drawImage(texture, 0, ty, tx, this.view.height, this.view.width - tx, 0, tx, this.view.height);
+    }
   }
 
   drawProp(prop) {

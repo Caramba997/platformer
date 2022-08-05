@@ -10,7 +10,6 @@
         <script src="main.js" defer></script>
     </head>
     <body>
-        <div class="background"></div>
         <div class="stats">
             <div class="stats__fps">
                 FPS: <span id="fps"></span>
@@ -30,6 +29,7 @@
         </div>
         <canvas id="canvas" width="1600" height="900"></canvas>
         <div style="display: none;">
+            <img data-texture="background" src="textures/Background.png" data-width="1600" data-height="1800" width="1600" height="1800">
             <img data-texture="playernormal" src="textures/PlayerNormal.png" data-width="100" data-height="200" width="30" height="60">
             <img data-texture="playersuper" src="textures/PlayerSuper.png" data-width="100" data-height="200" width="50" height="100">
             <img data-texture="playerfire" src="textures/PlayerFire.png" data-width="100" data-height="200" width="50" height="100">
