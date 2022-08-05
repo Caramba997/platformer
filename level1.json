@@ -66,9 +66,9 @@
             "y": 350,
             "type": "itemblock",
             "breakable": false,
-            "hasCoin": true,
+            "hasCoin": false,
             "invisible": false,
-            "item": "mushroom",
+            "item": "default",
             "class": "Block"
         },
         {
@@ -169,6 +169,17 @@
             "solid": false,
             "ground": true,
             "class": "StaticProp"
+        },
+        {
+            "id": "block4",
+            "x": 2600,
+            "y": 1200,
+            "type": "itemblock",
+            "breakable": false,
+            "hasCoin": false,
+            "invisible": false,
+            "item": "default",
+            "class": "Block"
         },
         {
             "id": "brick4",
@@ -354,12 +365,12 @@
         {
             "id": "coin6",
             "x": 1850,
-            "y": 1000
+            "y": 1100
         },
         {
             "id": "coin7",
             "x": 1900,
-            "y": 1000
+            "y": 1100
         },
         {
             "id": "coin8",
@@ -393,6 +404,7 @@
             "hity": 0,
             "hitwidth": 50,
             "hitheight": 50,
+            "invincible": true,
             "jumpable": false,
             "moving": true,
             "initialForward": false,
@@ -409,6 +421,7 @@
             "hity": 0,
             "hitwidth": 50,
             "hitheight": 50,
+            "invincible": false,
             "jumpable": true,
             "moving": true,
             "initialForward": false,
@@ -425,6 +438,7 @@
             "hity": 0,
             "hitwidth": 50,
             "hitheight": 50,
+            "invincible": false,
             "jumpable": true,
             "moving": true,
             "initialForward": true,
@@ -441,6 +455,7 @@
             "hity": 0,
             "hitwidth": 40,
             "hitheight": 45,
+            "invincible": true,
             "jumpable": false,
             "moving": false,
             "initialForward": false,
@@ -457,6 +472,7 @@
             "hity": 0,
             "hitwidth": 40,
             "hitheight": 45,
+            "invincible": true,
             "jumpable": false,
             "moving": false,
             "initialForward": false,
@@ -473,6 +489,7 @@
             "hity": 0,
             "hitwidth": 40,
             "hitheight": 45,
+            "invincible": true,
             "jumpable": false,
             "moving": false,
             "initialForward": false,
@@ -489,6 +506,7 @@
             "hity": 0,
             "hitwidth": 40,
             "hitheight": 45,
+            "invincible": true,
             "jumpable": false,
             "moving": false,
             "initialForward": false,

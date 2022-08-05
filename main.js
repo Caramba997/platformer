@@ -4,11 +4,14 @@ const VALUES = {
   controls: {
     'ArrowLeft': 'left',
     'ArrowRight': 'right',
+    'ArrowUp': 'jump',
     'Space': 'jump',
     'KeyA': 'left',
     'KeyD': 'right',
     'KeyW': 'jump',
-    'ShiftLeft': 'run'
+    'KeyF': 'shoot',
+    'ShiftLeft': 'run',
+    'Enter': 'shoot'
   },
   defaultColor: '#0000FF',
   devMode: false,
@@ -16,6 +19,12 @@ const VALUES = {
   finishHeight: 400,
   finishHitboxWidth: 10,
   finishWidth: 100,
+  fireSize: 30,
+  fireSpeed: 1.0,
+  fireStart: {
+    x: 20,
+    y: 20
+  },
   gravity: 0.001,
   invincibleOpacity: 0.5,
   invincibleTime: 1000,
@@ -23,8 +32,13 @@ const VALUES = {
     mushroom: {
       powerup: 'super',
       moving: true
+    },
+    flower: {
+      powerup: 'fire',
+      moving: false
     }
   },
+  itemDefault: 'default',
   itemSize: 50,
   itemSpeed: 0.1,
   itemStates: {
@@ -34,15 +48,16 @@ const VALUES = {
   jumpTime: 300.0,
   maxEnemySpeed: 0.1,
   maxJumpHeight: 220.0,
-  maxPlayerRunSpeed: 1.0,
+  maxPlayerRunSpeed: 0.8,
   maxFallSpeed: -1.3,
-  maxPlayerWalkSpeed: 0.6,
+  maxPlayerWalkSpeed: 0.5,
   playerHeight: 60,
   playerHeightSuper: 100,
   playerSpeedGrowth: 0.002,
   playerStates: {
     normal: 0,
-    super: 1
+    super: 1,
+    fire: 2
   },
   playerWidth: 30,
   playerWidthSuper: 50,
@@ -52,6 +67,8 @@ const VALUES = {
     item: 1000
   },
   propDefault: 'default',
+  shotCooldown: 1000,
+  trashCans: ['props', 'items', 'shots', 'coinProps', 'enemies'],
   viewRatioX: 0.5,
   viewRatioY: 0.4,
   viewWidth: 1600,
@@ -107,12 +124,14 @@ class Player extends Prop {
     this.forward = true;
     this.state = VALUES.playerStates.super;
     this.invincible = 0;
+    this.shotCooldown = 0;
   }
 }
 
 class Enemy extends InteractableProp {
-  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, jumpable, moving, initialForward, speedFactor) {
+  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor) {
     super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type);
+    this.invincible = invincible;
     this.jumpable = jumpable;
     this.moving = moving;
     this.initialForward = initialForward;
@@ -156,6 +175,16 @@ class Item extends InteractableProp {
   }
 }
 
+class Fire extends InteractableProp {
+  constructor(id, x, y, forward) {
+    super(id, x, y, VALUES.itemSize, VALUES.itemSize, (VALUES.blockSize - VALUES.fireSize) / 2, (VALUES.blockSize - VALUES.fireSize) / 2, VALUES.fireSize, VALUES.fireSize, 'fire');
+    this.forward = forward;
+    this.lastY = y;
+    this.speedX = forward ? VALUES.fireSpeed : -VALUES.fireSpeed;
+    this.speedY = 0.0;
+  }
+}
+
 class World {
   constructor(level) {
     fetch(level + '.json')
@@ -180,9 +209,10 @@ class World {
       }
       this.enemies = [];
       for (let enemy of data.enemies) {
-        this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitx, enemy.hity, enemy.hitwidth, enemy.hitheight, enemy.type, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor));
+        this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitx, enemy.hity, enemy.hitwidth, enemy.hitheight, enemy.type, enemy.invincible, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor));
       }
       this.items = [];
+      this.shots = [];
       this.finish = new Finish(data.finish.x, data.finish.y);
       this.props.push(new StaticProp('finishground', data.finish.x, data.finish.y, VALUES.finishWidth, VALUES.finishGroundHeight, 'finishground', true, true));
       this.player = new Player(data.player.x, data.player.y);
@@ -257,6 +287,13 @@ class Game {
         player.speedY = this.playerInitialJumpSpeed;
         player.grounded = false;
       }
+    }
+    if (player.state === VALUES.playerStates.fire && this.activeControls.has('shoot') && player.shotCooldown === 0) {
+      this.world.shots.push(new Fire('fire' + Date.now(), player.x + VALUES.fireStart.x, player.y + VALUES.fireStart.y, player.forward));
+      player.shotCooldown = VALUES.shotCooldown;
+    }
+    else if (player.shotCooldown > 0) {
+      player.shotCooldown = Math.max(0, player.shotCooldown - this.deltaTime);
     }
   }
 
@@ -404,8 +441,18 @@ class Game {
         this.processPropPhysics(item);
       }
     }
+    for (let shot of this.world.shots) {
+      shot.x += this.deltaTime * shot.speedX;
+      for (let enemy of this.world.enemies) {
+        if (this.checkCollision(this.calcHitbox(shot), enemy)) {
+          shot.remove = true;
+          if (!enemy.invincible) enemy.remove = true;
+          break;
+        }
+      }
+    }
     for (let enemy of this.world.enemies) {
-      if (!enemy.moving) continue;
+      if (!enemy.moving || enemy.remove) continue;
       this.processPropPhysics(enemy);
     }
   }
@@ -539,14 +586,8 @@ class Game {
     // Check for collisions with coins
     for (let coin of this.world.coinProps) {
       if (this.checkPlayerCollision(this.calcHitbox(coin))) {
-        removeCoins.push(this.world.coinProps.indexOf(coin));
+        coin.remove = true;
         this.addCoin();
-      }
-    }
-    if (removeCoins.length > 0) {
-      removeCoins = removeCoins.reverse();
-      for (let index of removeCoins) {
-        this.world.coinProps.splice(index, 1);
       }
     }
   }
@@ -577,7 +618,16 @@ class Game {
     }
     else {
       if (block.item) {
-        this.world.items.push(new Item(block.id + 'item', block.x, block.y, block.item, VALUES.items[block.item].moving, VALUES.items[block.item].powerup, block));
+        let type;
+        if (block.item === VALUES.itemDefault) {
+          const player = this.world.player;
+          type = player.state === VALUES.playerStates.normal ? 'mushroom' : 'flower';
+        }
+        else {
+          type = block.item;
+        }
+        const item = VALUES.items[type];
+        this.world.items.push(new Item(block.id + 'item', block.x, block.y, type, item.moving, item.powerup, block));
       }
       else if (block.hasCoin) {
         this.addCoin();
@@ -630,29 +680,23 @@ class Game {
         player.width = VALUES.playerWidthSuper;
         break;
       }
+      case VALUES.playerStates.fire: {
+        player.state = state;
+        player.height = VALUES.playerHeightSuper;
+        player.width = VALUES.playerWidthSuper;
+        break;
+      }
     }
   }
 
   garbageCollection() {
-    const staticProps = this.world.props;
-    for (let i = staticProps.length - 1; i >= 0; i--) {
-      const prop = staticProps[i];
-      if (prop.remove) {
-        staticProps.splice(staticProps.indexOf(prop), 1);
-      }
-    }
-    const items = this.world.items;
-    for (let i = items.length - 1; i >= 0; i--) {
-      const prop = items[i];
-      if (prop.remove) {
-        items.splice(items.indexOf(prop), 1);
-      }
-    }
-    const enemies = this.world.enemies;
-    for (let i = enemies.length - 1; i >= 0; i--) {
-      const prop = enemies[i];
-      if (prop.remove) {
-        enemies.splice(enemies.indexOf(prop), 1);
+    for (let trashCan of VALUES.trashCans) {
+      const props = this.world[trashCan];
+      for (let i = props.length - 1; i >= 0; i--) {
+        const prop = props[i];
+        if (prop.remove) {
+          props.splice(props.indexOf(prop), 1);
+        }
       }
     }
   }
@@ -678,6 +722,9 @@ class Game {
     for (let item of this.world.items) {
       if (item.state === VALUES.itemStates.spawn) continue;
       graphics.drawProp(item);
+    }
+    for (let shot of this.world.shots) {
+      graphics.drawProp(shot);
     }
     graphics.drawMoving(this.world.player);
   }
@@ -805,6 +852,10 @@ class Graphics {
       switch(moving.state) {
         case VALUES.playerStates.super: {
           state = 'super';
+          break;
+        }
+        case VALUES.playerStates.fire: {
+          state = 'fire';
           break;
         }
         default: {
