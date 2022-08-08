@@ -11,6 +11,7 @@ const VALUES = {
     'KeyW': 'jump',
     'KeyF': 'shoot',
     'ShiftLeft': 'run',
+    'ShiftRight': 'shoot',
     'Enter': 'shoot'
   },
   defaultColor: '#0000FF',
@@ -46,7 +47,7 @@ const VALUES = {
     move: 1
   },
   jumpTime: 300.0,
-  maxEnemySpeed: 0.1,
+  maxEnemySpeed: 0.07,
   maxJumpHeight: 220.0,
   maxPlayerRunSpeed: 0.8,
   maxFallSpeed: -1.3,
@@ -68,6 +69,7 @@ const VALUES = {
     item: 1000
   },
   propDefault: 'default',
+  propSpeed: 0.08,
   shotCooldown: 1000,
   trashCans: ['props', 'items', 'shots', 'coinProps', 'enemies'],
   viewRatioX: 0.5,
@@ -108,6 +110,19 @@ class InteractableProp extends Prop {
   }
 }
 
+class MovingProp extends StaticProp {
+  constructor(id, x, y, width, height, type, solid, ground, speedX, speedY, endX, endY) {
+    super(id, x, y, width, height, type, solid, ground);
+    this.moving = true;
+    this.speedX = speedX * VALUES.propSpeed;
+    this.speedY = speedY * VALUES.propSpeed;
+    this.startX = x;
+    this.startY = y;
+    this.endX = endX;
+    this.endY = endY;
+  }
+}
+
 class Finish extends InteractableProp {
   constructor(x, y) {
     super('finish', x, y, VALUES.finishWidth, VALUES.finishHeight, ((VALUES.finishWidth - VALUES.finishHitboxWidth) / 2), 0, VALUES.finishHitboxWidth, VALUES.finishHeight, 'finishflag');
@@ -130,7 +145,7 @@ class Player extends Prop {
 }
 
 class Enemy extends InteractableProp {
-  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor) {
+  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround) {
     super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type);
     this.invincible = invincible;
     this.jumpable = jumpable;
@@ -143,6 +158,7 @@ class Enemy extends InteractableProp {
     this.grounded = false;
     this.ground = null;
     this.forward = initialForward;
+    this.stayOnGround = stayOnGround;
   }
 }
 
@@ -200,6 +216,9 @@ class World {
         if (prop.class === 'Block') {
           this.props.push(new Block(prop.id, prop.x, prop.y, type, prop.breakable, prop.hasCoin, prop.invisible, prop.item));
         }
+        else if (prop.class === 'MovingProp') {
+          this.props.push(new MovingProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground, prop.speedX, prop.speedY, prop.endX, prop.endY));
+        }
         else {
           this.props.push(new StaticProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground));
         }
@@ -210,7 +229,7 @@ class World {
       }
       this.enemies = [];
       for (let enemy of data.enemies) {
-        this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitx, enemy.hity, enemy.hitwidth, enemy.hitheight, enemy.type, enemy.invincible, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor));
+        this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitx, enemy.hity, enemy.hitwidth, enemy.hitheight, enemy.type, enemy.invincible, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor, enemy.stayOnGround));
       }
       this.items = [];
       this.shots = [];
@@ -315,6 +334,10 @@ class Game {
       const prop = player.ground;
       if (prop.x > player.x + player.width || prop.x + prop.width < player.x) {
         player.grounded = false;
+      }
+      else if (prop.moving) {
+        player.x += prop.speedX * this.deltaTime;
+        player.y += prop.speedY * this.deltaTime;
       }
     }
     let groundResult = null;
@@ -428,6 +451,27 @@ class Game {
   }
 
   processPropActions() {
+    for (let prop of this.world.props) {
+      if (!prop.moving) continue;
+      prop.x += this.deltaTime * prop.speedX;
+      prop.y += this.deltaTime * prop.speedY;
+      if (prop.speedX > 0 && prop.x >= prop.endX) {
+        prop.speedX *= -1;
+        prop.x = prop.endX;
+      }
+      else if (prop.speedX < 0 && prop.x <= prop.startX) {
+        prop.speedX *= -1;
+        prop.x = prop.startX;
+      }
+      if (prop.speedY > 0 && prop.y >= prop.endY) {
+        prop.speedY *= -1;
+        prop.y = prop.endY;
+      }
+      else if (prop.speedY < 0 && prop.y <= prop.startY) {
+        prop.speedY *= -1;
+        prop.y = prop.startY;
+      }
+    }
     for (let item of this.world.items) {
       if (item.state === VALUES.itemStates.spawn) {
         item.y += this.deltaTime * VALUES.itemSpeed;
@@ -486,6 +530,10 @@ class Game {
       const prop = thisProp.ground;
       if (prop.x > thisProp.x + thisProp.width || prop.x + prop.width < thisProp.x) {
         thisProp.grounded = false;
+      }
+      else if (thisProp.ground.moving) {
+        thisProp.x += thisProp.ground.speedX * this.deltaTime;
+        thisProp.y += thisProp.ground.speedY * this.deltaTime;
       }
     }
     let groundResult = null;
@@ -563,6 +611,14 @@ class Game {
       thisProp.grounded = groundResult.grounded;
       thisProp.ground = groundResult.ground;
       thisProp.y = groundResult.y;
+    }
+    else if (!thisProp.grounded && thisProp.stayOnGround) {
+      thisProp.speedX *= -1;
+      thisProp.speedY = 0;
+      thisProp.grounded = true;
+      const ground = thisProp.ground;
+      thisProp.x = ground.x > thisProp.x + thisProp.width ? ground.x - thisProp.width : ground.x + ground.width;
+      thisProp.x += this.deltaTime * ground.speedX;
     }
   }
 

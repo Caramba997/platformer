@@ -50,6 +50,36 @@
             "class": "StaticProp"
         },
         {
+            "id": "platform1",
+            "x": 550,
+            "y": 550,
+            "width": 300,
+            "height": 50,
+            "type": "orangeplatform",
+            "solid": false,
+            "ground": true,
+            "speedX": 1,
+            "speedY": 0,
+            "endX": 850,
+            "endY": 550,
+            "class": "MovingProp"
+        },
+        {
+            "id": "platform2",
+            "x": 650,
+            "y": 750,
+            "width": 200,
+            "height": 50,
+            "type": "orangeplatform",
+            "solid": false,
+            "ground": true,
+            "speedX": 0,
+            "speedY": 1,
+            "endX": 650,
+            "endY": 1050,
+            "class": "MovingProp"
+        },
+        {
             "id": "block1",
             "x": 200,
             "y": 350,
@@ -408,7 +438,8 @@
             "jumpable": false,
             "moving": true,
             "initialForward": false,
-            "speedFactor": 1.0, 
+            "speedFactor": 1.0,
+            "stayOnGround": false,
             "type": "spike"
         },
         {
@@ -425,7 +456,8 @@
             "jumpable": true,
             "moving": true,
             "initialForward": false,
-            "speedFactor": 1.0, 
+            "speedFactor": 1.0,
+            "stayOnGround": false,
             "type": "bubble"
         },
         {
@@ -442,7 +474,26 @@
             "jumpable": true,
             "moving": true,
             "initialForward": true,
-            "speedFactor": 1.0, 
+            "speedFactor": 1.0,
+            "stayOnGround": false,
+            "type": "bubble"
+        },
+        {
+            "id": "normal3",
+            "x": 600,
+            "y": 600,
+            "width": 50,
+            "height": 50,
+            "hitx": 0,
+            "hity": 0,
+            "hitwidth": 50,
+            "hitheight": 50,
+            "invincible": false,
+            "jumpable": true,
+            "moving": true,
+            "initialForward": true,
+            "speedFactor": 1.0,
+            "stayOnGround": true,
             "type": "bubble"
         },
         {
@@ -459,7 +510,8 @@
             "jumpable": false,
             "moving": false,
             "initialForward": false,
-            "speedFactor": 0, 
+            "speedFactor": 0,
+            "stayOnGround": false,
             "type": "toxicplant"
         },
         {
@@ -476,7 +528,8 @@
             "jumpable": false,
             "moving": false,
             "initialForward": false,
-            "speedFactor": 0, 
+            "speedFactor": 0,
+            "stayOnGround": false,
             "type": "toxicplant"
         },
         {
@@ -493,7 +546,8 @@
             "jumpable": false,
             "moving": false,
             "initialForward": false,
-            "speedFactor": 0, 
+            "speedFactor": 0,
+            "stayOnGround": false,
             "type": "toxicplant"
         },
         {
@@ -510,7 +564,8 @@
             "jumpable": false,
             "moving": false,
             "initialForward": false,
-            "speedFactor": 0, 
+            "speedFactor": 0,
+            "stayOnGround": false,
             "type": "toxicplant"
         }
     ]
