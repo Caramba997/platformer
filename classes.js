@@ -151,7 +151,6 @@ export class World {
       this.points = 0;
       this.calcViewPosition(this.player);
       this.time = defaults.time;
-      window.dispatchEvent(new CustomEvent('world:loaded'));
     }
     else {
       fetch('levels/' + level + '.json')

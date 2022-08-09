@@ -246,6 +246,9 @@ class Editor {
       this.game = new Game(null);
       document.querySelector('[data-data="level"]').innerText = 'New level';
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
+      const playButton = document.querySelector('a[data-action="play"]');
+      playButton.href = playButton.getAttribute('data-href') + this.game.world.id;
+      this.initOutline();
     });
     // Save level
     document.querySelector('[data-control="save"]').addEventListener('click', () => {
@@ -285,49 +288,50 @@ class Editor {
   }
 
   createProp(type) {
-    console.log(type);
     const outline = document.querySelector('.Outline'),
           defaults = EDITORVALUES.propDefaults[type],
-          id = defaults.type + Date.now();
-    let propsOutline, html;
+          id = type + Date.now();
+    let propsOutline, html, prop;
 
     switch (type) {
       case 'staticprop': {
-        const prop = new StaticProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground);
+        prop = new StaticProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground);
         this.game.world.props.push(prop);
         propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'StaticProp');
         break;
       }
       case 'movingprop': {
-        const prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
+        prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
         this.game.world.props.push(prop);
         propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'MovingProp');
         break;
       }
       case 'block': {
-        const prop = new Block(id, defaults.x, defaults.y, defaults.type, defaults.breakable, defaults.hasCoin, defaults.invisible, defaults.item);
+        prop = new Block(id, defaults.x, defaults.y, defaults.type, defaults.breakable, defaults.hasCoin, defaults.invisible, defaults.item);
         this.game.world.props.push(prop);
         propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Block');
         break;
       }
       case 'enemy': {
-        const prop = new Enemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactor, defaults.stayOnGround);
+        prop = new Enemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactor, defaults.stayOnGround);
         this.game.world.enemies.push(prop);
         propsOutline = outline.querySelector('[data-outline="enemies"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'enemies').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Enemy');
         break;
       }
       case 'coin': {
-        const prop = new Coin(id, defaults.x, defaults.y);
+        prop = new Coin(id, defaults.x, defaults.y);
         this.game.world.coinProps.push(prop);
         propsOutline = outline.querySelector('[data-outline="coins"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'coinProps').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Coin');
         break;
       }
     }
+    prop.x = this.game.world.view.x + Math.ceil(this.game.world.view.width / 2);
+    prop.y = this.game.world.view.y + Math.ceil(this.game.world.view.height / 2);
     const temp = document.createElement('DIV');
     temp.innerHTML = html;
     temp.firstChild.addEventListener('click', (e) => {
@@ -473,11 +477,18 @@ class Game {
   }
 
   loadLevel(level) {
-    window.addEventListener('world:loaded', () => {
+    if (level) {
+      window.addEventListener('world:loaded', () => {
+        this.setCenter(this.world.player);
+        this.start();
+      }, { once: true });
+      this.world = new World(level);
+    }
+    else {
+      this.world = new World(level);
       this.setCenter(this.world.player);
       this.start();
-    }, { once: true });
-    this.world = new World(level);
+    }
     this.activeControls = new Set();
   }
 

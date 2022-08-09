@@ -52,6 +52,10 @@ export class Graphics {
     }
     else {
       const texture = prop.hit ? this.getTexture(prop.type + 'hit') : this.getTexture(prop.type);
+      if (!texture) {
+        console.warn('Unknown prop type: ' + prop.type);
+        return;
+      }
       for (let ix = 0; ix < prop.width; ix += texture.width) {
         for (let iy = 0; iy < prop.height; iy += texture.height) {
           const twidth = texture.getAttribute('data-width'),
