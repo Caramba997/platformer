@@ -1,258 +1,6 @@
-const VALUES = {
-  blockSize: 50,
-  coinSize: 30,
-  controls: {
-    'ArrowLeft': 'left',
-    'ArrowRight': 'right',
-    'ArrowUp': 'jump',
-    'Space': 'jump',
-    'KeyA': 'left',
-    'KeyD': 'right',
-    'KeyW': 'jump',
-    'KeyF': 'shoot',
-    'ShiftLeft': 'run',
-    'ShiftRight': 'shoot',
-    'Enter': 'shoot'
-  },
-  defaultColor: '#0000FF',
-  devMode: false,
-  finishGroundHeight: 50,
-  finishHeight: 400,
-  finishHitboxWidth: 10,
-  finishWidth: 100,
-  fireSize: 30,
-  fireSpeed: 1.0,
-  fireStart: {
-    x: 20,
-    y: 20
-  },
-  gravity: 0.001,
-  invincibleOpacity: 0.5,
-  invincibleTime: 1500,
-  items: {
-    mushroom: {
-      powerup: 'super',
-      moving: true
-    },
-    flower: {
-      powerup: 'fire',
-      moving: false
-    }
-  },
-  itemDefault: 'default',
-  itemSize: 50,
-  itemSpeed: 0.1,
-  itemStates: {
-    spawn: 0,
-    move: 1
-  },
-  jumpTime: 300.0,
-  maxEnemySpeed: 0.07,
-  maxJumpHeight: 220.0,
-  maxPlayerRunSpeed: 0.8,
-  maxFallSpeed: -1.3,
-  maxPlayerWalkSpeed: 0.5,
-  parallaxFactor: 0.5,
-  playerHeight: 60,
-  playerHeightSuper: 100,
-  playerSpeedGrowth: 0.002,
-  playerStates: {
-    normal: 0,
-    super: 1,
-    fire: 2
-  },
-  playerWidth: 30,
-  playerWidthSuper: 50,
-  points: {
-    coin: 10,
-    enemy: 100,
-    item: 1000
-  },
-  propDefault: 'default',
-  propSpeed: 0.08,
-  shotCooldown: 1000,
-  trashCans: ['props', 'items', 'shots', 'coinProps', 'enemies'],
-  viewRatioX: 0.5,
-  viewRatioY: 0.4,
-  viewWidth: 1600,
-  viewHeight: 900
-};
-
-class Prop {
-  constructor(id, x, y, width, height, type) {
-    this.id = id;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.type = type;
-  }
-}
-
-class StaticProp extends Prop {
-  constructor(id, x, y, width, height, type, solid, ground) {
-    super(id, x, y, width, height, type);
-    this.id = id;
-    this.solid = solid;
-    this.ground = ground;
-  }
-}
-
-class InteractableProp extends Prop {
-  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type) {
-    super(id, x, y, width, height, type);
-    this.hitbox = {
-      x: hitx,
-      y: hity,
-      width: hitwidth,
-      height: hitheight
-    };
-  }
-}
-
-class MovingProp extends StaticProp {
-  constructor(id, x, y, width, height, type, solid, ground, speedX, speedY, endX, endY) {
-    super(id, x, y, width, height, type, solid, ground);
-    this.moving = true;
-    this.speedX = speedX * VALUES.propSpeed;
-    this.speedY = speedY * VALUES.propSpeed;
-    this.startX = x;
-    this.startY = y;
-    this.endX = endX;
-    this.endY = endY;
-  }
-}
-
-class Finish extends InteractableProp {
-  constructor(x, y) {
-    super('finish', x, y, VALUES.finishWidth, VALUES.finishHeight, ((VALUES.finishWidth - VALUES.finishHitboxWidth) / 2), 0, VALUES.finishHitboxWidth, VALUES.finishHeight, 'finishflag');
-  }
-}
-
-class Player extends Prop {
-  constructor(x, y) {
-    super('player', x, y, VALUES.playerWidthSuper, VALUES.playerHeightSuper, 'player');
-    this.lastY = 0;
-    this.speedX = 0.0;
-    this.speedY = 0.0;
-    this.grounded = false;
-    this.ground = null;
-    this.forward = true;
-    this.state = VALUES.playerStates.super;
-    this.invincible = 0;
-    this.shotCooldown = 0;
-  }
-}
-
-class Enemy extends InteractableProp {
-  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround) {
-    super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type);
-    this.invincible = invincible;
-    this.jumpable = jumpable;
-    this.moving = moving;
-    this.initialForward = initialForward;
-    this.speedFactor = speedFactor;
-    this.lastY = 0;
-    this.speedX = initialForward ? speedFactor * VALUES.maxEnemySpeed : -speedFactor * VALUES.maxEnemySpeed;
-    this.speedY = 0.0;
-    this.grounded = false;
-    this.ground = null;
-    this.forward = initialForward;
-    this.stayOnGround = stayOnGround;
-  }
-}
-
-class Coin extends InteractableProp {
-  constructor(id, x, y) {
-    super(id, x, y, VALUES.blockSize, VALUES.blockSize, (VALUES.blockSize - VALUES.coinSize) / 2, (VALUES.blockSize - VALUES.coinSize) / 2, VALUES.coinSize, VALUES.coinSize, 'coin');
-  }
-}
-
-class Block extends StaticProp {
-  constructor(id, x, y, type, breakable, hasCoin, invisible, item) {
-    super(id, x, y, VALUES.blockSize, VALUES.blockSize, type, true, true);
-    this.breakable = breakable;
-    this.hit = false;
-    this.hasCoin = hasCoin;
-    this.invisible = invisible;
-    this.item = item;
-  }
-}
-
-class Item extends InteractableProp {
-  constructor(id, x, y, type, moving, powerup, block) {
-    super(id, x, y, VALUES.itemSize, VALUES.itemSize, 0, 0, VALUES.itemSize, VALUES.itemSize, type);
-    this.moving = moving;
-    this.powerup = powerup;
-    this.state = VALUES.itemStates.spawn;
-    this.block = block;
-    this.lastY = 0;
-    this.speedX = VALUES.itemSpeed;
-    this.speedY = 0.0;
-  }
-}
-
-class Fire extends InteractableProp {
-  constructor(id, x, y, forward) {
-    super(id, x, y, VALUES.itemSize, VALUES.itemSize, (VALUES.blockSize - VALUES.fireSize) / 2, (VALUES.blockSize - VALUES.fireSize) / 2, VALUES.fireSize, VALUES.fireSize, 'fire');
-    this.forward = forward;
-    this.lastY = y;
-    this.speedX = forward ? VALUES.fireSpeed : -VALUES.fireSpeed;
-    this.speedY = 0.0;
-  }
-}
-
-class World {
-  constructor(level) {
-    fetch(level + '.json')
-    .then(result => result.json())
-    .then((data) => {
-      this.name = data.meta.name;
-      this.width = data.world.width;
-      this.height = data.world.height;
-      this.props = [];
-      for (let prop of data.staticProps) {
-        const type = prop.type || VALUES.propDefault;
-        if (prop.class === 'Block') {
-          this.props.push(new Block(prop.id, prop.x, prop.y, type, prop.breakable, prop.hasCoin, prop.invisible, prop.item));
-        }
-        else if (prop.class === 'MovingProp') {
-          this.props.push(new MovingProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground, prop.speedX, prop.speedY, prop.endX, prop.endY));
-        }
-        else {
-          this.props.push(new StaticProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground));
-        }
-      }
-      this.coinProps = [];
-      for (let coin of data.coins) {
-        this.coinProps.push(new Coin(coin.id, coin.x, coin.y));
-      }
-      this.enemies = [];
-      for (let enemy of data.enemies) {
-        this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitx, enemy.hity, enemy.hitwidth, enemy.hitheight, enemy.type, enemy.invincible, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor, enemy.stayOnGround));
-      }
-      this.items = [];
-      this.shots = [];
-      this.finish = new Finish(data.finish.x, data.finish.y);
-      this.props.push(new StaticProp('finishground', data.finish.x, data.finish.y, VALUES.finishWidth, VALUES.finishGroundHeight, 'finishground', true, true));
-      this.player = new Player(data.player.x, data.player.y);
-      this.view = {
-        width: VALUES.viewWidth,
-        height: VALUES.viewHeight
-      };
-      this.calcViewPosition();
-      this.coins = 0;
-      this.points = 0;
-      this.time = data.time;
-      window.dispatchEvent(new CustomEvent('world:loaded'));
-    });
-  }
-
-  calcViewPosition() {
-    this.view.x = Math.max(0, Math.floor(this.player.x) - VALUES.viewRatioX * VALUES.viewWidth);
-    this.view.y = Math.max(0, Math.floor(this.player.y) - VALUES.viewRatioY * VALUES.viewHeight);
-  }
-}
+import { VALUES } from '/values.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
+import { Graphics } from '/graphics.js';
 
 class Game {
   constructor() {
@@ -260,7 +8,14 @@ class Game {
     this.stats = new Stats();
     this.calcJumpParameters();
     this.initControls();
-    this.loadLevel(1);
+    if (window.location.search) {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.has('level')) {
+        this.loadLevel(searchParams.get('level'));
+        return;
+      }
+    }
+    this.loadLevel('level1');
   }
 
   calcJumpParameters() {
@@ -270,7 +25,7 @@ class Game {
   }
 
   loadLevel(level) {
-    this.world = new World("level" + level);
+    this.world = new World(level);
     this.activeControls = new Set();
     window.addEventListener('world:loaded', () => {
       this.stats.setLevel(this.world.name);
@@ -811,7 +566,7 @@ class Game {
 
   gameOver() {
     this.stop();
-    this.loadLevel(1);
+    this.loadLevel(this.world.id);
   }
 
   levelFinished() {
@@ -835,7 +590,7 @@ class Game {
     this.processInteractions();
     if (!this.running) return;
     this.garbageCollection();
-    this.world.calcViewPosition();
+    this.world.calcViewPosition(this.world.player);
     this.render();
     this.stats.setFps(this.deltaTime);
     this.stats.setTime(this.world.time);
@@ -853,118 +608,6 @@ class Game {
       if (!this.activeControls.has(control)) return;
       this.activeControls.delete(control);
     });
-  }
-}
-
-class Graphics {
-  constructor() {
-    this.canvas = document.getElementById('canvas'),
-    this.context = canvas.getContext('2d');
-    const images = document.querySelectorAll('[data-texture]');
-    this.textures = new Map();
-    for (let image of images) {
-      this.textures.set(image.getAttribute('data-texture'), image);
-    }
-  }
-
-  clear() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-
-  setView(view) {
-    this.view = view;
-  }
-
-  transformToView(prop) {
-    const result = {};
-    result.x = prop.x - this.view.x;
-    result.y = this.view.height - (prop.y - this.view.y + prop.height);
-    return result;
-  }
-
-  getTexture(type) {
-    return this.textures.get(type);
-  }
-
-  drawBackground(world) {
-    const texture = this.getTexture('background'),
-          tx = Math.ceil(this.view.x * VALUES.parallaxFactor) % this.view.width,
-          ty = Math.ceil(this.view.height - this.view.y * texture.height / world.height);
-    if (tx === 0) {
-      this.context.drawImage(texture, 0, ty, this.view.width, this.view.height, 0, 0, this.view.width, this.view.height);
-    }
-    else {
-      this.context.drawImage(texture, tx, ty, this.view.width - tx, this.view.height, 0, 0, this.view.width - tx, this.view.height);
-      this.context.drawImage(texture, 0, ty, tx, this.view.height, this.view.width - tx, 0, tx, this.view.height);
-    }
-  }
-
-  drawProp(prop) {
-    if (prop.invisible) return;
-    const {x, y} = this.transformToView(prop);
-    if (prop.type === VALUES.propDefault) {
-      this.context.fillStyle = VALUES.defaultColor;
-      this.context.fillRect(x, y, prop.width, prop.height);
-    }
-    else {
-      const texture = prop.hit ? this.getTexture(prop.type + 'hit') : this.getTexture(prop.type);
-      for (let ix = 0; ix < prop.width; ix += texture.width) {
-        for (let iy = 0; iy < prop.height; iy += texture.height) {
-          const twidth = texture.getAttribute('data-width'),
-                theight = texture.getAttribute('data-height'),
-                tx = Math.min(twidth, prop.width - ix),
-                ty = Math.min(theight, prop.height - iy);
-          this.context.drawImage(texture, 0, 0, twidth, theight, x + ix, y + iy, texture.width - tx % texture.width, texture.height - ty % texture.height);
-        }
-      }
-    }
-    if (VALUES.devMode) {
-      this.context.font = '16px Courier New';
-      this.context.fillStyle = '#FFFFFF';
-      this.context.fillText(prop.id, x, y + prop.height - 5);
-    }
-  }
-
-  drawMoving(moving) {
-    let {x, y} = this.transformToView(moving);
-    x = Math.floor(x);
-    y = Math.floor(y);
-    let texture;
-    if (moving instanceof Player) {
-      let state;
-      switch(moving.state) {
-        case VALUES.playerStates.super: {
-          state = 'super';
-          break;
-        }
-        case VALUES.playerStates.fire: {
-          state = 'fire';
-          break;
-        }
-        default: {
-          state = 'normal';
-          break;
-        }
-      }
-      texture = this.getTexture(moving.type + state);
-      if (moving.invincible > 0) this.context.globalAlpha = VALUES.invincibleOpacity;
-    }
-    else {
-      texture = this.getTexture(moving.type);
-    }
-    const twidth = texture.getAttribute('data-width'),
-          theight = texture.getAttribute('data-height');
-    if (moving.forward) {
-      this.context.drawImage(texture, 0, 0, twidth, theight, x, y, moving.width, moving.height);
-    }
-    else {
-      this.context.save();
-      this.context.scale(-1, 1);
-      this.context.drawImage(texture, 0, 0, twidth, theight, -x - moving.width, y, moving.width, moving.height);
-      this.context.restore();
-      this.context.scale(1, 1);
-    }
-    if (this.context.globalAlpha !== 1) this.context.globalAlpha = 1;
   }
 }
 

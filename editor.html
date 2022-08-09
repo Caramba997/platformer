@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Platformer</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="editor.css">
+        <script src="assetloader.js" defer></script>
+        <script type="module" src="values.js" defer></script>
+        <script type="module" src="classes.js" defer></script>
+        <script type="module" src="graphics.js" defer></script>
+        <script type="module" src="editor.js" defer></script>
+    </head>
+    <body>
+        <div class="Toolbar">
+            <div class="Toolbar__Item">
+                <button data-action="open-popup" data-control="select-level" data-data="level">Select level</button>
+            </div>
+            <div class="Toolbar__Item">
+                <button data-action="open-popup" data-control="save">Save</button>
+            </div>
+            <div class="Toolbar__Item">
+                <a data-action="play" data-href="/game.html?level=" target="_blank" href="#">Play</a>
+            </div>
+            <div class="Toolbar__Item">
+                <button data-action="open-popup" data-control="create">+</button>
+            </div>
+        </div>
+        <div class="Container">
+            <div class="Outline Sidebar" data-expanded="true">
+                <div class="Sidebar__Content">
+                    <div class="Sidebar__Content--Header">
+                        <div>Outline</div>
+                        <hr>
+                    </div>
+                    <div class="Sidebar__Content--Content">
+                        <div class="Outline__Item" data-expanded="false" data-outline="meta">
+                            <button class="Button--Outline">World</button>
+                            <div class="Outline__Item--Content">
+                                <button class="Outline--Subheading" data-action="show-properties" data-location="" data-id="meta">Meta</button>
+                                <button class="Outline--Subheading" data-action="show-properties" data-location="" data-id="world">World</button>
+                                <button class="Outline--Subheading" data-action="show-properties" data-location="" data-id="player">Player</button>
+                                <button class="Outline--Subheading" data-action="show-properties" data-location="" data-id="finish">Finish</button>
+                            </div>
+                        </div>
+                        <div class="Outline__Item" data-expanded="false" data-outline="props">
+                            <button class="Button--Outline">Props</button>
+                            <div class="Outline__Item--Content"></div>
+                        </div>
+                        <div class="Outline__Item" data-expanded="false" data-outline="enemies">
+                            <button class="Button--Outline">Enemies</button>
+                            <div class="Outline__Item--Content"></div>
+                        </div>
+                        <div class="Outline__Item" data-expanded="false" data-outline="coins">
+                            <button class="Button--Outline">Coins</button>
+                            <div class="Outline__Item--Content"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="Sidebar__Control" data-action="toggle-sidebar">
+                    <span>></span>
+                </button>
+            </div>
+            <div class="Canvas">
+                <canvas id="canvas" width="1600" height="900"></canvas>
+            </div>
+            <div class="Properties Sidebar" data-expanded="true">
+                <button class="Sidebar__Control" data-action="toggle-sidebar"">
+                    <span><</span>
+                </button>
+                <div class="Sidebar__Content">
+                    <div class="Sidebar__Content--Header">
+                        <div data-property="class"></div>
+                        <div data-property="id"></div>
+                        <hr>
+                    </div>
+                    <div class="Sidebar__Content--Content">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="popups">
+            <div class="Popup" data-visible="false" data-popup="select-level">
+                <div class="Popup__Header">
+                    <div class="Popup__Header--Title">Choose a level to edit</div>
+                    <button class="Popup__Header--Close" data-action="close-popup">X</button>
+                </div>
+                <hr>
+                <div class="Popup__Content">
+                    <select name="level" class="mb-10">
+                        <option value="none">Select level...</option>
+                    </select>
+                    <button class="Button" data-action="load-level">Load</button>
+                    <p>or</p>
+                    <button class="Button" data-action="new-level">New</button>
+                </div>
+            </div>
+            <div class="Popup" data-visible="false" data-popup="create">
+                <div class="Popup__Header">
+                    <div class="Popup__Header--Title">Create new prop</div>
+                    <button class="Popup__Header--Close" data-action="close-popup">X</button>
+                </div>
+                <hr>
+                <div class="Popup__Content">
+                    <select name="prop" class="mb-10">
+                        <option value="prop">Static prop</option>
+                        <option value="enemy">Enemy</option>
+                        <option value="coin">Coin</option>
+                    </select>
+                    <button class="Button" data-action="create-prop">Create</button>
+                </div>
+            </div>
+            <div class="Popup" data-visible="false" data-popup="save">
+                <div class="Popup__Header">
+                    <div class="Popup__Header--Title">Save level</div>
+                    <button class="Popup__Header--Close" data-action="close-popup">X</button>
+                </div>
+                <hr>
+                <div class="Popup__Content">
+                    <textarea class="mb-10" data-text="level"></textarea>
+                    <button class="Button" data-action="copy-level">Copy</button>
+                </div>
+            </div>
+        </div>
+        <div class="PageOverlay" data-visible="false"></div>
+        <div id="textures" style="display: none;"></div>
+    </body>
+</html>

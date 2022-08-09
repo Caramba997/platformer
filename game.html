@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Platformer</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="game.css">
+        <script src="assetloader.js" defer></script>
+        <script type="module" src="values.js" defer></script>
+        <script type="module" src="classes.js" defer></script>
+        <script type="module" src="graphics.js" defer></script>
+        <script type="module" src="game.js" defer></script>
+    </head>
+    <body>
+        <div class="stats">
+            <div class="stats__fps">
+                FPS: <span id="fps"></span>
+            </div>
+            <div class="stats__level">
+                Level: <span id="level"></span>
+            </div>
+            <div class="stats__time">
+                Time: <span id="time"></span>
+            </div>
+            <div class="stats__coins">
+                Coins: <span id="coins"></span>
+            </div>
+            <div class="stats__points">
+                Points: <span id="points"></span>
+            </div>
+        </div>
+        <canvas id="canvas" width="1600" height="900"></canvas>
+        <div id="textures" style="display: none;"></div>
+    </body>
+</html>

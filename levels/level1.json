@@ -1,8 +1,8 @@
 {
     "meta": {
-        "name": "1 - Test"
+        "name": "1 - Test",
+        "time": 180000
     },
-    "time": 180000,
     "world": {
         "width": 20000,
         "height": 4000
@@ -58,8 +58,8 @@
             "type": "orangeplatform",
             "solid": false,
             "ground": true,
-            "speedX": 1,
-            "speedY": 0,
+            "speedFactorX": 1,
+            "speedFactorY": 0,
             "endX": 850,
             "endY": 550,
             "class": "MovingProp"
@@ -73,8 +73,8 @@
             "type": "orangeplatform",
             "solid": false,
             "ground": true,
-            "speedX": 0,
-            "speedY": 1,
+            "speedFactorX": 0,
+            "speedFactorY": 1,
             "endX": 650,
             "endY": 1050,
             "class": "MovingProp"

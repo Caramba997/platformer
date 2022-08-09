@@ -1,0 +1,203 @@
+:root {
+    --color-background: rgb(73, 73, 73);
+    --color-toolbar: rgb(45, 45, 45);
+    --color-sidebar: rgb(39, 47, 80);
+    --color-overlay: rgba(255, 255, 255, 0.4);
+    --color-text: rgb(255, 255, 255);
+    --color-text-dark: rgb(40, 35, 50);
+    --color-subheading: rgba(255, 255, 255, 0.2);
+    --color-text-highlight: rgb(180, 180, 250);
+    --header-height: 30px;
+    --header-margin: 0px;
+    --sidebar-min-width: 10px;
+    --sidebar-max-width: 200px;
+    --base-font-size: 16px;
+    --small-font: 12px;
+}
+
+html {
+    font-size: var(--base-font-size);
+    color: var(--color-text);
+}
+html, input, button, select {
+    font-family: 'Courier New', Courier, monospace;
+}
+body {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    background: var(--color-background);
+}
+input {
+    border: none;
+    border-radius: 2px;
+    font-size: var(--small-font);
+}
+button {
+    border: none;
+    background: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+hr {
+    border: none;
+    border-top: 2px solid var(--color-text);
+}
+a {
+    cursor: pointer;
+    font-size: var(--small-font);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+[data-visible="false"] {
+    display: none;
+}
+.mb-10 {
+    margin-bottom: 10px;
+}
+.text-center {
+    text-align: center;
+}
+
+.Toolbar {
+    height: var(--header-height);
+    background: var(--color-toolbar);
+    margin-bottom: var(--header-margin);
+    font-size: var(--small-font);
+    display: flex;
+    padding-left: 5px;
+    align-items: center;
+}
+.Toolbar__Item {
+    padding: 2px;
+}
+.Toolbar__Item button{
+    font-size: var(--small-font);
+}
+
+.Container {
+    display: flex;
+    max-height: calc(100vh - var(--header-height) - var(--header-margin));
+    max-width: 100vw;
+}
+
+.Sidebar {
+    display: flex;
+    background: var(--color-sidebar);
+    height: calc(100vh - var(--header-height) - var(--header-margin));
+    flex: 0 0 var(--sidebar-max-width);
+}
+.Sidebar:not([data-expanded="true"]) {
+    flex: 0 0 var(--sidebar-min-width);
+}
+.Sidebar:not([data-expanded="true"]) > .Sidebar__Content {
+    display: none;
+}
+.Sidebar__Control {
+    display: flex;
+    flex-direction: column;
+    min-width: var(--sidebar-min-width);
+}
+.Sidebar__Control span {
+    margin: auto;
+}
+.Sidebar__Content {
+    width: 100%;
+    flex-grow: 0;
+    background: var(--color-toolbar);
+    padding: 5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.Sidebar__Content--Header > :first-child {
+    color: var(--color-text-highlight);
+}
+.Sidebar__Content--Header > :nth-child(2) {
+    font-size: var(--small-font);
+}
+.Sidebar__Content--Content {
+    display: flex;
+    flex: 0 0 100%;
+    flex-direction: column;
+}
+
+.Property {
+    display: flex;
+    width: 100%;
+    font-size: var(--small-font);
+    margin-bottom: 2px;
+}
+.Property--Label {
+    flex: 0 0 50%;
+    margin-right: 5px;
+}
+.Property--Value {
+    flex: 0 0 50%;
+    width: auto;
+    max-width: 45%;
+}
+
+#canvas {
+    max-width: 100%;
+    max-height: calc(100vh - var(--header-height) - var(--header-margin));
+    margin: auto;
+}
+
+.Popup {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-sidebar);
+    min-width: 25vw;
+    min-height: 25vh;
+    border-radius: 2px;
+    padding: 10px;
+    z-index: 10;
+}
+.Popup__Header {
+    display: flex;
+    justify-content: space-between;
+}
+.Popup__Content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+}
+.Popup__Content textarea {
+    width: 50vw;
+    height: 75vh;
+}
+
+.PageOverlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--color-overlay);
+}
+
+.Button {
+    background: var(--color-text);
+    color: var(--color-text-dark);
+    width: fit-content;
+    border-radius: 2px;
+}
+.Button--Outline {
+    padding: 5px;
+    text-decoration: underline;
+    color: var(--color-text-highlight);
+}
+
+.Outline__Item[data-expanded="false"] .Outline__Item--Content {
+    display: none;
+}
+.Outline--Subheading {
+    width: 100%;
+    background-color: var(--color-subheading);
+    margin: 5px 0;
+    font-size: var(--small-font);
+}
