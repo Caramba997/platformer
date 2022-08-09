@@ -44,7 +44,7 @@ export class Graphics {
   }
 
   drawProp(prop) {
-    if (prop.invisible) return;
+    if (prop.invisible && prop.type !== VALUES.propDefault) return;
     const {x, y} = this.transformToView(prop);
     if (prop.type === VALUES.propDefault) {
       this.context.fillStyle = VALUES.defaultColor;

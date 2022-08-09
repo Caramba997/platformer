@@ -56,6 +56,9 @@ a {
 .mb-10 {
     margin-bottom: 10px;
 }
+.mr-10 {
+    margin-right: 10px;
+}
 .text-center {
     text-align: center;
 }
@@ -190,6 +193,10 @@ a {
     padding: 5px;
     text-decoration: underline;
     color: var(--color-text-highlight);
+}
+.Button[data-active="true"] {
+    color: var(--color-text);
+    background: var(--color-text-highlight);
 }
 
 .Outline__Item[data-expanded="false"] .Outline__Item--Content {

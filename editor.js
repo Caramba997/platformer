@@ -41,6 +41,7 @@ class Editor {
     function addProperty(property, value) {
       let type = EDITORVALUES.propertyTypes[property] || 'text';
       if (type === 'checkbox' && value) type += '" checked="checked"';
+      if (type === 'number') type += '" step="50"';
       const html = EDITORHTML.property.replaceAll('{{property}}', property).replaceAll('{{type}}', type).replaceAll('{{value}}', value);
       contentElement.innerHTML += html;
     }
@@ -83,8 +84,14 @@ class Editor {
         }
       }
       if (locationObject instanceof Array) {
-        contentElement.innerHTML += EDITORHTML.removeProp;
+        contentElement.innerHTML += EDITORHTML.propActions;
         contentElement.querySelector('[data-action="remove-prop"]').addEventListener('click', this.removeProp.bind(this));
+        this.placeButton = contentElement.querySelector('[data-action="place-prop"]');
+        this.prop = prop;
+        this.placeButton.addEventListener('click', () => {
+          const active = this.placeButton.getAttribute('data-active') === 'true' ? 'false' : 'true';
+          this.placeButton.setAttribute('data-active', active);
+        });
       }
     }
     else {
@@ -271,27 +278,67 @@ class Editor {
     });
     // Create new prop
     document.querySelector('[data-action="create-prop"]').addEventListener('click', (e) => {
-      const select = document.querySelector('select[name="level"]');
+      const select = document.querySelector('select[name="prop"]');
       this.createProp(select.value);
+      e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
     });
   }
 
   createProp(type) {
-    const outline = document.querySelector('.Outline');
-    // TODO
+    console.log(type);
+    const outline = document.querySelector('.Outline'),
+          defaults = EDITORVALUES.propDefaults[type],
+          id = defaults.type + Date.now();
+    let propsOutline, html;
 
-    // switch (type) {
-    //   case 'prop': {
-    //     const defaults = EDITORVALUES.propDefaults.prop;
-    //     const id = defaults.type + Date.now();
-    //     const prop = new StaticProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground);
-    //     this.game.world.props.push(prop);
-    //     const propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
-    //     const html = EDITORHTML.outlineProp.replaceAll('{{location}}', props).replaceAll('{{id}}', id).replaceAll('{{class}}', propClass);
-    //     element.innerHTML += html;
-    //     break;
-    //   }
-    // }
+    switch (type) {
+      case 'staticprop': {
+        const prop = new StaticProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground);
+        this.game.world.props.push(prop);
+        propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'StaticProp');
+        break;
+      }
+      case 'movingprop': {
+        const prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
+        this.game.world.props.push(prop);
+        propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'MovingProp');
+        break;
+      }
+      case 'block': {
+        const prop = new Block(id, defaults.x, defaults.y, defaults.type, defaults.breakable, defaults.hasCoin, defaults.invisible, defaults.item);
+        this.game.world.props.push(prop);
+        propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Block');
+        break;
+      }
+      case 'enemy': {
+        const prop = new Enemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactor, defaults.stayOnGround);
+        this.game.world.enemies.push(prop);
+        propsOutline = outline.querySelector('[data-outline="enemies"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'enemies').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Enemy');
+        break;
+      }
+      case 'coin': {
+        const prop = new Coin(id, defaults.x, defaults.y);
+        this.game.world.coinProps.push(prop);
+        propsOutline = outline.querySelector('[data-outline="coins"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'coinProps').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Coin');
+        break;
+      }
+    }
+    const temp = document.createElement('DIV');
+    temp.innerHTML = html;
+    temp.firstChild.addEventListener('click', (e) => {
+      const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
+      this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
+    });
+    propsOutline.appendChild(temp.firstChild);
+    const outlineButton = outline.querySelector('[data-id="' + id + '"]');
+    outlineButton.closest('.Outline__Item').querySelector('.Button--Outline').click();
+    outlineButton.scrollIntoView();
+    outlineButton.click();
   }
 
   selectProp(e) {
@@ -331,18 +378,28 @@ class Editor {
           clickX = e.offsetX,
           clickY = e.offsetY,
           world = this.game.world,
-          view = this.game.world.view,
-          x = view.width / canvasRect.width * clickX + view.x,
-          y = view.height - (view.height / canvasRect.height * clickY) + view.y,
-          prop = checkPointInProps(this.game, x, y),
-          outline = document.querySelector('.Outline');
-    if (!prop) return;
-    const propButton = outline.querySelector('[data-id="' + prop.id + '"]'),
-          outlineItem = propButton.closest('.Outline__Item'),
-          outlineButton = outlineItem.querySelector('.Button--Outline');
-    if (outlineItem.getAttribute('data-expanded') === 'false') outlineButton.click();
-    propButton.scrollIntoView();
-    propButton.click();
+          view = world.view,
+          x = Math.ceil(view.width / canvasRect.width * clickX + view.x),
+          y = Math.ceil(view.height - (view.height / canvasRect.height * clickY) + view.y);
+    if (this.placeButton && this.placeButton.getAttribute('data-active') === 'true') {
+      const propertiesElement = this.placeButton.closest('.Properties');
+      this.prop.x = x;
+      this.prop.y = y;
+      propertiesElement.querySelector('[name="x"]').value = x;
+      propertiesElement.querySelector('[name="y"]').value = y;
+      this.game.setCenter(this.prop);
+    }
+    else {
+      const prop = checkPointInProps(this.game, x, y),
+            outline = document.querySelector('.Outline');
+      if (!prop) return;
+      const propButton = outline.querySelector('[data-id="' + prop.id + '"]'),
+            outlineItem = propButton.closest('.Outline__Item'),
+            outlineButton = outlineItem.querySelector('.Button--Outline');
+      if (outlineItem.getAttribute('data-expanded') === 'false') outlineButton.click();
+      propButton.scrollIntoView();
+      propButton.click();
+    }
   }
 
   initLevelSelector() {

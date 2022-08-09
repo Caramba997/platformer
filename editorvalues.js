@@ -8,7 +8,7 @@ export const EDITORVALUES = {
   levels: ['level1', 'level2'],
   moveSpeed: 1,
   propDefaults: {
-    prop: {
+    staticprop: {
       x: 0,
       y: 0,
       width: 50,
@@ -17,11 +17,48 @@ export const EDITORVALUES = {
       solid: true,
       ground: true
     },
+    movingprop: {
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 50,
+      type: 'orangeplatform',
+      solid: false,
+      ground: true,
+      speedFactorX: 1.0,
+      speedFactorY: 0,
+      endX: 200,
+      endY: 0
+    },
+    block: {
+      x: 0,
+      y: 0,
+      type: 'brick',
+      breakable: true,
+      hasCoin: false,
+      invisible: false,
+      item: false
+    },
     enemy: {
-
+      x: 0,
+      y: 0,
+      width: 50,
+      height: 50,
+      hitx: 0,
+      hity: 0,
+      hitwidth: 50,
+      hitheight: 50,
+      invincible: false,
+      jumpable: true,
+      moving: true,
+      initialForward: false,
+      speedFactor: 1.0,
+      stayOnGround: false,
+      type: "bubble"
     },
     coin: {
-      
+      x: 0,
+      y: 0
     }
   },
   propertyTypes: {
