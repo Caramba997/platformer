@@ -20,6 +20,7 @@ body {
 
 .stats {
     position: fixed;
+    justify-content: center;
     bottom: 0;
     left: 0;
     padding: 10px;
@@ -27,6 +28,8 @@ body {
     gap: 10px;
     font-weight: bold;
     color: white;
+    z-index: 10;
+    width: 100%;
 }
 .stats div {
     width: 12vw;

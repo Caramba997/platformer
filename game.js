@@ -373,7 +373,7 @@ class Game {
       thisProp.grounded = true;
       const ground = thisProp.ground;
       thisProp.x = ground.x > thisProp.x + thisProp.width ? ground.x - thisProp.width : ground.x + ground.width;
-      thisProp.x += this.deltaTime * ground.speedX;
+      if (ground.moving) thisProp.x += this.deltaTime * ground.speedX;
     }
   }
 
@@ -571,9 +571,8 @@ class Game {
 
   levelFinished() {
     this.stop();
-    this.world.points += Math.ceil(this.world.time);
+    this.world.points += Math.ceil(this.world.time * VALUES.points.time);
     this.stats.setPoints(this.world.points);
-    // this.loadLevel(1);
   }
 
   loop() {

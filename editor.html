@@ -17,15 +17,15 @@
         <div class="Toolbar">
             <div class="Toolbar__Item">
                 <button data-action="open-popup" data-control="select-level" data-data="level">Select level</button>
-            </div>
+            </div>|
             <div class="Toolbar__Item">
                 <button data-action="open-popup" data-control="save">Save</button>
-            </div>
-            <div class="Toolbar__Item">
+            </div>|
+            <div class="Toolbar__Item mr-10 ml-10">
                 <a data-action="play" data-href="/game.html?level=" target="_blank" href="#">Play</a>
-            </div>
-            <div class="Toolbar__Item">
-                <button data-action="open-popup" data-control="create">+</button>
+            </div>|
+            <div class="Toolbar__Item ml-10">
+                <button class="Button" data-action="open-popup" data-control="create">+</button>
             </div>
         </div>
         <div class="Container">
@@ -73,7 +73,7 @@
                 <div class="Sidebar__Content">
                     <div class="Sidebar__Content--Header">
                         <div data-property="class"></div>
-                        <div data-property="id"></div>
+                        <input data-property="id" name="id" type="text">
                         <hr>
                     </div>
                     <div class="Sidebar__Content--Content">
@@ -82,7 +82,7 @@
             </div>
         </div>
         <div id="popups">
-            <div class="Popup" data-visible="false" data-popup="select-level">
+            <div class="Popup" data-visible="true" data-popup="select-level">
                 <div class="Popup__Header">
                     <div class="Popup__Header--Title">Choose a level to edit</div>
                     <button class="Popup__Header--Close" data-action="close-popup">X</button>
@@ -126,7 +126,7 @@
                 </div>
             </div>
         </div>
-        <div class="PageOverlay" data-visible="false"></div>
+        <div class="PageOverlay" data-visible="true"></div>
         <div id="textures" style="display: none;"></div>
     </body>
 </html>

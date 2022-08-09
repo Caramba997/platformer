@@ -77,7 +77,7 @@ export class Enemy extends InteractableProp {
     this.moving = moving;
     this.initialForward = initialForward;
     this.speedFactor = speedFactor;
-    this.lastY = 0;
+    this.lastY = y;
     this.speedX = initialForward ? Math.abs(speedFactor * VALUES.maxEnemySpeed) : -1 * Math.abs(speedFactor * VALUES.maxEnemySpeed);
     this.speedY = 0.0;
     this.grounded = false;
@@ -179,10 +179,9 @@ export class World {
         }
         this.enemies = [];
         for (let enemy of data.enemies) {
-          this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitx, enemy.hity, enemy.hitwidth, enemy.hitheight, enemy.type, enemy.invincible, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor, enemy.stayOnGround));
+          this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height, enemy.type, enemy.invincible, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor, enemy.stayOnGround));
         }
         this.finish = new Finish(data.finish.x, data.finish.y);
-        this.props.push(new StaticProp('finishground', data.finish.x, data.finish.y, VALUES.finishWidth, VALUES.finishGroundHeight, 'finishground', true, true));
         this.player = new Player(data.player.x, data.player.y);
         this.view = {
           width: VALUES.viewWidth,

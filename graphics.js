@@ -100,6 +100,10 @@ export class Graphics {
     else {
       texture = this.getTexture(moving.type);
     }
+    if (!texture) {
+      console.warn('Unknown prop type: ' + prop.type);
+      return;
+    }
     const twidth = texture.getAttribute('data-width'),
           theight = texture.getAttribute('data-height');
     if (moving.forward) {

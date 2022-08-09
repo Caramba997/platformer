@@ -137,8 +137,27 @@ class Editor {
     if (!prop) {
       prop = locationObject;
     }
-    prop[property] = value;
+    let locationFixed, propertyFixed;
+    if (property.includes('.')) {
+      const arr = property.split('.');
+      locationFixed = prop;
+      for (let i = 0; i < arr.length - 1; i++) {
+        locationFixed = locationFixed[arr[i]];
+      }
+      propertyFixed = arr[arr.length - 1];
+    }
+    else {
+      locationFixed = prop;
+      propertyFixed = property;
+    }
+    locationFixed[propertyFixed] = value;
     if (prop !== this.game.world) this.game.setCenter(prop);
+    if (property === 'id') {
+      const outlineButton = document.querySelector('[data-action="show-properties"][data-id="' + id + '"]');
+      outlineButton.querySelector('span:first-of-type').innerText = value;
+      outlineButton.setAttribute('data-id', value);
+      sidebarContent.setAttribute('data-id', value);
+    }
   }
 
   removeProp(e) {
@@ -285,6 +304,7 @@ class Editor {
       this.createProp(select.value);
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
     });
+    document.querySelector('.Sidebar__Content--Header input[name="id"]').addEventListener('change', this.updateProperty.bind(this));
   }
 
   createProp(type) {
@@ -331,7 +351,9 @@ class Editor {
       }
     }
     prop.x = this.game.world.view.x + Math.ceil(this.game.world.view.width / 2);
+    prop.x = prop.x - prop.x % 50;
     prop.y = this.game.world.view.y + Math.ceil(this.game.world.view.height / 2);
+    prop.y = prop.y - prop.y % 50;
     const temp = document.createElement('DIV');
     temp.innerHTML = html;
     temp.firstChild.addEventListener('click', (e) => {
@@ -438,33 +460,20 @@ class Editor {
       coins: [],
       enemies: []
     }
-    for (let prop of world.props) {
-      const propJson = { id: prop.id, class: prop.constructor.name };
-      for (let [key, value] of Object.entries(prop)) {
-        if (!EDITORVALUES.skipProperties.includes(key)) {
-          propJson[key] = value;
+    function convertProps(worldLocation, jsonLocation) {
+      for (let prop of worldLocation) {
+        const propJson = { id: prop.id, class: prop.constructor.name };
+        for (let [key, value] of Object.entries(prop)) {
+          if (!EDITORVALUES.skipProperties.includes(key)) {
+            propJson[key] = value;
+          }
         }
+        jsonLocation.push(propJson);
       }
-      this.levelJson.staticProps.push(propJson);
     }
-    for (let prop of world.enemies) {
-      const propJson = { id: prop.id };
-      for (let [key, value] of Object.entries(prop)) {
-        if (!EDITORVALUES.skipProperties.includes(key)) {
-          propJson[key] = value;
-        }
-      }
-      this.levelJson.enemies.push(propJson);
-    }
-    for (let prop of world.coinProps) {
-      const propJson = { id: prop.id, class: prop.constructor.name };
-      for (let [key, value] of Object.entries(prop)) {
-        if (!EDITORVALUES.skipProperties.includes(key)) {
-          propJson[key] = value;
-        }
-      }
-      this.levelJson.coins.push(propJson);
-    }
+    convertProps(world.props, this.levelJson.staticProps);
+    convertProps(world.enemies, this.levelJson.enemies);
+    convertProps(world.coinProps, this.levelJson.coins);
     return this.levelJson;
   }
 }

@@ -1,0 +1,548 @@
+{
+    "meta": {
+        "name": "Development",
+        "time": 180000
+    },
+    "world": {
+        "width": 20000,
+        "height": 4000
+    },
+    "player": {
+        "x": 100,
+        "y": 100
+    },
+    "finish": {
+        "x": 5000,
+        "y": 100
+    },
+    "staticProps": [
+        {
+            "id": "floor1",
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 100,
+            "type": "grass",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "floor2",
+            "x": 3300,
+            "y": 0,
+            "width": 2500,
+            "height": 100,
+            "type": "grass",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick1",
+            "x": 500,
+            "y": 350,
+            "width": 350,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "platform1",
+            "x": 550,
+            "y": 550,
+            "width": 300,
+            "height": 50,
+            "type": "orangeplatform",
+            "solid": false,
+            "ground": true,
+            "speedFactorX": 1,
+            "speedFactorY": 0,
+            "endX": 850,
+            "endY": 550,
+            "class": "MovingProp"
+        },
+        {
+            "id": "platform2",
+            "x": 650,
+            "y": 750,
+            "width": 200,
+            "height": 50,
+            "type": "orangeplatform",
+            "solid": false,
+            "ground": true,
+            "speedFactorX": 0,
+            "speedFactorY": 1,
+            "endX": 650,
+            "endY": 1050,
+            "class": "MovingProp"
+        },
+        {
+            "id": "block1",
+            "x": 200,
+            "y": 350,
+            "type": "brick",
+            "breakable": true,
+            "hasCoin": false,
+            "invisible": false,
+            "item": false,
+            "class": "Block"
+        },
+        {
+            "id": "block2",
+            "x": 250,
+            "y": 350,
+            "type": "itemblock",
+            "breakable": false,
+            "hasCoin": false,
+            "invisible": false,
+            "item": "default",
+            "class": "Block"
+        },
+        {
+            "id": "block3",
+            "x": 370,
+            "y": 250,
+            "type": "itemblock",
+            "breakable": false,
+            "hasCoin": true,
+            "invisible": true,
+            "item": false,
+            "class": "Block"
+        },
+        {
+            "id": "brick2",
+            "x": 900,
+            "y": 350,
+            "width": 400,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "hill1.1",
+            "x": 1500,
+            "y": 100,
+            "width": 800,
+            "height": 200,
+            "type": "dirt",
+            "solid": false,
+            "ground": false,
+            "class": "StaticProp"
+        },
+        {
+            "id": "hill1.2",
+            "x": 1500,
+            "y": 300,
+            "width": 800,
+            "height": 100,
+            "type": "grass",
+            "solid": false,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "hill1.3",
+            "x": 1600,
+            "y": 400,
+            "width": 600,
+            "height": 200,
+            "type": "dirt",
+            "solid": false,
+            "ground": false,
+            "class": "StaticProp"
+        },
+        {
+            "id": "hill1.4",
+            "x": 1600,
+            "y": 600,
+            "width": 600,
+            "height": 100,
+            "type": "grass",
+            "solid": false,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick3",
+            "x": 1800,
+            "y": 850,
+            "width": 200,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "cloud1",
+            "x": 2100,
+            "y": 1000,
+            "width": 200,
+            "height": 50,
+            "type": "cloud",
+            "solid": false,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "cloud2",
+            "x": 2500,
+            "y": 1000,
+            "width": 200,
+            "height": 50,
+            "type": "cloud",
+            "solid": false,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "block4",
+            "x": 2600,
+            "y": 1200,
+            "type": "itemblock",
+            "breakable": false,
+            "hasCoin": false,
+            "invisible": false,
+            "item": "default",
+            "class": "Block"
+        },
+        {
+            "id": "brick4",
+            "x": 1700,
+            "y": 550,
+            "width": 200,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick5",
+            "x": 1900,
+            "y": 250,
+            "width": 200,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick6",
+            "x": 2600,
+            "y": 100,
+            "width": 400,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick7",
+            "x": 2650,
+            "y": 150,
+            "width": 350,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick8",
+            "x": 2700,
+            "y": 200,
+            "width": 300,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick9",
+            "x": 2750,
+            "y": 250,
+            "width": 250,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick15",
+            "x": 2800,
+            "y": 300,
+            "width": 200,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick16",
+            "x": 2850,
+            "y": 350,
+            "width": 150,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick10",
+            "x": 3300,
+            "y": 100,
+            "width": 400,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick11",
+            "x": 3300,
+            "y": 150,
+            "width": 350,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick12",
+            "x": 3300,
+            "y": 200,
+            "width": 300,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick13",
+            "x": 3300,
+            "y": 250,
+            "width": 250,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick14",
+            "x": 3300,
+            "y": 300,
+            "width": 200,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        },
+        {
+            "id": "brick17",
+            "x": 3300,
+            "y": 350,
+            "width": 150,
+            "height": 50,
+            "type": "solidblock",
+            "solid": true,
+            "ground": true,
+            "class": "StaticProp"
+        }
+    ],
+    "coins": [
+        {
+            "id": "coin1",
+            "x": 550,
+            "y": 450
+        },
+        {
+            "id": "coin2",
+            "x": 600,
+            "y": 450
+        },
+        {
+            "id": "coin3",
+            "x": 650,
+            "y": 450
+        },
+        {
+            "id": "coin4",
+            "x": 700,
+            "y": 450
+        },
+        {
+            "id": "coin5",
+            "x": 750,
+            "y": 450
+        },
+        {
+            "id": "coin6",
+            "x": 1850,
+            "y": 1100
+        },
+        {
+            "id": "coin7",
+            "x": 1900,
+            "y": 1100
+        },
+        {
+            "id": "coin8",
+            "x": 3050,
+            "y": 600
+        },
+        {
+            "id": "coin9",
+            "x": 3100,
+            "y": 650
+        },
+        {
+            "id": "coin10",
+            "x": 3150,
+            "y": 650
+        },
+        {
+            "id": "coin11",
+            "x": 3200,
+            "y": 600
+        }
+    ],
+    "enemies": [
+        {
+            "id": "spike1",
+            "x": 2100,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": true,
+            "jumpable": false,
+            "moving": true,
+            "initialForward": false,
+            "speedFactor": 1.0,
+            "stayOnGround": false,
+            "type": "spike"
+        },
+        {
+            "id": "normal1",
+            "x": 1700,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": false,
+            "jumpable": true,
+            "moving": true,
+            "initialForward": false,
+            "speedFactor": 1.0,
+            "stayOnGround": false,
+            "type": "bubble"
+        },
+        {
+            "id": "normal2",
+            "x": 1750,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": false,
+            "jumpable": true,
+            "moving": true,
+            "initialForward": true,
+            "speedFactor": 1.0,
+            "stayOnGround": false,
+            "type": "bubble"
+        },
+        {
+            "id": "normal3",
+            "x": 550,
+            "y": 400,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": false,
+            "jumpable": true,
+            "moving": true,
+            "initialForward": true,
+            "speedFactor": 1.0,
+            "stayOnGround": true,
+            "type": "bubble"
+        },
+        {
+            "id": "plant1",
+            "x": 1900,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": true,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0,
+            "stayOnGround": false,
+            "type": "toxicplant"
+        },
+        {
+            "id": "plant2",
+            "x": 1950,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": true,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0,
+            "stayOnGround": false,
+            "type": "toxicplant"
+        },
+        {
+            "id": "plant3",
+            "x": 2000,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": true,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0,
+            "stayOnGround": false,
+            "type": "toxicplant"
+        },
+        {
+            "id": "plant4",
+            "x": 2050,
+            "y": 100,
+            "width": 50,
+            "height": 50,
+            "hitbox":{"x":"0","y":"0","width":"50","height":"50"},
+            "invincible": true,
+            "jumpable": false,
+            "moving": false,
+            "initialForward": false,
+            "speedFactor": 0,
+            "stayOnGround": false,
+            "type": "toxicplant"
+        }
+    ]
+}

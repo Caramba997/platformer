@@ -5,7 +5,7 @@ export const EDITORVALUES = {
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
-  levels: ['level1', 'level2'],
+  levels: ['level1', 'dev'],
   moveSpeed: 1,
   propDefaults: {
     staticprop: {
