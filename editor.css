@@ -197,7 +197,7 @@ a {
     text-decoration: underline;
     color: var(--color-text-highlight);
 }
-.Button[data-active="true"] {
+.Button[data-active="true"], .Button--Prop[data-active="true"] {
     color: var(--color-text);
     background: var(--color-text-highlight);
 }
@@ -205,7 +205,7 @@ a {
 .Outline__Item[data-expanded="false"] .Outline__Item--Content {
     display: none;
 }
-.Outline--Subheading {
+.Button--Prop {
     width: 100%;
     background-color: var(--color-subheading);
     margin: 5px 0;

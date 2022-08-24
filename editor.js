@@ -1,4 +1,3 @@
-import { VALUES } from '/values.js';
 import { EDITORHTML } from '/editorhtml.js';
 import { EDITORVALUES } from '/editorvalues.js';
 import { Prop, StaticProp, InteractableProp, MovingProp, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
@@ -86,6 +85,7 @@ class Editor {
       if (locationObject instanceof Array) {
         contentElement.innerHTML += EDITORHTML.propActions;
         contentElement.querySelector('[data-action="remove-prop"]').addEventListener('click', this.removeProp.bind(this));
+        contentElement.querySelector('[data-action="duplicate-prop"]').addEventListener('click', this.duplicateProp.bind(this));
         this.placeButton = contentElement.querySelector('[data-action="place-prop"]');
         this.prop = prop;
         this.placeButton.addEventListener('click', () => {
@@ -111,6 +111,26 @@ class Editor {
     contentElement.querySelectorAll('input').forEach((input) => {
       input.addEventListener('change', this.updateProperty.bind(this));
     });
+  }
+
+  duplicateProp(e) {
+    const sidebarContent = e.target.closest('.Sidebar__Content'),
+          location = sidebarContent.getAttribute('data-location'),
+          locationObject = location ? this.game.world[location] : this.game.world,
+          clone = Object.assign(Object.create(Object.getPrototypeOf(this.prop)), this.prop);
+    clone.x += 50;
+    clone.id = clone.type + Date.now();
+    locationObject.push(clone);
+    const propsOutline = document.querySelector('.Outline [data-outline="' + location + '"] .Outline__Item--Content'),
+          html = EDITORHTML.outlineProp.replaceAll('{{location}}', location).replaceAll('{{id}}', clone.id).replaceAll('{{class}}', clone.constructor.name);
+    const temp = document.createElement('DIV');
+    temp.innerHTML = html;
+    temp.firstChild.addEventListener('click', (e) => {
+      const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
+      this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
+    });
+    propsOutline.appendChild(temp.firstChild);
+    this.selectPropInOutline(clone.id);
   }
 
   updateProperty(e) {
@@ -201,7 +221,7 @@ class Editor {
     for (let prop of world.enemies) {
       addPropHeading(enemiesOutline, 'enemies', prop.id, prop.constructor.name);
     }
-    const coinsOutline = outline.querySelector('[data-outline="coins"] .Outline__Item--Content');
+    const coinsOutline = outline.querySelector('[data-outline="coinProps"] .Outline__Item--Content');
     coinsOutline.innerHTML = '';
     for (let prop of world.coinProps) {
       addPropHeading(coinsOutline, 'coinProps', prop.id, prop.constructor.name);
@@ -212,6 +232,17 @@ class Editor {
         this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
       });
     });
+  }
+
+  selectPropInOutline(id) {
+    const activeButton = document.querySelector('.Outline button[data-active="true"]');
+    if (activeButton) activeButton.removeAttribute('data-active');
+    const outlineButton = document.querySelector('.Outline [data-id="' + id + '"]'),
+          outlineContainer = outlineButton.closest('.Outline__Item');
+    if (outlineContainer.getAttribute('data-expanded') === 'false') outlineContainer.querySelector('.Button--Outline').click();
+    outlineButton.scrollIntoView();
+    outlineButton.click();
+    outlineButton.setAttribute('data-active', 'true');
   }
 
   initListeners() {
@@ -345,7 +376,7 @@ class Editor {
       case 'coin': {
         prop = new Coin(id, defaults.x, defaults.y);
         this.game.world.coinProps.push(prop);
-        propsOutline = outline.querySelector('[data-outline="coins"] .Outline__Item--Content');
+        propsOutline = outline.querySelector('[data-outline="coinProps"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'coinProps').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Coin');
         break;
       }
@@ -361,10 +392,7 @@ class Editor {
       this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
     });
     propsOutline.appendChild(temp.firstChild);
-    const outlineButton = outline.querySelector('[data-id="' + id + '"]');
-    outlineButton.closest('.Outline__Item').querySelector('.Button--Outline').click();
-    outlineButton.scrollIntoView();
-    outlineButton.click();
+    this.selectPropInOutline(id);
   }
 
   selectProp(e) {
@@ -409,22 +437,17 @@ class Editor {
           y = Math.ceil(view.height - (view.height / canvasRect.height * clickY) + view.y);
     if (this.placeButton && this.placeButton.getAttribute('data-active') === 'true') {
       const propertiesElement = this.placeButton.closest('.Properties');
-      this.prop.x = x;
-      this.prop.y = y;
-      propertiesElement.querySelector('[name="x"]').value = x;
-      propertiesElement.querySelector('[name="y"]').value = y;
+      this.prop.x = x - x % 10;
+      this.prop.y = y - y % 10;
+      propertiesElement.querySelector('[name="x"]').value = x - x % 10;
+      propertiesElement.querySelector('[name="y"]').value = y - y % 10;
       this.game.setCenter(this.prop);
     }
     else {
       const prop = checkPointInProps(this.game, x, y),
             outline = document.querySelector('.Outline');
       if (!prop) return;
-      const propButton = outline.querySelector('[data-id="' + prop.id + '"]'),
-            outlineItem = propButton.closest('.Outline__Item'),
-            outlineButton = outlineItem.querySelector('.Button--Outline');
-      if (outlineItem.getAttribute('data-expanded') === 'false') outlineButton.click();
-      propButton.scrollIntoView();
-      propButton.click();
+      this.selectPropInOutline(prop.id);
     }
   }
 

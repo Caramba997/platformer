@@ -3,7 +3,7 @@ export const EDITORHTML = {
   <div class="Property--Label">{{property}}</div>
   <input class="Property--Value" type="{{type}}" name="{{property}}" value="{{value}}">
 </div>`,
-  propActions: `<div><button class="Button mr-10" data-action="remove-prop">Remove</button><button class="Button" data-action="place-prop" data-active="false">Place</button></div>`,
+  propActions: `<div><button class="Button mr-10" data-action="duplicate-prop">Duplicate</button><div><button class="Button mr-10" data-action="remove-prop">Remove</button><button class="Button" data-action="place-prop" data-active="false">Place</button></div>`,
   leveloption: `<option value="{{level}}">{{level}}</option>`,
-  outlineProp: `<button class="Outline--Subheading" data-action="show-properties" data-location="{{location}}" data-id="{{id}}"><span>{{id}}</span> : <span>{{class}}</span></button>`
+  outlineProp: `<button class="Button--Prop" data-action="show-properties" data-location="{{location}}" data-id="{{id}}"><span>{{id}}</span> : <span>{{class}}</span></button>`
 }
