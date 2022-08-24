@@ -1,36 +1,64 @@
 html {
-    font-family: 'Courier New', Courier, monospace;
     font-size: 16px;
 }
 body {
     margin: 0;
     background: black;
+    color: white;
+}
+
+.Game {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+}
+.Game__Container {
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+    position: relative;
 }
 
 #canvas {
-    position: fixed;
-    z-index: 1;
+    margin: auto;
     max-width: calc(100vw - 10px);
     max-height: calc(100% - 10px);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     border: 5px solid white;
+    border-radius: 5px;
 }
 
-.stats {
-    position: fixed;
-    justify-content: center;
-    bottom: 0;
+.Info {
+    position: absolute;
+    top: 0;
     left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.stats, .Actions {
+    justify-content: center;
     padding: 10px;
     display: flex;
     gap: 10px;
     font-weight: bold;
-    color: white;
     z-index: 10;
-    width: 100%;
+    overflow: hidden;
 }
 .stats div {
-    width: 12vw;
+    width: fit-content;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: rgba(0, 0, 0, 0.342);
+    padding: 2px 4px;
+    border-radius: 5px;
+}
+.Action__Link {
+    width: fit-content;
+    background: none;
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 4px solid black;
+    color: black;
+    opacity: 0.5;
 }

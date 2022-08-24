@@ -12,7 +12,8 @@ export const VALUES = {
     'KeyF': 'shoot',
     'ShiftLeft': 'run',
     'ShiftRight': 'shoot',
-    'Enter': 'shoot'
+    'Enter': 'shoot',
+    'Escape': 'pause'
   },
   defaultColor: '#FF000088',
   devMode: false,

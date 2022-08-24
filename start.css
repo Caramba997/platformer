@@ -1,0 +1,87 @@
+:root {
+    --page-margin: 50px;
+}
+
+html {
+    font-size: 16px;
+    color: white;
+}
+body {
+    margin: var(--page-margin);
+    background: black;
+}
+
+
+.Actions {
+    position: absolute;
+    top: var(--page-margin);
+    right: var(--page-margin);
+    display: flex;
+    gap: 5px;
+}
+.Actions select {
+    border: 2px solid white;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+}
+.Link--Editor {
+    border: 2px solid white;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.Levels {
+    display: flex;
+    flex-flow: row wrap;
+    max-width: 100%;
+    justify-content: center;
+}
+
+.Level {
+    margin: 20px;
+}
+.Level__Content {
+    border: 5px solid white;
+    width: 300px;
+    height: 200px;
+    min-width: 300px;
+    min-height: 200px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.Level__Content[data-complete="true"] {
+    border: 5px solid rgba(0, 128, 0, 0.5);
+}
+.Level:hover {
+    opacity: 0.6;
+}
+.Level__Text {
+    display: flex;
+    align-items: center;
+}
+.Level__Text > * {
+    margin: 5px;
+    padding: 5px;
+    width: fit-content;
+    border-radius: 5px;
+}
+.Level__Name {
+    background: rgba(0, 0, 0, 0.5);
+}
+.Level__Complete {
+    background: rgba(0, 128, 0, 0.5);
+}
+.Level__Stats--Points, .Level__Stats--Time {
+    background: rgba(255, 255, 255, 0.5);
+    color: black;
+}
+[data-complete="false"] :is(.Level__Complete, .Level__Stats--Points, .Level__Stats--Time) {
+    display: none;
+}

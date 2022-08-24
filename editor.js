@@ -83,7 +83,7 @@ class Editor {
         }
       }
       if (locationObject instanceof Array) {
-        contentElement.innerHTML += EDITORHTML.propActions;
+        contentElement.innerHTML += window.locales.translateRaw(EDITORHTML.propActions);
         contentElement.querySelector('[data-action="remove-prop"]').addEventListener('click', this.removeProp.bind(this));
         contentElement.querySelector('[data-action="duplicate-prop"]').addEventListener('click', this.duplicateProp.bind(this));
         this.placeButton = contentElement.querySelector('[data-action="place-prop"]');
@@ -125,10 +125,7 @@ class Editor {
           html = EDITORHTML.outlineProp.replaceAll('{{location}}', location).replaceAll('{{id}}', clone.id).replaceAll('{{class}}', clone.constructor.name);
     const temp = document.createElement('DIV');
     temp.innerHTML = html;
-    temp.firstChild.addEventListener('click', (e) => {
-      const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
-      this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
-    });
+    temp.firstChild.addEventListener('click', this.outlinePropClickListener.bind(this));
     propsOutline.appendChild(temp.firstChild);
     this.selectPropInOutline(clone.id);
   }
@@ -227,22 +224,24 @@ class Editor {
       addPropHeading(coinsOutline, 'coinProps', prop.id, prop.constructor.name);
     }
     outline.querySelectorAll('[data-action="show-properties"]').forEach((button) => {
-      button.addEventListener('click', (e) => {
-        const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
-        this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
-      });
+      button.addEventListener('click', this.outlinePropClickListener.bind(this));
     });
   }
 
   selectPropInOutline(id) {
-    const activeButton = document.querySelector('.Outline button[data-active="true"]');
-    if (activeButton) activeButton.removeAttribute('data-active');
     const outlineButton = document.querySelector('.Outline [data-id="' + id + '"]'),
           outlineContainer = outlineButton.closest('.Outline__Item');
     if (outlineContainer.getAttribute('data-expanded') === 'false') outlineContainer.querySelector('.Button--Outline').click();
     outlineButton.scrollIntoView();
     outlineButton.click();
-    outlineButton.setAttribute('data-active', 'true');
+  }
+
+  outlinePropClickListener(e) {
+    const activeButton = document.querySelector('.Outline button[data-active="true"]');
+    if (activeButton) activeButton.removeAttribute('data-active');
+    const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
+    button.setAttribute('data-active', 'true');
+    this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
   }
 
   initListeners() {
@@ -387,10 +386,7 @@ class Editor {
     prop.y = prop.y - prop.y % 50;
     const temp = document.createElement('DIV');
     temp.innerHTML = html;
-    temp.firstChild.addEventListener('click', (e) => {
-      const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
-      this.initPropertiesView(button.getAttribute('data-location'), button.getAttribute('data-id'));
-    });
+    temp.firstChild.addEventListener('click', this.outlinePropClickListener.bind(this));
     propsOutline.appendChild(temp.firstChild);
     this.selectPropInOutline(id);
   }

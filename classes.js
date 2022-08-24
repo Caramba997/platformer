@@ -151,6 +151,7 @@ export class World {
       this.points = 0;
       this.calcViewPosition(this.player);
       this.time = defaults.time;
+      this.startTime = this.time;
     }
     else {
       fetch('levels/' + level + '.json')
@@ -193,6 +194,7 @@ export class World {
         this.points = 0;
         this.calcViewPosition(this.player);
         this.time = data.meta.time;
+        this.startTime = this.time;
         window.dispatchEvent(new CustomEvent('world:loaded'));
       });
     }

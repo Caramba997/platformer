@@ -1,0 +1,109 @@
+:root {
+    --color-background: rgb(73, 73, 73);
+    --color-toolbar: rgb(45, 45, 45);
+    --color-sidebar: rgb(39, 47, 80);
+    --color-overlay: rgba(255, 255, 255, 0.4);
+    --color-text: rgb(255, 255, 255);
+    --color-text-dark: rgb(40, 35, 50);
+    --color-subheading: rgba(255, 255, 255, 0.2);
+    --color-text-highlight: rgb(180, 180, 250);
+}
+
+html, input, button, select {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+input {
+    border: none;
+    border-radius: 2px;
+    font-size: var(--small-font);
+}
+button {
+    border: none;
+    background: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+:is(button, a, select):hover {
+    opacity: 0.6;
+}
+hr {
+    border: none;
+    border-top: 2px solid var(--color-text);
+}
+a {
+    cursor: pointer;
+    font-size: var(--small-font);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+[data-visible="false"] {
+    display: none;
+}
+.mt-10 {
+    margin-top: 10px;
+}
+.mb-10 {
+    margin-bottom: 10px;
+}
+.mr-10 {
+    margin-right: 10px;
+}
+.ml-10 {
+    margin-left: 10px;
+}
+.text-center {
+    text-align: center;
+}
+
+span[data-t] {
+    pointer-events: none;
+}
+
+.Button {
+    background: var(--color-text);
+    color: var(--color-text-dark);
+    width: fit-content;
+    border-radius: 2px;
+}
+.Button--Link {
+    padding: 1px 6px;
+    font-size: 14px;
+}
+
+.Popup {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-sidebar);
+    min-width: 25vw;
+    min-height: 25vh;
+    border-radius: 2px;
+    padding: 10px;
+    z-index: 10;
+}
+.Popup__Header {
+    display: flex;
+    justify-content: space-between;
+}
+.Popup__Content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+}
+.Popup__Content textarea {
+    width: 50vw;
+    height: 75vh;
+}
+
+.PageOverlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--color-overlay);
+}

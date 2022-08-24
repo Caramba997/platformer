@@ -8,6 +8,7 @@ class Game {
     this.stats = new Stats();
     this.calcJumpParameters();
     this.initControls();
+    this.initListeners();
     if (window.location.search) {
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.has('level')) {
@@ -16,6 +17,42 @@ class Game {
       }
     }
     this.loadLevel('level1');
+  }
+
+  initListeners() {
+    // Popup openers
+    document.querySelectorAll('[data-action="open-popup"]').forEach((opener) => {
+      opener.addEventListener('click', (e) => {
+        this.openPopup(e.target.getAttribute('data-control'));
+      });
+    });
+    // Popup closers
+    document.querySelectorAll('[data-action="close-popup"]').forEach((opener) => {
+      opener.addEventListener('click', (e) => {
+        this.closePopup(e.target.closest('.Popup').getAttribute('data-popup'));
+      });
+    });
+    // Replay
+    document.querySelector('[data-action="replay"]').addEventListener('click', () => {
+      this.closePopup('game-over');
+      this.loadLevel(this.world.id);
+    });
+  }
+
+  openPopup(name) {
+    this.stop();
+    const popup = document.querySelector('[data-popup="' + name + '"]'),
+          overlay = document.querySelector('.PageOverlay');
+    popup.setAttribute('data-visible', true);
+    overlay.setAttribute('data-visible', true);
+  }
+
+  closePopup(name) {
+    const popup = document.querySelector('[data-popup="' + name + '"]'),
+          overlay = document.querySelector('.PageOverlay');
+    popup.setAttribute('data-visible', false);
+    overlay.setAttribute('data-visible', false);
+    this.start();
   }
 
   calcJumpParameters() {
@@ -39,6 +76,11 @@ class Game {
   processInput() {
     const player = this.world.player;
     let maxSpeedX = this.activeControls.has('run') ? VALUES.maxPlayerRunSpeed : VALUES.maxPlayerWalkSpeed;
+    if (this.activeControls.has('pause')) {
+      this.openPopup('start');
+      this.activeControls.remove('pause');
+      return;
+    }
     if (this.activeControls.has('right')) {
       if (player.speedX > maxSpeedX) maxSpeedX = player.speedX - this.deltaTime * VALUES.playerSpeedGrowth;
       player.speedX = Math.min(maxSpeedX, player.speedX + this.deltaTime * VALUES.playerSpeedGrowth);
@@ -565,14 +607,28 @@ class Game {
   }
 
   gameOver() {
-    this.stop();
-    this.loadLevel(this.world.id);
+    this.openPopup('game-over');
   }
 
   levelFinished() {
-    this.stop();
     this.world.points += Math.ceil(this.world.time * VALUES.points.time);
     this.stats.setPoints(this.world.points);
+    this.openPopup('level-complete');
+    const storageProgress = localStorage.getItem('progress'),
+          progress = storageProgress ? JSON.parse(storageProgress) : {},
+          levelProgress = progress[this.world.id],
+          newLevelProgress = {},
+          time = Math.ceil((this.world.startTime - this.world.time) / 1000);
+    if (levelProgress) {
+      if (levelProgress.points < this.world.points) newLevelProgress.points = this.world.points;
+      if (levelProgress.time > time) newLevelProgress.time = time;
+    }
+    else {
+      newLevelProgress.points = this.world.points;
+      newLevelProgress.time = time;
+    }
+    progress[this.world.id] = newLevelProgress;
+    localStorage.setItem('progress', JSON.stringify(progress));
   }
 
   loop() {
