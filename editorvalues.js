@@ -1,10 +1,13 @@
 export const EDITORVALUES = {
+  blockTypes: ['brick', 'brickhit', 'itemblock', 'itemblockhit', 'solidblock'],
+  coinTypes: ['coin'],
   controls: {
     'ArrowLeft': 'left',
     'ArrowRight': 'right',
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
+  enemyTypes: ['spike', 'bubble', 'toxicplant'],
   levels: ['level1', 'dev'],
   moveSpeed: 1,
   propDefaults: {
@@ -70,7 +73,7 @@ export const EDITORVALUES = {
     width: 'number',
     name: 'text',
     time: 'number',
-    type: 'text',
+    type: 'select',
     solid: 'checkbox',
     grounded: 'checkbox',
     ground: 'checkbox',
@@ -95,6 +98,7 @@ export const EDITORVALUES = {
     speedFactor: 'number',
     forward: 'checkbox'
   },
+  propTypes: ['grass', 'dirt', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'finishground'],
   skipProperties: ['hit', 'id', 'state', 'startX', 'startY'],
   worldDefaults: {
     world: {

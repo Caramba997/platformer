@@ -45,7 +45,8 @@ const locales = {
     replay: 'Neustart',
     pause: 'Pause',
     levelComplete: 'Level geschafft',
-    levelCompleteText: 'Herzlichen Glückwunsch, du hast das Level gemeistert!'
+    levelCompleteText: 'Herzlichen Glückwunsch, du hast das Level gemeistert!',
+    centerPosition: 'Marker-Position'
   },
   EN: {
     undefined: '???',
@@ -93,7 +94,8 @@ const locales = {
     replay: 'Play again',
     pause: 'Pause',
     levelComplete: 'Level complete',
-    levelCompleteText: 'Congratulations, you finished the level!'
+    levelCompleteText: 'Congratulations, you finished the level!',
+    centerPosition: 'Center position'
   }
 }
 

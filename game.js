@@ -52,7 +52,7 @@ class Game {
           overlay = document.querySelector('.PageOverlay');
     popup.setAttribute('data-visible', false);
     overlay.setAttribute('data-visible', false);
-    this.start();
+    if (name === 'start') this.start();
   }
 
   calcJumpParameters() {
@@ -78,7 +78,7 @@ class Game {
     let maxSpeedX = this.activeControls.has('run') ? VALUES.maxPlayerRunSpeed : VALUES.maxPlayerWalkSpeed;
     if (this.activeControls.has('pause')) {
       this.openPopup('start');
-      this.activeControls.remove('pause');
+      this.activeControls.delete('pause');
       return;
     }
     if (this.activeControls.has('right')) {

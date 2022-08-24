@@ -12,7 +12,7 @@ class Editor {
 
   initControls() {
     window.addEventListener('keydown', (e) => {
-      if (!this.game) return;
+      if (!this.game || ['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
       const control = EDITORVALUES.controls[e.code];
       if (!this.game.running || !control || this.game.activeControls.has(control)) return;
       this.game.activeControls.add(control);
@@ -37,13 +37,47 @@ class Editor {
         element.innerText = value;
       }
     }
+    let thisProp;
     function addProperty(property, value) {
       let type = EDITORVALUES.propertyTypes[property] || 'text';
       if (type === 'checkbox' && value) type += '" checked="checked"';
       if (type === 'number') type += '" step="50"';
-      const html = EDITORHTML.property.replaceAll('{{property}}', property).replaceAll('{{type}}', type).replaceAll('{{value}}', value);
+      let html;
+      if (type === 'select') {
+        html = EDITORHTML.propertySelect.replaceAll('{{property}}', property);
+        let options;
+        console.log(thisProp.constructor.name);
+        switch (thisProp.constructor.name) {
+          case 'Enemy': {
+            options = EDITORVALUES.enemyTypes;
+            break;
+          }
+          case 'Block': {
+            options = EDITORVALUES.blockTypes;
+            break;
+          }
+          case 'Coin': {
+            options = EDITORVALUES.coinTypes;
+            break;
+          }
+          default: {
+            options = EDITORVALUES.propTypes;
+            break;
+          }
+        }
+        let optionsHtml = '';
+        options.forEach((option) => {
+          const optionValue = option === value ? option + '" selected="selected' : option;
+          optionsHtml += EDITORHTML.propertyOption.replaceAll('{{value}}', optionValue).replaceAll('{{text}}', option);
+        });
+        html = html.replaceAll('{{options}}', optionsHtml);
+      }
+      else {
+        html = EDITORHTML.property.replaceAll('{{property}}', property).replaceAll('{{type}}', type).replaceAll('{{value}}', value);
+      }
       contentElement.innerHTML += html;
     }
+    addProperty.bind(this);
 
     propertiesElement.setAttribute('data-location', location);
     propertiesElement.setAttribute('data-id', id);
@@ -63,6 +97,8 @@ class Editor {
       prop = locationObject[id];
     }
     if (prop) {
+      this.prop = prop;
+      thisProp = prop;
       this.game.setCenter(prop);
       if (location) {
         setProperty('id', id);
@@ -87,7 +123,6 @@ class Editor {
         contentElement.querySelector('[data-action="remove-prop"]').addEventListener('click', this.removeProp.bind(this));
         contentElement.querySelector('[data-action="duplicate-prop"]').addEventListener('click', this.duplicateProp.bind(this));
         this.placeButton = contentElement.querySelector('[data-action="place-prop"]');
-        this.prop = prop;
         this.placeButton.addEventListener('click', () => {
           const active = this.placeButton.getAttribute('data-active') === 'true' ? 'false' : 'true';
           this.placeButton.setAttribute('data-active', active);
@@ -108,7 +143,7 @@ class Editor {
         addProperty('time', this.game.world.time);
       }
     }
-    contentElement.querySelectorAll('input').forEach((input) => {
+    contentElement.querySelectorAll('input, select').forEach((input) => {
       input.addEventListener('change', this.updateProperty.bind(this));
     });
   }
@@ -335,6 +370,17 @@ class Editor {
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
     });
     document.querySelector('.Sidebar__Content--Header input[name="id"]').addEventListener('change', this.updateProperty.bind(this));
+    // Center position updates
+    document.querySelectorAll('input[name^="center"]').forEach((input) => {
+      input.addEventListener('change', (e) => {
+        if (e.target.name === 'centerX') {
+          this.game.offset.x = e.target.value - this.game.center.x;
+        }
+        else if (e.target.name === 'centerY') {
+          this.game.offset.y = e.target.value - this.game.center.y;
+        }
+      });
+    });
   }
 
   createProp(type) {
@@ -509,6 +555,8 @@ class Game {
       window.addEventListener('world:loaded', () => {
         this.setCenter(this.world.player);
         this.start();
+        document.querySelector('input[name="centerX"]').setAttribute('max', this.world.width);
+        document.querySelector('input[name="centerY"]').setAttribute('max', this.world.height);
       }, { once: true });
       this.world = new World(level);
     }
@@ -516,6 +564,8 @@ class Game {
       this.world = new World(level);
       this.setCenter(this.world.player);
       this.start();
+      document.querySelector('input[name="centerX"]').setAttribute('max', this.world.width);
+      document.querySelector('input[name="centerY"]').setAttribute('max', this.world.height);
     }
     this.activeControls = new Set();
   }
@@ -535,6 +585,7 @@ class Game {
     this.center = { ...prop};
     this.offset = { x: 0, y: 0 };
     this.center.type = 'default';
+    this.refreshCenter();
   }
 
   start() {
@@ -554,30 +605,39 @@ class Game {
         x: this.offset.x + this.deltaTime * speed,
         y: this.offset.y
       }
+      this.refreshCenter();
     }
     if (this.activeControls.has('left')) {
       this.offset = {
         x: this.offset.x - this.deltaTime * speed,
         y: this.offset.y
       }
+      this.refreshCenter();
     }
     if (this.activeControls.has('up')) {
       this.offset = {
         x: this.offset.x,
         y: this.offset.y + this.deltaTime * speed
       }
+      this.refreshCenter();
     }
     if (this.activeControls.has('down')) {
       this.offset = {
         x: this.offset.x,
         y: this.offset.y - this.deltaTime * speed
       }
+      this.refreshCenter();
     }
     if (this.center.x + this.offset.x < 0) this.offset.x = -this.center.x;
     if (this.center.x + this.offset.x > this.world.width) this.offset.x = this.world.width - this.center.x;
     if (this.center.y + this.offset.y < 0) this.offset.y = -this.center.y;
     if (this.center.y + this.offset.y > this.world.height) this.offset.y = this.world.height - this.center.y;
 
+  }
+
+  refreshCenter() {
+    document.querySelector('input[name="centerX"]').value = Math.ceil(this.center.x + this.offset.x);
+    document.querySelector('input[name="centerY"]').value = Math.ceil(this.center.y + this.offset.y);
   }
 
   loop() {

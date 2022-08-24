@@ -201,7 +201,7 @@ export class World {
   }
 
   calcViewPosition(prop) {
-    this.view.x = Math.max(0, Math.floor(prop.x) - VALUES.viewRatioX * VALUES.viewWidth);
-    this.view.y = Math.max(0, Math.floor(prop.y) - VALUES.viewRatioY * VALUES.viewHeight);
+    this.view.x = Math.min(Math.max(0, Math.floor(prop.x) - VALUES.viewRatioX * VALUES.viewWidth), this.width - VALUES.viewWidth);
+    this.view.y = Math.min(Math.max(0, Math.floor(prop.y) - VALUES.viewRatioY * VALUES.viewHeight), this.height - VALUES.viewHeight);
   }
 }
