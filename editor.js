@@ -337,7 +337,7 @@ class Editor {
     // Save level
     document.querySelector('[data-control="save"]').addEventListener('click', () => {
       const levelData = JSON.stringify(this.createLevelJson());
-      document.querySelector('[data-text="level"]').innerText = levelData;
+      document.querySelector('[data-text="level"]').value = levelData;
     });
     // Copy level data
     document.querySelector('[data-action="copy-level"]').addEventListener('click', () => {
