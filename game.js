@@ -620,6 +620,8 @@ class Game {
           newLevelProgress = {},
           time = Math.ceil((this.world.startTime - this.world.time) / 1000);
     if (levelProgress) {
+      newLevelProgress.points = levelProgress.points;
+      newLevelProgress.time = levelProgress.time;
       if (levelProgress.points < this.world.points) newLevelProgress.points = this.world.points;
       if (levelProgress.time > time) newLevelProgress.time = time;
     }
