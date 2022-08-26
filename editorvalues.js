@@ -44,7 +44,7 @@ export const EDITORVALUES = {
       breakable: true,
       hasCoin: false,
       invisible: false,
-      item: false
+      item: ''
     },
     enemy: {
       x: 0,

@@ -292,6 +292,9 @@ class Game {
         item.y += this.deltaTime * VALUES.itemSpeed;
         if (!this.checkCollision(item, item.block)) {
           item.state = VALUES.itemStates.move;
+          item.y = item.block.y + item.block.height + 1;
+          item.ground = item.block;
+          item.grounded = true;
         }
       }
       else if (!item.moving) {
