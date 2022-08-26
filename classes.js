@@ -13,11 +13,13 @@ export class Prop {
 }
 
 export class StaticProp extends Prop {
-  constructor(id, x, y, width, height, type, solid, ground) {
+  constructor(id, x, y, width, height, type, solid, ground, bounce, bounceFactor) {
     super(id, x, y, width, height, type);
     this.id = id;
     this.solid = solid;
     this.ground = ground;
+    this.bounce = bounce;
+    this.bounceFactor = bounceFactor;
   }
 }
 
@@ -34,8 +36,8 @@ export class InteractableProp extends Prop {
 }
 
 export class MovingProp extends StaticProp {
-  constructor(id, x, y, width, height, type, solid, ground, speedFactorX, speedFactorY, endX, endY) {
-    super(id, x, y, width, height, type, solid, ground);
+  constructor(id, x, y, width, height, type, solid, ground, bounce, bounceFactor, speedFactorX, speedFactorY, endX, endY) {
+    super(id, x, y, width, height, type, solid, ground, bounce, bounceFactor);
     this.moving = true;
     this.speedFactorX = speedFactorX;
     this.speedFactorY = speedFactorY;
@@ -45,6 +47,16 @@ export class MovingProp extends StaticProp {
     this.startY = y;
     this.endX = endX;
     this.endY = endY;
+  }
+}
+
+export class Spawner extends StaticProp {
+  constructor(id, x, y, width, height, type, solid, ground, speedFactor, forward, spawnRate) {
+    super(id, x, y, width, height, type, solid, ground, false, 0);
+    this.speedFactor = speedFactor;
+    this.forward = forward;
+    this.spawnRate = spawnRate;
+    this.nextSpawn = spawnRate * 1000;
   }
 }
 
@@ -70,7 +82,7 @@ export class Player extends Prop {
 }
 
 export class Enemy extends InteractableProp {
-  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround) {
+  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround, physics, removeOnCollision, spawned) {
     super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type);
     this.invincible = invincible;
     this.jumpable = jumpable;
@@ -84,6 +96,9 @@ export class Enemy extends InteractableProp {
     this.ground = null;
     this.forward = initialForward;
     this.stayOnGround = stayOnGround;
+    this.physics = physics;
+    this.removeOnCollision = removeOnCollision;
+    this.spawned = spawned;
   }
 }
 
@@ -95,7 +110,7 @@ export class Coin extends InteractableProp {
 
 export class Block extends StaticProp {
   constructor(id, x, y, type, breakable, hasCoin, invisible, item) {
-    super(id, x, y, VALUES.blockSize, VALUES.blockSize, type, true, true);
+    super(id, x, y, VALUES.blockSize, VALUES.blockSize, type, true, true, false, 0);
     this.breakable = breakable;
     this.hit = false;
     this.hasCoin = hasCoin;
@@ -139,7 +154,7 @@ export class World {
       this.coinProps = [];
       this.enemies = [];
       this.finish = new Finish(defaults.finish.x, defaults.finish.y);
-      this.props.push(new StaticProp('finishground', defaults.finish.x, defaults.finish.y, VALUES.finishWidth, VALUES.finishGroundHeight, 'finishground', true, true));
+      this.props.push(new StaticProp('finishground', defaults.finish.x, defaults.finish.y, VALUES.finishWidth, VALUES.finishGroundHeight, 'finishground', true, true, false, 0));
       this.player = new Player(defaults.player.x, defaults.player.y);
       this.view = {
         width: VALUES.viewWidth,
@@ -157,30 +172,34 @@ export class World {
       fetch('levels/' + level + '.json')
       .then(result => result.json())
       .then((data) => {
+        const t = this;
         this.id = level;
         this.name = data.meta.name;
         this.width = data.world.width;
         this.height = data.world.height;
         this.props = [];
         for (let prop of data.staticProps) {
-          const type = prop.type || VALUES.propDefault;
-          if (prop.class === 'Block') {
-            this.props.push(new Block(prop.id, prop.x, prop.y, type, prop.breakable, prop.hasCoin, prop.invisible, prop.item));
+          const type = t.p(prop, 'type') || VALUES.propDefault;
+          if (t.p(prop, 'class') === 'Block') {
+            this.props.push(new Block(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), type, t.p(prop, 'breakable'), t.p(prop, 'hasCoin'), t.p(prop, 'invisible'), t.p(prop, 'item')));
           }
-          else if (prop.class === 'MovingProp') {
-            this.props.push(new MovingProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground, prop.speedFactorX, prop.speedFactorY, prop.endX, prop.endY));
+          else if (t.p(prop, 'class') === 'MovingProp') {
+            this.props.push(new MovingProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor'), t.p(prop, 'speedFactorX'), t.p(prop, 'speedFactorY'), t.p(prop, 'endX'), t.p(prop, 'endY')));
+          }
+          else if (t.p(prop, 'class') === 'Spawner') {
+            this.props.push(new Spawner(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'speedFactor'), t.p(prop, 'forward'), t.p(prop, 'spawnRate')));
           }
           else {
-            this.props.push(new StaticProp(prop.id, prop.x, prop.y, prop.width, prop.height, type, prop.solid, prop.ground));
+            this.props.push(new StaticProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor')));
           }
         }
         this.coinProps = [];
         for (let coin of data.coins) {
-          this.coinProps.push(new Coin(coin.id, coin.x, coin.y));
+          this.coinProps.push(new Coin(t.p(coin, 'id'), t.p(coin, 'x'), t.p(coin, 'y')));
         }
         this.enemies = [];
         for (let enemy of data.enemies) {
-          this.enemies.push(new Enemy(enemy.id, enemy.x, enemy.y, enemy.width, enemy.height, enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height, enemy.type, enemy.invincible, enemy.jumpable, enemy.moving, enemy.initialForward, enemy.speedFactor, enemy.stayOnGround));
+          this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawned')));
         }
         this.finish = new Finish(data.finish.x, data.finish.y);
         this.player = new Player(data.player.x, data.player.y);
@@ -197,6 +216,18 @@ export class World {
         this.startTime = this.time;
         window.dispatchEvent(new CustomEvent('world:loaded'));
       });
+    }
+  }
+
+  p(prop, property) {
+    let value = prop[property];
+    if (value !== undefined) return value;
+    const propertyType = EDITORVALUES.propertyTypes[property];
+    switch (propertyType) {
+      case 'number': return 0;
+      case 'select': return EDITORVALUES.propTypes[0];
+      case 'checkbox': return false;
+      default: return '';
     }
   }
 

@@ -62,7 +62,16 @@ export class Graphics {
                 theight = texture.getAttribute('data-height'),
                 tx = Math.min(twidth, prop.width - ix),
                 ty = Math.min(theight, prop.height - iy);
-          this.context.drawImage(texture, 0, 0, twidth, theight, x + ix, y + iy, texture.width - tx % texture.width, texture.height - ty % texture.height);
+          if (prop.forward !== false) {
+            this.context.drawImage(texture, 0, 0, twidth, theight, x + ix, y + iy, texture.width - tx % texture.width, texture.height - ty % texture.height);
+          }
+          else {
+            this.context.save();
+            this.context.scale(-1, 1);
+            this.context.drawImage(texture, 0, 0, twidth, theight, -x - texture.width - ix, y + iy, texture.width - tx % texture.width, texture.height - ty % texture.height);
+            this.context.restore();
+            this.context.scale(1, 1);
+          }
         }
       }
     }

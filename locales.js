@@ -46,7 +46,8 @@ const locales = {
     pause: 'Pause',
     levelComplete: 'Level geschafft',
     levelCompleteText: 'Herzlichen Glückwunsch, du hast das Level gemeistert!',
-    centerPosition: 'Marker-Position'
+    centerPosition: 'Marker-Position',
+    spawner: 'Spawner'
   },
   EN: {
     undefined: '???',
@@ -95,7 +96,8 @@ const locales = {
     pause: 'Pause',
     levelComplete: 'Level complete',
     levelCompleteText: 'Congratulations, you finished the level!',
-    centerPosition: 'Center position'
+    centerPosition: 'Center position',
+    spawner: 'Spawner'
   }
 }
 

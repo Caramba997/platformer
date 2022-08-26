@@ -7,7 +7,7 @@ export const EDITORVALUES = {
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
-  enemyTypes: ['spike', 'bubble', 'toxicplant'],
+  enemyTypes: ['spike', 'bubble', 'toxicplant', 'rocket'],
   levels: ['level1', 'dev'],
   moveSpeed: 1,
   propDefaults: {
@@ -18,7 +18,9 @@ export const EDITORVALUES = {
       height: 50,
       type: 'solidblock',
       solid: true,
-      ground: true
+      ground: true,
+      bounce: false,
+      bounceFactor: 1.0
     },
     movingprop: {
       x: 0,
@@ -28,6 +30,8 @@ export const EDITORVALUES = {
       type: 'orangeplatform',
       solid: false,
       ground: true,
+      bounce: false,
+      bounceFactor: 1.0,
       speedFactorX: 1.0,
       speedFactorY: 0,
       endX: 200,
@@ -57,11 +61,26 @@ export const EDITORVALUES = {
       initialForward: false,
       speedFactor: 1.0,
       stayOnGround: false,
-      type: "bubble"
+      type: "bubble",
+      physics: true,
+      removeOnCollision: false,
+      spawned: false
     },
     coin: {
       x: 0,
       y: 0
+    },
+    spawner: {
+      x: 0,
+      y: 0,
+      width: 50,
+      height: 50,
+      type: 'rocketspawner',
+      solid: true,
+      ground: true,
+      forward: false,
+      speedFactor: 1,
+      spawnRate: 4
     }
   },
   propertyTypes: {
@@ -96,10 +115,16 @@ export const EDITORVALUES = {
     initialForward: 'checkbox',
     stayOnGround: 'checkbox',
     speedFactor: 'number',
-    forward: 'checkbox'
+    forward: 'checkbox',
+    bounce: 'checkbox',
+    bounceFactor: 'number',
+    physics: 'checkbox',
+    spawnRate: 'number',
+    removeOnCollision: 'checkbox',
+    spawned: 'checkbox'
   },
-  propTypes: ['grass', 'dirt', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'finishground'],
-  skipProperties: ['hit', 'id', 'state', 'startX', 'startY'],
+  propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomstem', 'rocketspawner'],
+  skipProperties: ['hit', 'id', 'state', 'startX', 'startY', 'nextSpawn', 'spawned'],
   worldDefaults: {
     world: {
       width: 5000,

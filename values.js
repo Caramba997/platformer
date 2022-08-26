@@ -1,5 +1,7 @@
 export const VALUES = {
   blockSize: 50,
+  bounceFactor: 0.6,
+  bounceJumpFactor: 1.1,
   coinSize: 30,
   controls: {
     'ArrowLeft': 'left',
@@ -70,9 +72,11 @@ export const VALUES = {
     item: 1000,
     time: 0.2
   },
+  powerUpTime: 500,
   propDefault: 'default',
   propSpeed: 0.08,
   shotCooldown: 1000,
+  spawnDistance: 2000,
   trashCans: ['props', 'items', 'shots', 'coinProps', 'enemies'],
   viewRatioX: 0.5,
   viewRatioY: 0.4,

@@ -72,6 +72,22 @@ const textures = [
     height: "100"
   },
   {
+    type: "sand",
+    src: "textures/Sand.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "100",
+    height: "100"
+  },
+  {
+    type: "sandground",
+    src: "textures/SandGround.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "100",
+    height: "100"
+  },
+  {
     type: "cloud",
     src: "textures/Cloud.png",
     imageWidth: "100",
@@ -175,6 +191,54 @@ const textures = [
     width: "50",
     height: "50"
   },
+  {
+    type: "pipe",
+    src: "textures/Pipe.png",
+    imageWidth: "200",
+    imageHeight: "200",
+    width: "100",
+    height: "100"
+  },
+  {
+    type: "pipetop",
+    src: "textures/PipeTop.png",
+    imageWidth: "200",
+    imageHeight: "200",
+    width: "100",
+    height: "100"
+  },
+  {
+    type: "mushroomcap",
+    src: "textures/MushroomCap.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "mushroomstem",
+    src: "textures/MushroomStem.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "rocketspawner",
+    src: "textures/RocketSpawner.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "rocket",
+    src: "textures/Rocket.png",
+    imageWidth: "100",
+    imageHeight: "50",
+    width: "50",
+    height: "25"
+  }
 ];
 
 (function() {

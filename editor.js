@@ -1,6 +1,6 @@
 import { EDITORHTML } from '/editorhtml.js';
 import { EDITORVALUES } from '/editorvalues.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
 import { Graphics } from '/graphics.js';
 
 class Editor {
@@ -391,14 +391,14 @@ class Editor {
 
     switch (type) {
       case 'staticprop': {
-        prop = new StaticProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground);
+        prop = new StaticProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.bounce, defaults.bounceFactor);
         this.game.world.props.push(prop);
         propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'StaticProp');
         break;
       }
       case 'movingprop': {
-        prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
+        prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.bounce, defaults.bounceFactor, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
         this.game.world.props.push(prop);
         propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'MovingProp');
@@ -412,7 +412,7 @@ class Editor {
         break;
       }
       case 'enemy': {
-        prop = new Enemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactor, defaults.stayOnGround);
+        prop = new Enemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactor, defaults.stayOnGround, defaults.physics, defaults.removeOnCollision);
         this.game.world.enemies.push(prop);
         propsOutline = outline.querySelector('[data-outline="enemies"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'enemies').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Enemy');
@@ -425,10 +425,17 @@ class Editor {
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'coinProps').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Coin');
         break;
       }
+      case 'spawner': {
+        prop = new Spawner(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.speedFactor, defaults.forward, defaults.spawnRate);
+        this.game.world.props.push(prop);
+        propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Spawner');
+        break;
+      }
     }
-    prop.x = this.game.world.view.x + Math.ceil(this.game.world.view.width / 2);
+    prop.x = Math.ceil(this.game.center.x + this.game.offset.x);
     prop.x = prop.x - prop.x % 50;
-    prop.y = this.game.world.view.y + Math.ceil(this.game.world.view.height / 2);
+    prop.y = Math.ceil(this.game.center.y + this.game.offset.y);
     prop.y = prop.y - prop.y % 50;
     const temp = document.createElement('DIV');
     temp.innerHTML = html;
@@ -486,8 +493,7 @@ class Editor {
       this.game.setCenter(this.prop);
     }
     else {
-      const prop = checkPointInProps(this.game, x, y),
-            outline = document.querySelector('.Outline');
+      const prop = checkPointInProps(this.game, x, y);
       if (!prop) return;
       this.selectPropInOutline(prop.id);
     }

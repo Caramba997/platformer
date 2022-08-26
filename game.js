@@ -1,5 +1,5 @@
 import { VALUES } from '/values.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
 import { Graphics } from '/graphics.js';
 
 class Game {
@@ -33,9 +33,12 @@ class Game {
       });
     });
     // Replay
-    document.querySelector('[data-action="replay"]').addEventListener('click', () => {
-      this.closePopup('game-over');
-      this.loadLevel(this.world.id);
+    document.querySelectorAll('[data-action="replay"]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const popup = document.querySelector('.Popup[data-visible="true"]').getAttribute('data-popup');
+        this.closePopup(popup);
+        this.loadLevel(this.world.id);
+      });
     });
   }
 
@@ -151,7 +154,7 @@ class Game {
             if (enemy.jumpable) {
               enemy.remove = true;
               player.y = enemy.y + enemy.height + 1;
-              player.speedY = this.activeControls.has('jump') ? this.playerInitialJumpSpeed * 1.1 : this.playerInitialJumpSpeed / 2;
+              player.speedY = this.activeControls.has('jump') ? this.playerInitialJumpSpeed * VALUES.bounceJumpFactor : this.playerInitialJumpSpeed * VALUES.bounceFactor;
               this.world.points += VALUES.points.enemy;
               this.stats.setPoints(this.world.points);
             }
@@ -240,15 +243,30 @@ class Game {
       }
     }
     if (groundResult && groundResult.valid) {
-      player.speedY = groundResult.speedY;
-      player.grounded = groundResult.grounded;
-      player.ground = groundResult.ground;
-      player.y = groundResult.y;
+      if (groundResult.ground.bounce) {
+        player.speedY = this.activeControls.has('jump') ? this.playerInitialJumpSpeed * VALUES.bounceJumpFactor * groundResult.ground.bounceFactor : this.playerInitialJumpSpeed * VALUES.bounceFactor * groundResult.ground.bounceFactor;
+        player.grounded = false;
+      }
+      else {
+        player.speedY = groundResult.speedY || 0;
+        player.grounded = groundResult.grounded;
+        player.ground = groundResult.ground;
+        player.y = groundResult.y;
+      }
     }
   }
 
   processPropActions() {
     for (let prop of this.world.props) {
+      if (prop.constructor.name === 'Spawner' && Math.abs(prop.x - this.world.player.x) < VALUES.spawnDistance) {
+        if (prop.nextSpawn === 0) {
+          this.world.enemies.push(new Enemy('rocket' + Date.now(), prop.x, prop.y + 13, 50, 25, 0, 0, 50, 25, 'rocket', false, true, true, prop.forward, prop.speedFactor, false, false, true));
+          prop.nextSpawn = prop.spawnRate * 1000;
+        }
+        else {
+          prop.nextSpawn = Math.max(prop.nextSpawn - this.deltaTime, 0);
+        }
+      }
       if (!prop.moving) continue;
       prop.x += this.deltaTime * prop.speedX;
       prop.y += this.deltaTime * prop.speedY;
@@ -301,14 +319,36 @@ class Game {
       for (let enemy of this.world.enemies) {
         if (this.checkCollision(shotHitbox, enemy)) {
           shot.remove = true;
-          if (!enemy.invincible) enemy.remove = true;
+          if (!enemy.invincible) {
+            enemy.remove = true;
+            this.world.points += VALUES.points.enemy;
+            this.stats.setPoints(this.world.points);
+          }
           break;
         }
       }
     }
     for (let enemy of this.world.enemies) {
       if (!enemy.moving || enemy.remove) continue;
-      this.processPropPhysics(enemy);
+      if (enemy.physics) {
+        this.processPropPhysics(enemy);
+      }
+      else {
+        enemy.lastY = enemy.y;
+        enemy.x += enemy.speedX * this.deltaTime;
+        // Check world boundaries
+        if (enemy.x + enemy.width < 0 || enemy.x > this.world.width) {
+          enemy.remove = true;
+        }
+        // Check for collisions with solid props
+        for (let prop of this.world.props) {
+          if (!prop.solid || prop.invisible || prop.constructor.name === 'Spawner') continue;
+          const collision = this.checkCollision(enemy, prop);
+          if (!collision) continue;
+          // Top collision
+          enemy.remove = true;
+        }
+      }
     }
   }
 
@@ -368,7 +408,7 @@ class Game {
       if (thisProp instanceof Enemy) {
         // Check for collisions with other enemies
         for (let enemy of this.world.enemies) {
-          if (enemy.remove || enemy.id === thisProp.id) continue;
+          if (enemy.remove || enemy.id === thisProp.id || !enemy.physics) continue;
           if (this.checkCollision(thisProp, enemy)) {
             thisProp.x = thisProp.speedX > 0 ? enemy.x - thisProp.width : enemy.x + enemy.width;
             thisProp.speedX *= -1;
@@ -431,11 +471,14 @@ class Game {
       if (this.checkPlayerCollision(item)) {
         if (this.world.player.state !== VALUES.playerStates[item.powerup]) {
           this.setPlayerState(VALUES.playerStates[item.powerup]);
+          this.stop();
+          item.remove = true;
+          this.garbageCollection();
+          window.requestAnimationFrame(this.render.bind(this));
+          window.setTimeout(this.start.bind(this), VALUES.powerUpTime);
         }
-        else {
-          this.world.points += VALUES.points.item;
-          this.stats.setPoints(this.world.points);
-        }
+        this.world.points += VALUES.points.item;
+        this.stats.setPoints(this.world.points);
         item.remove = true;
       }
     }
