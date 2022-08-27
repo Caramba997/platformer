@@ -47,7 +47,8 @@ const locales = {
     levelComplete: 'Level geschafft',
     levelCompleteText: 'Herzlichen Glückwunsch, du hast das Level gemeistert!',
     centerPosition: 'Marker-Position',
-    spawner: 'Spawner'
+    spawner: 'Spawner',
+    thumbnail: 'Vorschaubild generieren'
   },
   EN: {
     undefined: '???',
@@ -97,7 +98,8 @@ const locales = {
     levelComplete: 'Level complete',
     levelCompleteText: 'Congratulations, you finished the level!',
     centerPosition: 'Center position',
-    spawner: 'Spawner'
+    spawner: 'Spawner',
+    thumbnail: 'Create thumbnail'
   }
 }
 

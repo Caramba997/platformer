@@ -82,7 +82,7 @@ export class Player extends Prop {
 }
 
 export class Enemy extends InteractableProp {
-  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround, physics, removeOnCollision, spawned) {
+  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround, physics, removeOnCollision, spawner) {
     super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type);
     this.invincible = invincible;
     this.jumpable = jumpable;
@@ -98,7 +98,7 @@ export class Enemy extends InteractableProp {
     this.stayOnGround = stayOnGround;
     this.physics = physics;
     this.removeOnCollision = removeOnCollision;
-    this.spawned = spawned;
+    this.spawner = spawner;
   }
 }
 
@@ -129,6 +129,7 @@ export class Item extends InteractableProp {
     this.lastY = 0;
     this.speedX = VALUES.itemSpeed;
     this.speedY = 0.0;
+    this.forward = true;
   }
 }
 
@@ -150,6 +151,7 @@ export class World {
       this.name = 'New level';
       this.width = defaults.world.width;
       this.height = defaults.world.height;
+      this.background = defaults.world.background;
       this.props = [];
       this.coinProps = [];
       this.enemies = [];
@@ -175,8 +177,9 @@ export class World {
         const t = this;
         this.id = level;
         this.name = data.meta.name;
-        this.width = data.world.width;
-        this.height = data.world.height;
+        this.width = data.meta.width;
+        this.height = data.meta.height;
+        this.background = data.meta.background;
         this.props = [];
         for (let prop of data.staticProps) {
           const type = t.p(prop, 'type') || VALUES.propDefault;
@@ -199,7 +202,7 @@ export class World {
         }
         this.enemies = [];
         for (let enemy of data.enemies) {
-          this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawned')));
+          this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner')));
         }
         this.finish = new Finish(data.finish.x, data.finish.y);
         this.player = new Player(data.player.x, data.player.y);

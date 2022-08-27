@@ -1,7 +1,15 @@
 const textures = [
   {
-    type: "background",
+    type: "forest",
     src: "textures/Background.png",
+    imageWidth: "1600",
+    imageHeight: "1800",
+    width: "1600",
+    height: "1800"
+  },
+  {
+    type: "desert",
+    src: "textures/DesertBackground.png",
     imageWidth: "1600",
     imageHeight: "1800",
     width: "1600",
@@ -42,6 +50,22 @@ const textures = [
   {
     type: "bubble",
     src: "textures/Bubble.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "desertspike",
+    src: "textures/DesertSpike.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "desertbubble",
+    src: "textures/DesertBubble.png",
     imageWidth: "100",
     imageHeight: "100",
     width: "50",

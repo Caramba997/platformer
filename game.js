@@ -248,10 +248,14 @@ class Game {
         player.grounded = false;
       }
       else {
-        player.speedY = groundResult.speedY || 0;
+        player.speedY = 0;
         player.grounded = groundResult.grounded;
         player.ground = groundResult.ground;
         player.y = groundResult.y;
+        if (player.ground.moving) {
+          player.x += player.ground.speedX * this.deltaTime;
+          player.y += player.ground.speedY * this.deltaTime;
+        }
       }
     }
   }
@@ -260,7 +264,7 @@ class Game {
     for (let prop of this.world.props) {
       if (prop.constructor.name === 'Spawner' && Math.abs(prop.x - this.world.player.x) < VALUES.spawnDistance) {
         if (prop.nextSpawn === 0) {
-          this.world.enemies.push(new Enemy('rocket' + Date.now(), prop.x, prop.y + 13, 50, 25, 0, 0, 50, 25, 'rocket', false, true, true, prop.forward, prop.speedFactor, false, false, true));
+          this.world.enemies.push(new Enemy('rocket' + Date.now(), prop.x, prop.y + 13, 50, 25, 0, 0, 50, 25, 'rocket', false, true, true, prop.forward, prop.speedFactor, false, false, true, prop));
           prop.nextSpawn = prop.spawnRate * 1000;
         }
         else {
@@ -303,6 +307,11 @@ class Game {
       else {
         this.processPropPhysics(item);
       }
+    }
+    for (let coin of this.world.coinProps) {
+      if (!coin.fromBlock) continue;
+      coin.y += this.deltaTime * VALUES.coinSpeed;
+      if (!this.checkCollision(coin, coin.block)) coin.remove = true;
     }
     for (let shot of this.world.shots) {
       shot.x += this.deltaTime * shot.speedX;
@@ -451,6 +460,10 @@ class Game {
       thisProp.grounded = groundResult.grounded;
       thisProp.ground = groundResult.ground;
       thisProp.y = groundResult.y;
+      if (thisProp.ground.moving) {
+        thisProp.x += this.deltaTime * thisProp.ground.speedX;
+        thisProp.y += this.deltaTime * thisProp.ground.speedY;
+      }
     }
     else if (!thisProp.grounded && thisProp.stayOnGround) {
       thisProp.speedX *= -1;
@@ -497,7 +510,7 @@ class Game {
     }
     // Check for collisions with coins
     for (let coin of this.world.coinProps) {
-      if (this.checkPlayerCollision(this.calcHitbox(coin))) {
+      if (!coin.fromBlock && this.checkPlayerCollision(this.calcHitbox(coin))) {
         coin.remove = true;
         this.addCoin();
       }
@@ -542,6 +555,10 @@ class Game {
         this.world.items.push(new Item(block.id + 'item', block.x, block.y, type, item.moving, item.powerup, block));
       }
       else if (block.hasCoin) {
+        const coin = new Coin(block.id + 'coin', block.x, block.y);
+        coin.fromBlock = true;
+        coin.block = block;
+        this.world.coinProps.push(coin);
         this.addCoin();
       }
       if (block.invisible) {
@@ -619,12 +636,24 @@ class Game {
     graphics.setView(this.world.view);
     graphics.drawBackground(this.world);
     graphics.drawProp(this.world.finish);
+    const deferredRender = [];
     for (let item of this.world.items) {
       if (item.state !== VALUES.itemStates.spawn) continue;
-      graphics.drawProp(item);
+      item.block.defer = true;
+      deferredRender.push(item.block);
+    }
+    for (let coin of this.world.coinProps) {
+      if (!coin.fromBlock) continue;
+      coin.block.defer = true;
+      deferredRender.push(coin.block);
+    }
+    for (let enemy of this.world.enemies) {
+      if (!enemy.spawner) continue;
+      enemy.spawner.defer = true;
+      deferredRender.push(enemy.spawner);
     }
     for (let prop of this.world.props) {
-      graphics.drawProp(prop);
+      if (!prop.defer) graphics.drawProp(prop);
     }
     for (let coin of this.world.coinProps) {
       graphics.drawProp(this.calcHitbox(coin));
@@ -633,8 +662,11 @@ class Game {
       graphics.drawMoving(enemy);
     }
     for (let item of this.world.items) {
-      if (item.state === VALUES.itemStates.spawn) continue;
       graphics.drawProp(item);
+    }
+    for (let deferred of deferredRender) {
+      graphics.drawProp(deferred);
+      deferred.defer = false;
     }
     for (let shot of this.world.shots) {
       graphics.drawProp(shot);

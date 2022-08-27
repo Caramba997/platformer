@@ -31,7 +31,8 @@ export class Graphics {
   }
 
   drawBackground(world) {
-    const texture = this.getTexture('background'),
+    if (!world.background) return;
+    const texture = this.getTexture(world.background),
           tx = Math.ceil(this.view.x * VALUES.parallaxFactor) % this.view.width,
           ty = Math.ceil(this.view.height - this.view.y * texture.height / world.height);
     if (tx === 0) {
@@ -58,8 +59,8 @@ export class Graphics {
       }
       for (let ix = 0; ix < prop.width; ix += texture.width) {
         for (let iy = 0; iy < prop.height; iy += texture.height) {
-          const twidth = texture.getAttribute('data-width'),
-                theight = texture.getAttribute('data-height'),
+          const twidth = parseInt(texture.getAttribute('data-width')),
+                theight = parseInt(texture.getAttribute('data-height')),
                 tx = Math.min(twidth, prop.width - ix),
                 ty = Math.min(theight, prop.height - iy);
           if (prop.forward !== false) {

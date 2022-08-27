@@ -1,4 +1,6 @@
 export const EDITORVALUES = {
+  backgroundTypes: ['forest', 'desert'],
+  blockItemTypes: ['', 'default'],
   blockTypes: ['brick', 'brickhit', 'itemblock', 'itemblockhit', 'solidblock'],
   coinTypes: ['coin'],
   controls: {
@@ -7,8 +9,8 @@ export const EDITORVALUES = {
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
-  enemyTypes: ['spike', 'bubble', 'toxicplant', 'rocket'],
-  levels: ['level1', 'dev'],
+  enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'toxicplant', 'rocket'],
+  levels: ['level1', 'level2', 'dev'],
   moveSpeed: 1,
   propDefaults: {
     staticprop: {
@@ -64,7 +66,7 @@ export const EDITORVALUES = {
       type: "bubble",
       physics: true,
       removeOnCollision: false,
-      spawned: false
+      spawner: null
     },
     coin: {
       x: 0,
@@ -104,7 +106,7 @@ export const EDITORVALUES = {
     breakable: 'checkbox',
     hasCoin: 'checkbox',
     invisible: 'checkbox',
-    item: 'text',
+    item: 'select',
     hitx: 'number',
     hity: 'number',
     hitwidth: 'number',
@@ -121,14 +123,15 @@ export const EDITORVALUES = {
     physics: 'checkbox',
     spawnRate: 'number',
     removeOnCollision: 'checkbox',
-    spawned: 'checkbox'
+    background: 'select'
   },
   propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomstem', 'rocketspawner'],
-  skipProperties: ['hit', 'id', 'state', 'startX', 'startY', 'nextSpawn', 'spawned'],
+  skipProperties: ['hit', 'id', 'state', 'startX', 'startY', 'nextSpawn', 'spawner'],
   worldDefaults: {
     world: {
       width: 5000,
-      height: 4000
+      height: 4000,
+      background: 'forest'
     },
     finish: {
       x: 4500,

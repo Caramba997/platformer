@@ -46,18 +46,21 @@ class Editor {
       if (type === 'select') {
         html = EDITORHTML.propertySelect.replaceAll('{{property}}', property);
         let options;
-        console.log(thisProp.constructor.name);
         switch (thisProp.constructor.name) {
           case 'Enemy': {
             options = EDITORVALUES.enemyTypes;
             break;
           }
           case 'Block': {
-            options = EDITORVALUES.blockTypes;
+            options = property === 'type' ? EDITORVALUES.blockTypes : EDITORVALUES.blockItemTypes;
             break;
           }
           case 'Coin': {
             options = EDITORVALUES.coinTypes;
+            break;
+          }
+          case 'World': {
+            options = EDITORVALUES.backgroundTypes;
             break;
           }
           default: {
@@ -129,19 +132,16 @@ class Editor {
         });
       }
     }
-    else {
-      if (id === 'world') {
-        setProperty('id', 'world');
-        setProperty('class', 'World');
-        addProperty('width', this.game.world.width);
-        addProperty('height', this.game.world.height);
-      }
-      else if (id === 'meta') {
-        setProperty('id', 'meta');
-        setProperty('class', 'World');
-        addProperty('name', this.game.world.name);
-        addProperty('time', this.game.world.time);
-      }
+    else if (id === 'meta') {
+      this.prop = this.game.world;
+      thisProp = this.prop;
+      setProperty('id', 'meta');
+      setProperty('class', 'World');
+      addProperty('name', this.game.world.name);
+      addProperty('time', this.game.world.time);
+      addProperty('background', this.game.world.background);
+      addProperty('width', this.game.world.width);
+      addProperty('height', this.game.world.height);
     }
     contentElement.querySelectorAll('input, select').forEach((input) => {
       input.addEventListener('change', this.updateProperty.bind(this));
@@ -317,6 +317,7 @@ class Editor {
         const playButton = document.querySelector('a[data-action="play"]');
         playButton.href = playButton.getAttribute('data-href') + this.game.world.id;
         this.initOutline();
+        this.selectPropInOutline('player');
       }, { once: true });
       this.game = new Game(select.value);
       document.querySelector('[data-data="level"]').innerText = select.value;
@@ -328,6 +329,7 @@ class Editor {
         this.game.stop();
       }
       this.game = new Game(null);
+      this.selectPropInOutline('player');
       document.querySelector('[data-data="level"]').innerText = 'New level';
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
       const playButton = document.querySelector('a[data-action="play"]');
@@ -343,6 +345,16 @@ class Editor {
     document.querySelector('[data-action="copy-level"]').addEventListener('click', () => {
       const levelData = JSON.stringify(this.createLevelJson());
       navigator.clipboard.writeText(levelData);
+    });
+    // Create level thumbnail
+    document.querySelector('[data-action="create-thumbnail"]').addEventListener('click', () => {
+      const downloadButton = document.querySelector('#download-thumbnail');
+      this.game.pictureMode = true;
+      this.game.render();
+      downloadButton.href = this.game.graphics.canvas.toDataURL('png');
+      downloadButton.download = this.game.world.id + '.png';
+      downloadButton.click();
+      this.game.pictureMode = false;
     });
     // Outline toggles
     document.querySelectorAll('.Button--Outline').forEach((button) => {
@@ -513,9 +525,8 @@ class Editor {
     this.levelJson = {
       meta: {
         name: world.name,
-        time: world.time
-      },
-      world: {
+        time: world.time,
+        background: world.background,
         width: world.width,
         height: world.height
       },
@@ -554,6 +565,7 @@ class Game {
     this.graphics = new Graphics();
     this.loadLevel(level);
     this.activeControls = new Set();
+    this.pictureMode = false;
   }
 
   loadLevel(level) {
@@ -673,14 +685,16 @@ class Game {
       graphics.drawMoving(enemy);
     }
     graphics.drawMoving(this.world.player);
-    graphics.drawProp(this.center);
-    graphics.drawProp({
-      x: this.center.x + this.offset.x,
-      y: this.center.y + this.offset.y,
-      width: 10,
-      height: 10,
-      type: 'default'
-    })
+    if (!this.pictureMode) {
+      graphics.drawProp(this.center);
+      graphics.drawProp({
+        x: this.center.x + this.offset.x,
+        y: this.center.y + this.offset.y,
+        width: 10,
+        height: 10,
+        type: 'default'
+      });
+    }
   }
 }
 

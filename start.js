@@ -1,4 +1,4 @@
-const levels = [ 'dev', 'level1' ];
+const levels = [ 'dev', 'level1', 'level2' ];
 const levelHtml = `<a class="Level" href="/game.html?level={{name}}">
   <div class="Level__Content" data-name="{{name}}" data-complete="false" style="background-image: url(/images/{{name}}.png);">
     <div class="Level__Text">

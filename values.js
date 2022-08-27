@@ -3,6 +3,7 @@ export const VALUES = {
   bounceFactor: 0.6,
   bounceJumpFactor: 1.1,
   coinSize: 30,
+  coinSpeed: 0.2,
   controls: {
     'ArrowLeft': 'left',
     'ArrowRight': 'right',
