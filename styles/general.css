@@ -38,11 +38,6 @@ a {
     text-decoration: none;
 }
 
-input[type="number"]::-webkit-outer-spin-button, 
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: inner-spin-button !important;
-}
-
 [data-visible="false"] {
     display: none;
 }

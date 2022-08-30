@@ -293,7 +293,7 @@ export class AssetLoader {
   }
 
   loadSounds(soundContainer, progress) {
-    const soundHtml = '<audio data-sound="{{type}}" src="{{src}}"></audio>';
+    window.sounds = {};
     progress.sounds.steps = sounds.length;
     for (let sound of sounds) {
       const audio = document.createElement('audio');
@@ -304,6 +304,7 @@ export class AssetLoader {
       });
       audio.setAttribute('data-sound', sound.type);
       audio.src = sound.src;
+      window.sounds[sound.type] = audio;
     }
     soundContainer.setAttribute('data-initialized', 'true');
   }
