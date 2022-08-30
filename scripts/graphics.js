@@ -1,4 +1,4 @@
-import {VALUES} from '/values.js';
+import {VALUES} from './values.js';
 
 export class Graphics {
   constructor() {

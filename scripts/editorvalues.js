@@ -10,8 +10,10 @@ export const EDITORVALUES = {
     'ArrowDown': 'down'
   },
   enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'toxicplant', 'rocket'],
+  finishTypes: ['finishflag'],
   levels: ['level1', 'level2', 'dev'],
   moveSpeed: 1,
+  playerTypes: ['playernormal'],
   propDefaults: {
     staticprop: {
       x: 0,

@@ -1,5 +1,5 @@
-import { VALUES } from '/values.js';
-import { EDITORVALUES } from '/editorvalues.js';
+import { VALUES } from './values.js';
+import { EDITORVALUES } from './editorvalues.js';
 
 export class Prop {
   constructor(id, x, y, width, height, type) {

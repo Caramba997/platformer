@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Platformer</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="styles/general.css">
+    <script src="scripts/locales.js" defer></script>
+    <script type="module" src="scripts/assetloader.js" defer></script>
+    <script type="module" src="scripts/pwa.js" defer></script>
+  </head>
+  <body>
+    <div id="content"></div>
+    <div id="loading" class="Loading" data-visible="true">
+      <div class="Loading__Content">
+        <div class="Loading__Text" data-t="loading"></div>
+        <div class="Loading__Progress">
+          <div class="Loading__Bar">
+            <div class="Loading__Bar--Inner"></div>
+          </div>
+        </div>
+        <div class="Loading__Step"></div>
+      </div>
+    </div>
+    <div id="textures" style="display: none;" data-initialized="false"></div>
+    <div id="sounds" style="display: none;" data-initialized="false"></div>
+  </body>
+</html>

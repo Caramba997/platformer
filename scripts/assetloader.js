@@ -265,14 +265,46 @@ const textures = [
   }
 ];
 
-(function() {
-  const textureContainer = document.getElementById('textures'),
-        textureHtml = '<img data-texture="{{type}}" src="{{src}}" data-width="{{imageWidth}}" data-height="{{imageHeight}}" width="{{width}}" height="{{height}}">'
-  for (let texture of textures) {
-    let html = textureHtml;
-    for (let entry of Object.entries(texture)) {
-      html = html.replace('{{' + entry[0] + '}}', entry[1]);
-    }
-    textureContainer.innerHTML += html;
+const sounds = [
+  {
+    type: "changingtab",
+    src: "sounds/mixkit-arcade-retro-changing-tab-206.wav"
   }
-})();
+];
+
+export class AssetLoader {
+  loadTextures(textureContainer, progress) {
+    progress.textures.steps = textures.length;
+    for (let texture of textures) {
+      const img = document.createElement('img');
+      textureContainer.appendChild(img);
+      img.addEventListener('load', () => {
+        progress.textures.current += 1;
+        window.dispatchEvent(new CustomEvent('progress:changed', { detail: progress }));
+      });
+      img.width = texture.width;
+      img.height = texture.height;
+      img.setAttribute('data-texture', texture.type);
+      img.setAttribute('data-width', texture.imageWidth);
+      img.setAttribute('data-height', texture.imageHeight);
+      img.src = texture.src;
+    }
+    textureContainer.setAttribute('data-initialized', 'true');
+  }
+
+  loadSounds(soundContainer, progress) {
+    const soundHtml = '<audio data-sound="{{type}}" src="{{src}}"></audio>';
+    progress.sounds.steps = sounds.length;
+    for (let sound of sounds) {
+      const audio = document.createElement('audio');
+      soundContainer.appendChild(audio);
+      audio.addEventListener('canplaythrough', () => {
+        progress.sounds.current += 1;
+        window.dispatchEvent(new CustomEvent('progress:changed', { detail: progress }));
+      });
+      audio.setAttribute('data-sound', sound.type);
+      audio.src = sound.src;
+    }
+    soundContainer.setAttribute('data-initialized', 'true');
+  }
+}

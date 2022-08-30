@@ -71,7 +71,7 @@ export const VALUES = {
     coin: 20,
     enemy: 200,
     item: 1000,
-    time: 0.2
+    time: 0.1
   },
   powerUpTime: 500,
   propDefault: 'default',

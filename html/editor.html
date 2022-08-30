@@ -1,0 +1,143 @@
+<div id="head"> >
+    <link rel="stylesheet" href="styles/editor.css">
+    <script type="module" src="scripts/values.js" defer></script>
+    <script type="module" src="scripts/classes.js" defer></script>
+    <script type="module" src="scripts/graphics.js" defer></script>
+    <script type="module" src="scripts/editor.js" defer></script>
+</div>
+<div id="content">
+    <div class="Toolbar">
+        <div class="Toolbar__Item">
+            <button data-action="open-popup" data-control="start"><span data-t="mainMenu"></span></button>
+        </div>|
+        <div class="Toolbar__Item">
+            <button data-action="open-popup" data-control="select-level" data-data="level"><span data-t="selectLevel"></span></button>
+        </div>|
+        <div class="Toolbar__Item">
+            <button data-action="open-popup" data-control="save"><span data-t="save"></span></button>
+        </div>|
+        <div class="Toolbar__Item mr-10 ml-10">
+            <a data-action="play" href="javascript:void(0);" target="_blank"><span data-t="play"></span></a>
+        </div>|
+        <div class="Toolbar__Item ml-10">
+            <button class="Button" data-action="open-popup" data-control="create"><span data-t="newProp"></span></button>
+        </div>
+    </div>
+    <div class="Container">
+        <div class="Outline Sidebar" data-expanded="true">
+            <div class="Sidebar__Content">
+                <div class="Sidebar__Content--Header">
+                    <div><span data-t="outline"></span></div>
+                    <hr>
+                </div>
+                <div class="Sidebar__Content--Content">
+                    <div class="Outline__Item" data-expanded="false" data-outline="meta">
+                        <button class="Button--Outline"><span data-t="world"></span></button>
+                        <div class="Outline__Item--Content">
+                            <button class="Button--Prop" data-action="show-properties" data-location="" data-id="meta"><span data-t="meta"></span></button>
+                            <button class="Button--Prop" data-action="show-properties" data-location="" data-id="player"><span data-t="player"></span></button>
+                            <button class="Button--Prop" data-action="show-properties" data-location="" data-id="finish"><span data-t="finish"></span></button>
+                        </div>
+                    </div>
+                    <div class="Outline__Item" data-expanded="false" data-outline="props">
+                        <button class="Button--Outline"><span data-t="props"></span></button>
+                        <div class="Outline__Item--Content"></div>
+                    </div>
+                    <div class="Outline__Item" data-expanded="false" data-outline="enemies">
+                        <button class="Button--Outline"><span data-t="enemies"></span></button>
+                        <div class="Outline__Item--Content"></div>
+                    </div>
+                    <div class="Outline__Item" data-expanded="false" data-outline="coinProps">
+                        <button class="Button--Outline"><span data-t="coins"></span></button>
+                        <div class="Outline__Item--Content"></div>
+                    </div>
+                </div>
+            </div>
+            <button class="Sidebar__Control" data-action="toggle-sidebar">
+                <span>></span>
+            </button>
+        </div>
+        <div class="Canvas">
+            <canvas id="canvas" width="1600" height="900"></canvas>
+            <div class="text-center">
+                <span class="ml-10" data-t="centerPosition"></span> x:<input name="centerX" value="0" type="number" step="200" min="0"> y:<input name="centerY" value="0" type="number" step="200" min="0">
+            </div>
+        </div>
+        <div class="Properties Sidebar" data-expanded="true">
+            <button class="Sidebar__Control" data-action="toggle-sidebar"">
+                <span><</span>
+            </button>
+            <div class="Sidebar__Content">
+                <div class="Sidebar__Content--Header">
+                    <div data-property="class"></div>
+                    <input data-property="id" name="id" type="text">
+                    <hr>
+                </div>
+                <div class="Sidebar__Content--Content">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popups">
+        <div class="Popup" data-visible="false" data-popup="start">
+            <div class="Popup__Header">
+                <div class="Popup__Header--Title"><span data-t="backToStart"></span></div>
+                <button class="Popup__Header--Close" data-action="close-popup">X</button>
+            </div>
+            <hr>
+            <div class="Popup__Content">
+                <p class="text-center">
+                    <span data-t="sureBackToStart"></span>
+                </p>
+                <a class="Button Button--Link" data-href="menu"><span data-t="confirm"></span></a>
+            </div>
+        </div>
+        <div class="Popup" data-visible="true" data-popup="select-level">
+            <div class="Popup__Header">
+                <div class="Popup__Header--Title"><span data-t="chooseLevel"></span></div>
+                <button class="Popup__Header--Close" data-action="close-popup">X</button>
+            </div>
+            <hr>
+            <div class="Popup__Content">
+                <select name="level" class="mb-10">
+                    <option value="none">...</option>
+                </select>
+                <button class="Button" data-action="load-level"><span data-t="load"></span></button>
+                <p><span data-t="or"></span></p>
+                <button class="Button" data-action="new-level"><span data-t="new"></span></button>
+            </div>
+        </div>
+        <div class="Popup" data-visible="false" data-popup="create">
+            <div class="Popup__Header">
+                <div class="Popup__Header--Title"><span data-t="createNewProp"></span></div>
+                <button class="Popup__Header--Close" data-action="close-popup">X</button>
+            </div>
+            <hr>
+            <div class="Popup__Content">
+                <select name="prop" class="mb-10">
+                    <option value="staticprop" data-t="staticProp"></option>
+                    <option value="movingprop" data-t="movingProp"></option>
+                    <option value="block" data-t="block"></option>
+                    <option value="enemy" data-t="enemy"></option>
+                    <option value="coin" data-t="coin"></option>
+                    <option value="spawner" data-t="spawner"></option>
+                </select>
+                <button class="Button" data-action="create-prop"><span data-t="create"></span></button>
+            </div>
+        </div>
+        <div class="Popup" data-visible="false" data-popup="save">
+            <div class="Popup__Header">
+                <div class="Popup__Header--Title"><span data-t="saveLevel"></span></div>
+                <button class="Popup__Header--Close" data-action="close-popup">X</button>
+            </div>
+            <hr>
+            <div class="Popup__Content">
+                <textarea class="mb-10" data-text="level"></textarea>
+                <button class="Button" data-action="copy-level"><span data-t="copy"></span></button>
+                <button class="Button" data-action="create-thumbnail"><span data-t="thumbnail"></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="PageOverlay" data-visible="true"></div>
+    <a id="download-thumbnail" style="display: none;"></a>
+</div>

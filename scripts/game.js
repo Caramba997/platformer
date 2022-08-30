@@ -1,22 +1,47 @@
-import { VALUES } from '/values.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
-import { Graphics } from '/graphics.js';
+import { VALUES } from './values.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from './classes.js';
+import { Graphics } from './graphics.js';
 
-class Game {
+export class Game {
   constructor() {
     this.graphics = new Graphics();
     this.stats = new Stats();
     this.calcJumpParameters();
+    this._keyDownListener = this.keyDownListener.bind(this);
+    this._keyUpListener = this.keyUpListener.bind(this);
     this.initControls();
     this.initListeners();
-    if (window.location.search) {
-      const searchParams = new URLSearchParams(window.location.search);
-      if (searchParams.has('level')) {
-        this.loadLevel(searchParams.get('level'));
-        return;
-      }
+    const storageLevel = localStorage.getItem('level');
+    if (storageLevel) {
+      this.loadLevel(storageLevel);
     }
-    this.loadLevel('level1');
+    else {
+      this.loadLevel('level1');
+    }
+    window.dispatchEvent(new CustomEvent('progress:executed'));
+  }
+
+  unload() {
+    this.stop();
+    window.removeEventListener('keydown', this._keyDownListener);
+    window.removeEventListener('keyup', this._keyUpListener);
+  }
+
+  initControls() {
+    window.addEventListener('keydown', this._keyDownListener);
+    window.addEventListener('keyup', this._keyUpListener);
+  }
+
+  keyDownListener(e) {
+    const control = VALUES.controls[e.code];
+    if (!this.running || !control || this.activeControls.has(control)) return;
+    this.activeControls.add(control);
+  }
+
+  keyUpListener(e) {
+    const control = VALUES.controls[e.code];
+    if (!this.activeControls.has(control)) return;
+    this.activeControls.delete(control);
   }
 
   initListeners() {
@@ -731,19 +756,6 @@ class Game {
     this.stats.setTime(this.world.time);
     window.requestAnimationFrame(this.loop.bind(this));
   }
-
-  initControls() {
-    window.addEventListener('keydown', (e) => {
-      const control = VALUES.controls[e.code];
-      if (!this.running || !control || this.activeControls.has(control)) return;
-      this.activeControls.add(control);
-    });
-    window.addEventListener('keyup', (e) => {
-      const control = VALUES.controls[e.code];
-      if (!this.activeControls.has(control)) return;
-      this.activeControls.delete(control);
-    });
-  }
 }
 
 class Stats {
@@ -779,5 +791,3 @@ class Stats {
     this.pointsElement.innerText = points;
   }
 }
-
-window.game = new Game();

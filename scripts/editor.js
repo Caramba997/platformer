@@ -1,28 +1,41 @@
-import { EDITORHTML } from '/editorhtml.js';
-import { EDITORVALUES } from '/editorvalues.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from '/classes.js';
-import { Graphics } from '/graphics.js';
+import { EDITORHTML } from './editorhtml.js';
+import { EDITORVALUES } from './editorvalues.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from './classes.js';
+import { Graphics } from './graphics.js';
 
-class Editor {
+export class Editor {
   constructor() {
+    this._keyDownListener = this.keyDownListener.bind(this);
+    this._keyUpListener = this.keyUpListener.bind(this);
     this.initListeners();
     this.initControls();
     this.initLevelSelector();
+    window.dispatchEvent(new CustomEvent('progress:executed'));
+  }
+
+  unload() {
+    if(this.game) this.game.stop();
+    window.removeEventListener('keydown', this._keyDownListener);
+    window.removeEventListener('keyup', this._keyUpListener);
   }
 
   initControls() {
-    window.addEventListener('keydown', (e) => {
-      if (!this.game || ['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
-      const control = EDITORVALUES.controls[e.code];
-      if (!this.game.running || !control || this.game.activeControls.has(control)) return;
-      this.game.activeControls.add(control);
-    });
-    window.addEventListener('keyup', (e) => {
-      if (!this.game) return;
-      const control = EDITORVALUES.controls[e.code];
-      if (!this.game.activeControls.has(control)) return;
-      this.game.activeControls.delete(control);
-    });
+    window.addEventListener('keydown', this._keyDownListener);
+    window.addEventListener('keyup', this._keyUpListener);
+  }
+
+  keyDownListener(e) {
+    if (!this.game || ['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
+    const control = EDITORVALUES.controls[e.code];
+    if (!this.game.running || !control || this.game.activeControls.has(control)) return;
+    this.game.activeControls.add(control);
+  }
+
+  keyUpListener(e) {
+    if (!this.game) return;
+    const control = EDITORVALUES.controls[e.code];
+    if (!this.game.activeControls.has(control)) return;
+    this.game.activeControls.delete(control);
   }
 
   initPropertiesView(location, id) {
@@ -40,8 +53,8 @@ class Editor {
     let thisProp;
     function addProperty(property, value) {
       let type = EDITORVALUES.propertyTypes[property] || 'text';
-      if (type === 'checkbox' && value) type += '" checked="checked"';
-      if (type === 'number') type += '" step="50"';
+      if (type === 'checkbox' && value) type += '" checked="checked';
+      if (type === 'number') type += '" step="50';
       let html;
       if (type === 'select') {
         html = EDITORHTML.propertySelect.replaceAll('{{property}}', property);
@@ -61,6 +74,14 @@ class Editor {
           }
           case 'World': {
             options = EDITORVALUES.backgroundTypes;
+            break;
+          }
+          case 'Player': {
+            options = EDITORVALUES.playerTypes;
+            break;
+          }
+          case 'Finish': {
+            options = EDITORVALUES.finishTypes;
             break;
           }
           default: {
@@ -315,7 +336,7 @@ class Editor {
       }
       window.addEventListener('world:loaded', () => {
         const playButton = document.querySelector('a[data-action="play"]');
-        playButton.href = playButton.getAttribute('data-href') + this.game.world.id;
+        playButton.href = '?page=game&level=' + this.game.world.id;
         this.initOutline();
         this.selectPropInOutline('player');
       }, { once: true });
@@ -333,7 +354,7 @@ class Editor {
       document.querySelector('[data-data="level"]').innerText = 'New level';
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
       const playButton = document.querySelector('a[data-action="play"]');
-      playButton.href = playButton.getAttribute('data-href') + this.game.world.id;
+      playButton.href = '?page=game&level=' + this.game.world.id;
       this.initOutline();
     });
     // Save level
@@ -697,5 +718,3 @@ class Game {
     }
   }
 }
-
-window.editor = new Editor();

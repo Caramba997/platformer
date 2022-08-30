@@ -48,7 +48,14 @@ const locales = {
     levelCompleteText: 'Herzlichen Glückwunsch, du hast das Level gemeistert!',
     centerPosition: 'Marker-Position',
     spawner: 'Spawner',
-    thumbnail: 'Vorschaubild generieren'
+    thumbnail: 'Vorschaubild generieren',
+    loading: 'Lade...',
+    statusInit: 'Initialisierung',
+    statusTextures: 'Lade Texturen',
+    statusSounds: 'Lade Sounds',
+    statusScripts: 'Lade Scripte',
+    statusExecution: 'Scripts ausführen',
+    statusLoaded: 'Laden erfolgreich'
   },
   EN: {
     undefined: '???',
@@ -99,16 +106,35 @@ const locales = {
     levelCompleteText: 'Congratulations, you finished the level!',
     centerPosition: 'Center position',
     spawner: 'Spawner',
-    thumbnail: 'Create thumbnail'
+    thumbnail: 'Create thumbnail',
+    loading: 'Loading...',
+    statusInit: 'Initialization',
+    statusTextures: 'Loading textures',
+    statusSounds: 'Loading sounds',
+    statusScripts: 'Loading scripts',
+    statusExecution: 'Executing scripts',
+    statusLoaded: 'Loading successfull'
   }
 }
 
 class Locales {
   constructor() {
     this.locales = locales;
-    this.language = localStorage.getItem('language') || 'DE';
+    if (!localStorage.getItem('language')) {
+      localStorage.setItem('language', 'DE');
+    }
+    this.language = localStorage.getItem('language');
     this.t = this.locales[this.language];
-    document.querySelectorAll('[data-t]').forEach((element) => {
+  }
+
+  changeLanguage(language) {
+    localStorage.setItem('language', language);
+    this.language = language;
+    this.t = this.locales[this.language];
+  }
+
+  translatePage(container) {
+    container.querySelectorAll('[data-t]').forEach((element) => {
       element.innerText = this.getTranslation(element.getAttribute('data-t'));
     });
   }

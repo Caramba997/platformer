@@ -38,6 +38,11 @@ a {
     text-decoration: none;
 }
 
+input[type="number"]::-webkit-outer-spin-button, 
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button !important;
+}
+
 [data-visible="false"] {
     display: none;
 }
@@ -106,4 +111,47 @@ span[data-t] {
     width: 100vw;
     height: 100vh;
     background: var(--color-overlay);
+}
+
+/* Loading */
+.Loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    background: black;
+}
+.Loading__Content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+.Loading__Text {
+    margin: 1rem;
+    font-size: 2rem;
+}
+.Loading__Progress {
+    display: flex;
+}
+.Loading__Bar {
+    border: 2px solid white;
+    height: 1rem;
+    width: 20vw;
+    padding: 2px;
+}
+.Loading__Bar--Inner {
+    height: 100%;
+    width: 0%;
+    background: white;
+    transition: width 0.2s;
+}.Loading__Step {
+    margin: 0.2rem;
+    height: 1rem;
+    font-size: 1rem;
 }

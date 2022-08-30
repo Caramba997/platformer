@@ -1,0 +1,75 @@
+<div id="head">
+    <link rel="stylesheet" href="styles/game.css">
+    <script type="module" src="scripts/values.js" defer></script>
+    <script type="module" src="scripts/classes.js" defer></script>
+    <script type="module" src="scripts/graphics.js" defer></script>
+    <script type="module" src="scripts/game.js" defer></script>
+</div>
+<div id="content">
+    <div class="Game">
+        <div class="Game__Container">
+            <canvas id="canvas" width="1600" height="900"></canvas>
+            <div class="Info">
+                <div class="stats">
+                    <div class="stats__level">
+                        <span data-t="level"></span>: <span id="level"></span>
+                    </div>
+                    <div class="stats__coins">
+                        <span data-t="coins"></span>: <span id="coins"></span>
+                    </div>
+                    <div class="stats__points">
+                        <span data-t="points"></span>: <span id="points"></span>
+                    </div>
+                    <div class="stats__time">
+                        <span data-t="time"></span>: <span id="time"></span>
+                    </div>
+                    <div class="stats__fps">
+                        <span data-t="fps"></span>: <span id="fps"></span>
+                    </div>
+                </div>
+                <div class="Actions">
+                    <button class="Action__Link" data-action="open-popup" data-control="start"><span data-t="mainMenu"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popups">
+        <div class="Popup" data-visible="false" data-popup="start">
+            <div class="Popup__Header">
+                <div class="Popup__Header--Title"><span data-t="pause"></span></div>
+                <button class="Popup__Header--Close" data-action="close-popup">X</button>
+            </div>
+            <hr>
+            <div class="Popup__Content">
+                <p class="text-center">
+                    <span data-t="backToMainMenu"></span>
+                </p>
+                <a class="Button Button--Link" data-href="menu"><span data-t="confirm"></span></a>
+            </div>
+        </div>
+        <div class="Popup" data-visible="false" data-popup="game-over">
+            <div class="Popup__Header">
+                <div class="Popup__Header--Title"><span data-t="gameOver"></span></div>
+            </div>
+            <hr>
+            <div class="Popup__Content">
+                <p class="text-center"><span data-t="gameOverText"></span></p>
+                <button class="Button" data-action="replay"><span data-t="replay"></span></button>
+                <a class="Button Button--Link mt-10" data-href="menu"><span data-t="backToStart"></span></a>
+            </div>
+        </div>
+        <div class="Popup" data-visible="false" data-popup="level-complete">
+            <div class="Popup__Header">
+                <div class="Popup__Header--Title"><span data-t="levelComplete"></span></div>
+            </div>
+            <hr>
+            <div class="Popup__Content">
+                <p class="text-center"><span data-t="levelCompleteText"></span></p>
+                <a class="Button Button--Link" data-href="menu"><span data-t="backToStart"></span></a>
+                <p class="text-center"><span data-t="or"></span></p>
+                <button class="Button" data-action="replay"><span data-t="replay"></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="PageOverlay" data-visible="false"></div>
+</div>
