@@ -77,7 +77,7 @@ export const VALUES = {
   propDefault: 'default',
   propSpeed: 0.08,
   shotCooldown: 1000,
-  spawnDistance: 2000,
+  spawnDistance: 3000,
   trashCans: ['props', 'items', 'shots', 'coinProps', 'enemies'],
   viewRatioX: 0.5,
   viewRatioY: 0.4,

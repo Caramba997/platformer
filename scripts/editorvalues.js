@@ -13,6 +13,7 @@ export const EDITORVALUES = {
   finishTypes: ['finishflag'],
   levels: ['level1', 'level2', 'dev'],
   moveSpeed: 1,
+  musicTypes: ['supermario', 'supermariodesert'],
   playerTypes: ['playernormal'],
   propDefaults: {
     staticprop: {
@@ -125,7 +126,8 @@ export const EDITORVALUES = {
     physics: 'checkbox',
     spawnRate: 'number',
     removeOnCollision: 'checkbox',
-    background: 'select'
+    background: 'select',
+    music: 'select'
   },
   propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomstem', 'rocketspawner'],
   skipProperties: ['hit', 'id', 'state', 'startX', 'startY', 'nextSpawn', 'spawner'],
@@ -133,7 +135,8 @@ export const EDITORVALUES = {
     world: {
       width: 5000,
       height: 4000,
-      background: 'forest'
+      background: 'forest',
+      music: 'supermario'
     },
     finish: {
       x: 4500,

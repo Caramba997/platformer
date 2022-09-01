@@ -267,8 +267,77 @@ const textures = [
 
 const sounds = [
   {
-    type: "changingtab",
-    src: "sounds/mixkit-arcade-retro-changing-tab-206.wav"
+    type: "jump",
+    src: "sounds/mixkit-quick-jump-arcade-game-239.wav"
+  },
+  {
+    type: "coin",
+    src: "sounds/mixkit-bonus-earned-in-video-game-2058.wav",
+    volume: 0.7
+  },
+  {
+    type: "kill",
+    src: "sounds/mixkit-creature-cry-of-hurt-2208.wav"
+  },
+  {
+    type: "jumpboost",
+    src: "sounds/mixkit-explainer-video-game-alert-sweep-236.wav"
+  },
+  {
+    type: "gameover",
+    src: "sounds/mixkit-player-losing-or-failing-2042.wav"
+  },
+  {
+    type: "powerup1",
+    src: "sounds/mixkit-player-boost-recharging-2040.wav"
+  },
+  {
+    type: "powerup2",
+    src: "sounds/mixkit-player-recharging-in-video-game-2041.wav"
+  },
+  {
+    type: "hit",
+    src: "sounds/mixkit-video-game-retro-click-237.wav"
+  },
+  {
+    type: "destroy",
+    src: "sounds/mixkit-arcade-mechanical-bling-210.wav"
+  },
+  {
+    type: "restart",
+    src: "sounds/mixkit-unlock-game-notification-253.wav"
+  },
+  {
+    type: "damage",
+    src: "sounds/mixkit-boxer-getting-hit-2055.wav"
+  },
+  {
+    type: "supermario",
+    src: "sounds/Super Mario Bros. Soundtrack.mp3",
+    loop: true,
+    volume: 0.5
+  },
+  {
+    type: "supermariodesert",
+    src: "sounds/Desert Theme - New Super Mario Bros. Wii.mp3",
+    loop: true,
+    volume: 0.5
+  },
+  {
+    type: "completed",
+    src: "sounds/mixkit-game-level-completed-2059.wav"
+  },
+  {
+    type: "itemspawn",
+    src: "sounds/mixkit-video-game-treasure-2066.wav"
+  },
+  {
+    type: "shoot",
+    src: "sounds/mixkit-small-hit-in-a-game-2072.wav"
+  },
+  {
+    type: "spawner",
+    src: "sounds/mixkit-neutral-bot-pinbal-tone-3137.wav"
   }
 ];
 
@@ -303,6 +372,8 @@ export class AssetLoader {
         window.dispatchEvent(new CustomEvent('progress:changed', { detail: progress }));
       });
       audio.setAttribute('data-sound', sound.type);
+      if (sound.loop) audio.loop = true;
+      if (sound.volume) audio.volume = sound.volume;
       audio.src = sound.src;
       window.sounds[sound.type] = audio;
     }

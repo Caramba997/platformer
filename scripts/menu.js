@@ -46,6 +46,19 @@
     });
   });
 
+  const soundButton = document.querySelector('[data-action="toggle-sound"]');
+  if (localStorage.getItem('sounds')) soundButton.setAttribute('data-sounds', localStorage.getItem('sounds'));
+  soundButton.addEventListener('click', (e) => {
+    if (e.target.getAttribute('data-sounds') === 'on') {
+      localStorage.setItem('sounds', 'off');
+      e.target.setAttribute('data-sounds', 'off');
+    }
+    else {
+      localStorage.setItem('sounds', 'on');
+      e.target.setAttribute('data-sounds', 'on');
+    }
+  });
+
   const languageSelector = document.querySelector('select[name="language"]');
   if (localStorage.getItem('language') !== languageSelector.value) {
     languageSelector.value = localStorage.getItem('language');

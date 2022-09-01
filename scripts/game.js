@@ -1,10 +1,12 @@
 import { VALUES } from './values.js';
 import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from './classes.js';
 import { Graphics } from './graphics.js';
+import { Sounds } from './sounds.js';
 
 export class Game {
   constructor() {
     this.graphics = new Graphics();
+    this.sounds = new Sounds();
     this.stats = new Stats();
     this.calcJumpParameters();
     this._keyDownListener = this.keyDownListener.bind(this);
@@ -63,6 +65,7 @@ export class Game {
         const popup = document.querySelector('.Popup[data-visible="true"]').getAttribute('data-popup');
         this.closePopup(popup);
         this.loadLevel(this.world.id);
+        this.sounds.play('restart');
       });
     });
   }
@@ -131,11 +134,13 @@ export class Game {
       if (player.grounded) {
         player.speedY = this.playerInitialJumpSpeed;
         player.grounded = false;
+        this.sounds.play('jump');
       }
     }
     if (player.state === VALUES.playerStates.fire && this.activeControls.has('shoot') && player.shotCooldown === 0) {
       this.world.shots.push(new Fire('fire' + Date.now(), player.x + VALUES.fireStart.x, player.y + VALUES.fireStart.y, player.forward));
       player.shotCooldown = VALUES.shotCooldown;
+      this.sounds.play('shoot');
     }
     else if (player.shotCooldown > 0) {
       player.shotCooldown = Math.max(0, player.shotCooldown - this.deltaTime);
@@ -182,6 +187,8 @@ export class Game {
               player.speedY = this.activeControls.has('jump') ? this.playerInitialJumpSpeed * VALUES.bounceJumpFactor : this.playerInitialJumpSpeed * VALUES.bounceFactor;
               this.world.points += VALUES.points.enemy;
               this.stats.setPoints(this.world.points);
+              this.sounds.play('kill');
+              this.sounds.play('jumpboost');
             }
             else {
               this.playerDamage();
@@ -271,6 +278,7 @@ export class Game {
       if (groundResult.ground.bounce) {
         player.speedY = this.activeControls.has('jump') ? this.playerInitialJumpSpeed * VALUES.bounceJumpFactor * groundResult.ground.bounceFactor : this.playerInitialJumpSpeed * VALUES.bounceFactor * groundResult.ground.bounceFactor;
         player.grounded = false;
+        this.sounds.play('jumpboost');
       }
       else {
         player.speedY = 0;
@@ -291,6 +299,7 @@ export class Game {
         if (prop.nextSpawn === 0) {
           this.world.enemies.push(new Enemy('rocket' + Date.now(), prop.x, prop.y + 13, 50, 25, 0, 0, 50, 25, 'rocket', false, true, true, prop.forward, prop.speedFactor, false, false, true, prop));
           prop.nextSpawn = prop.spawnRate * 1000;
+          this.sounds.play('spawner');
         }
         else {
           prop.nextSpawn = Math.max(prop.nextSpawn - this.deltaTime, 0);
@@ -360,6 +369,7 @@ export class Game {
             enemy.remove = true;
             this.world.points += VALUES.points.enemy;
             this.stats.setPoints(this.world.points);
+            this.sounds.play('kill');
           }
           break;
         }
@@ -517,6 +527,19 @@ export class Game {
           this.garbageCollection();
           window.requestAnimationFrame(this.render.bind(this));
           window.setTimeout(this.start.bind(this), VALUES.powerUpTime);
+          switch (item.powerup) {
+            case 'fire': {
+              this.sounds.play('powerup2');
+              break;
+            }
+            default: {
+              this.sounds.play('powerup1');
+              break;
+            }
+          }
+        }
+        else {
+          this.sounds.play('hit');
         }
         this.world.points += VALUES.points.item;
         this.stats.setPoints(this.world.points);
@@ -565,6 +588,7 @@ export class Game {
   handleBlockCollision(block) {
     if (block.breakable) {
       block.remove = true;
+      this.sounds.play('destroy');
     }
     else {
       if (block.item) {
@@ -578,6 +602,7 @@ export class Game {
         }
         const item = VALUES.items[type];
         this.world.items.push(new Item(block.id + 'item', block.x, block.y, type, item.moving, item.powerup, block));
+        this.sounds.play('itemspawn');
       }
       else if (block.hasCoin) {
         const coin = new Coin(block.id + 'coin', block.x, block.y);
@@ -590,6 +615,7 @@ export class Game {
         block.invisible = false;
       }
       block.hit = true;
+      this.sounds.play('hit');
     }
   }
 
@@ -598,6 +624,7 @@ export class Game {
     this.stats.setCoins(this.world.coins);
     this.world.points += VALUES.points.coin;
     this.stats.setPoints(this.world.points);
+    this.sounds.play('coin');
   }
 
   playerDamage() {
@@ -607,12 +634,14 @@ export class Game {
       player.invincible = VALUES.invincibleTime;
       player.speedX = 0.0;
       player.speedY = 0.0;
+      this.sounds.play('damage');
     }
     else if (player.state > VALUES.playerStates.normal) {
       this.setPlayerState(VALUES.playerStates.normal);
       player.invincible = VALUES.invincibleTime;
       player.speedX = 0.0;
       player.speedY = 0.0;
+      this.sounds.play('damage');
     }
     else {
       this.gameOver();
@@ -703,14 +732,18 @@ export class Game {
     this.oldTime = window.performance.now();
     this.running = true;
     window.requestAnimationFrame(this.loop.bind(this));
+    this.sounds.play(this.world.music);
   }
 
   stop() {
     this.running = false;
+    this.sounds.pause(this.world.music);
   }
 
   gameOver() {
+    this.render();
     this.openPopup('game-over');
+    this.sounds.play('gameover');
   }
 
   levelFinished() {
@@ -734,6 +767,8 @@ export class Game {
     }
     progress[this.world.id] = newLevelProgress;
     localStorage.setItem('progress', JSON.stringify(progress));
+    this.sounds.stop(this.world.music);
+    this.sounds.play('completed');
   }
 
   loop() {

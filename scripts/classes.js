@@ -152,6 +152,7 @@ export class World {
       this.width = defaults.world.width;
       this.height = defaults.world.height;
       this.background = defaults.world.background;
+      this.music = defaults.world.music;
       this.props = [];
       this.coinProps = [];
       this.enemies = [];
@@ -180,6 +181,7 @@ export class World {
         this.width = data.meta.width;
         this.height = data.meta.height;
         this.background = data.meta.background;
+        this.music = data.meta.music;
         this.props = [];
         for (let prop of data.staticProps) {
           const type = t.p(prop, 'type') || VALUES.propDefault;

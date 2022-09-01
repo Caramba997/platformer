@@ -73,7 +73,7 @@ export class Editor {
             break;
           }
           case 'World': {
-            options = EDITORVALUES.backgroundTypes;
+            options = property === 'background' ? EDITORVALUES.backgroundTypes : EDITORVALUES.musicTypes;
             break;
           }
           case 'Player': {
@@ -161,6 +161,7 @@ export class Editor {
       addProperty('name', this.game.world.name);
       addProperty('time', this.game.world.time);
       addProperty('background', this.game.world.background);
+      addProperty('music', this.game.world.music);
       addProperty('width', this.game.world.width);
       addProperty('height', this.game.world.height);
     }
@@ -548,6 +549,7 @@ export class Editor {
         name: world.name,
         time: world.time,
         background: world.background,
+        music: world.music,
         width: world.width,
         height: world.height
       },

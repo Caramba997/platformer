@@ -19,6 +19,17 @@ body {
     display: flex;
     gap: 5px;
 }
+.Actions [data-action="toggle-sound"] {
+    background-image: url(/images/SoundOn.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 2rem;
+    height: 2rem;
+    padding: 5px;
+}
+.Actions [data-action="toggle-sound"][data-sounds="off"] {
+    background-image: url(/images/SoundOff.png);
+}
 .Actions select {
     border: 2px solid white;
     padding: 5px;
@@ -57,7 +68,7 @@ body {
     justify-content: space-between;
 }
 .Level__Content[data-complete="true"] {
-    border: 5px solid rgba(0, 128, 0, 0.5);
+    border: 5px solid rgb(31, 124, 31);
 }
 .Level:hover {
     opacity: 0.6;
