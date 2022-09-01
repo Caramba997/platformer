@@ -1,5 +1,6 @@
 import { EDITORHTML } from './editorhtml.js';
 import { EDITORVALUES } from './editorvalues.js';
+import { VALUES } from './values.js';
 import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from './classes.js';
 import { Graphics } from './graphics.js';
 
@@ -77,7 +78,7 @@ export class Editor {
             break;
           }
           case 'Player': {
-            options = EDITORVALUES.playerTypes;
+            options = EDITORVALUES.playerStates;
             break;
           }
           case 'Finish': {
@@ -133,13 +134,14 @@ export class Editor {
         setProperty('class', 'World');
       }
       for (let [key, value] of Object.entries(prop)) {
+        if (EDITORVALUES.skipProperties.default.includes(key) || (EDITORVALUES.skipProperties[prop.constructor.name] && EDITORVALUES.skipProperties[prop.constructor.name].includes(key))) continue;
         if (value instanceof Object) {
           for (let [subkey, subvalue] of Object.entries(value)) {
-            if (!EDITORVALUES.skipProperties.includes(subkey)) addProperty(key + '.' + subkey, subvalue);
+            if (!(EDITORVALUES.skipProperties.default.includes(subkey) || (EDITORVALUES.skipProperties[prop.constructor.name] && EDITORVALUES.skipProperties[prop.constructor.name].includes(subkey)))) addProperty(key + '.' + subkey, subvalue);
           }
         }
         else {
-          if (!EDITORVALUES.skipProperties.includes(key)) addProperty(key, value);
+          addProperty(key, value);
         }
       }
       if (locationObject instanceof Array) {
@@ -225,13 +227,20 @@ export class Editor {
       propertyFixed = property;
     }
     locationFixed[propertyFixed] = value;
-    if (prop !== this.game.world) this.game.setCenter(prop);
-    if (property === 'id') {
+    if (id === 'player' && property === 'state') {
+      locationFixed.width = value === VALUES.playerStates.normal ? VALUES.playerWidth : VALUES.playerWidthSuper;
+      locationFixed.height = value === VALUES.playerStates.normal ? VALUES.playerHeight : VALUES.playerHeightSuper;
+    }
+    else if (property === 'initialForward') {
+      locationFixed.forward = value;
+    }
+    else if (property === 'id') {
       const outlineButton = document.querySelector('[data-action="show-properties"][data-id="' + id + '"]');
       outlineButton.querySelector('span:first-of-type').innerText = value;
       outlineButton.setAttribute('data-id', value);
       sidebarContent.setAttribute('data-id', value);
     }
+    if (prop !== this.game.world) this.game.setCenter(prop);
   }
 
   removeProp(e) {
@@ -555,7 +564,8 @@ export class Editor {
       },
       player: {
         x: world.player.x,
-        y: world.player.y
+        y: world.player.y,
+        state: world.player.state
       },
       finish: {
         x: world.finish.x,

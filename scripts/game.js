@@ -428,9 +428,10 @@ export class Game {
         return;
       }
       thisProp.speedY = Math.max(VALUES.maxFallSpeed, thisProp.speedY - this.deltaTime * VALUES.gravity);
+      const stayOnGroundOffset = thisProp.stayOnGround ? 1 : 0;
       for (let prop of this.world.props) {
         if (!prop.ground || prop.invisible) continue;
-        if (thisProp.speedY < 0 && prop.y + prop.height <= thisProp.lastY && prop.x <= thisProp.x + thisProp.width && prop.x + prop.width >= thisProp.x && prop.y + prop.height >= thisProp.y && prop.y <= thisProp.y) {
+        if (thisProp.speedY < 0 && prop.y + prop.height <= thisProp.lastY && prop.x <= thisProp.x + thisProp.width && prop.x + prop.width >= thisProp.x && prop.y + prop.height >= thisProp.y - stayOnGroundOffset && prop.y <= thisProp.y) {
           groundResult = {
             valid: true,
             speedY: 0.0,
@@ -476,6 +477,7 @@ export class Game {
           break;
         }
         // X-axis collisions
+        if (groundResult && groundResult.ground.y + groundResult.ground.height === prop.y + prop.height) continue;
         if (thisProp.speedX > 0) { // thisProp is going forward
           thisProp.speedX *= -1;
           thisProp.x = prop.x - thisProp.width - 1;
@@ -550,7 +552,7 @@ export class Game {
     if (player.invincible === 0) {
       for (let enemy of this.world.enemies) {
         if (enemy.remove) continue;
-        if (this.checkPlayerCollision(enemy)) {
+        if (this.checkPlayerCollision({x: enemy.x, y: enemy.y - 1, width: enemy.width, height: enemy.height})) {
           this.playerDamage();
           if (!this.running) return;
         }
@@ -743,6 +745,7 @@ export class Game {
   gameOver() {
     this.render();
     this.openPopup('game-over');
+    this.sounds.stop(this.world.music);
     this.sounds.play('gameover');
   }
 

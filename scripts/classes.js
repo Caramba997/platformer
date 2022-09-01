@@ -67,15 +67,17 @@ export class Finish extends InteractableProp {
 }
 
 export class Player extends Prop {
-  constructor(x, y) {
-    super('player', x, y, VALUES.playerWidthSuper, VALUES.playerHeightSuper, 'player');
+  constructor(x, y, state) {
+    const width = state === VALUES.playerStates.normal ? VALUES.playerWidth : VALUES.playerWidthSuper;
+    const height = state === VALUES.playerStates.normal ? VALUES.playerHeight : VALUES.playerHeightSuper;
+    super('player', x, y, width, height, 'player');
     this.lastY = 0;
     this.speedX = 0.0;
     this.speedY = 0.0;
     this.grounded = false;
     this.ground = null;
     this.forward = true;
-    this.state = VALUES.playerStates.super;
+    this.state = state;
     this.invincible = 0;
     this.shotCooldown = 0;
   }
@@ -158,7 +160,7 @@ export class World {
       this.enemies = [];
       this.finish = new Finish(defaults.finish.x, defaults.finish.y);
       this.props.push(new StaticProp('finishground', defaults.finish.x, defaults.finish.y, VALUES.finishWidth, VALUES.finishGroundHeight, 'finishground', true, true, false, 0));
-      this.player = new Player(defaults.player.x, defaults.player.y);
+      this.player = new Player(defaults.player.x, defaults.player.y, defaults.player.state);
       this.view = {
         width: VALUES.viewWidth,
         height: VALUES.viewHeight
@@ -207,7 +209,7 @@ export class World {
           this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner')));
         }
         this.finish = new Finish(data.finish.x, data.finish.y);
-        this.player = new Player(data.player.x, data.player.y);
+        this.player = new Player(data.player.x, data.player.y, data.player.state);
         this.view = {
           width: VALUES.viewWidth,
           height: VALUES.viewHeight

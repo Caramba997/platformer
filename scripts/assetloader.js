@@ -312,13 +312,19 @@ const sounds = [
     src: "sounds/mixkit-boxer-getting-hit-2055.wav"
   },
   {
-    type: "supermario",
+    type: "supermariomedley",
     src: "sounds/Super Mario Bros. Soundtrack.mp3",
     loop: true,
     volume: 0.5
   },
   {
-    type: "supermariodesert",
+    type: "mariobros",
+    src: "sounds/New Super Mario Bros Music; Main Theme.mp3",
+    loop: true,
+    volume: 0.5
+  },
+  {
+    type: "mariobrosdesert",
     src: "sounds/Desert Theme - New Super Mario Bros. Wii.mp3",
     loop: true,
     volume: 0.5

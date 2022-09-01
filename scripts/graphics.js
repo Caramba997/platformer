@@ -111,7 +111,7 @@ export class Graphics {
       texture = this.getTexture(moving.type);
     }
     if (!texture) {
-      console.warn('Unknown prop type: ' + prop.type);
+      console.warn('Unknown prop type: ' + moving.type);
       return;
     }
     const twidth = texture.getAttribute('data-width'),

@@ -1,6 +1,6 @@
 export class Sounds {
   constructor() {
-    if (!localStorage.getItem('sounds')) localStorage.setItem('sounds', 'true');
+    if (!localStorage.getItem('sounds')) localStorage.setItem('sounds', 'on');
     this.on = localStorage.getItem('sounds') === 'on';
     this.sounds = {};
     document.querySelectorAll('#sounds audio').forEach((audio) => {

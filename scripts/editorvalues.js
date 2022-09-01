@@ -13,8 +13,8 @@ export const EDITORVALUES = {
   finishTypes: ['finishflag'],
   levels: ['level1', 'level2', 'dev'],
   moveSpeed: 1,
-  musicTypes: ['supermario', 'supermariodesert'],
-  playerTypes: ['playernormal'],
+  musicTypes: ['supermariomedley', 'mariobros', 'mariobrosdesert'],
+  playerStates: ["normal", "super", "fire"],
   propDefaults: {
     staticprop: {
       x: 0,
@@ -127,10 +127,19 @@ export const EDITORVALUES = {
     spawnRate: 'number',
     removeOnCollision: 'checkbox',
     background: 'select',
-    music: 'select'
+    music: 'select',
+    state: 'select'
   },
   propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomstem', 'rocketspawner'],
-  skipProperties: ['hit', 'id', 'state', 'startX', 'startY', 'nextSpawn', 'spawner'],
+  skipProperties: {
+    Player: ['type', 'width', 'height', 'speedX', 'speedY', 'grounded', 'ground', 'forward', 'invincible'],
+    Finish: ['width', 'height', 'hitbox'],
+    Block: ['solid', 'ground', 'bounce', 'bounceFactor'],
+    MovingProp: ['speedX', 'speedY', 'moving'],
+    Enemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward'],
+    Coin: ['width', 'height', 'hitbox'],
+    default: ['hit', 'id', 'startX', 'startY', 'nextSpawn', 'spawner', 'shotCooldown', 'lastY']
+  },
   worldDefaults: {
     world: {
       width: 5000,
@@ -144,7 +153,8 @@ export const EDITORVALUES = {
     },
     player: {
       x: 100,
-      y: 100
+      y: 100,
+      state: 1
     },
     time: 180000
   }

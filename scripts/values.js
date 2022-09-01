@@ -61,9 +61,9 @@ export const VALUES = {
   playerHeightSuper: 100,
   playerSpeedGrowth: 0.002,
   playerStates: {
-    normal: 0,
-    super: 1,
-    fire: 2
+    normal: "normal",
+    super: "super",
+    fire: "fire"
   },
   playerWidth: 30,
   playerWidthSuper: 50,
