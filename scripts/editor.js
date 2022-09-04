@@ -55,7 +55,12 @@ export class Editor {
     function addProperty(property, value) {
       let type = EDITORVALUES.propertyTypes[property] || 'text';
       if (type === 'checkbox' && value) type += '" checked="checked';
-      if (type === 'number') type += '" step="50';
+      if (type === 'number' && ['bounceFactor', 'speedFactor', 'speedFactorX', 'speedFactorY'].includes(property)) {
+        type += '" step="0.1';
+      }
+      else if (type === 'number') {
+        type += '" step="50';
+      }
       let html;
       if (type === 'select') {
         html = EDITORHTML.propertySelect.replaceAll('{{property}}', property);
@@ -83,6 +88,10 @@ export class Editor {
           }
           case 'Finish': {
             options = EDITORVALUES.finishTypes;
+            break;
+          }
+          case 'Spawner': {
+            options = EDITORVALUES.spawnerTypes;
             break;
           }
           default: {
@@ -195,7 +204,7 @@ export class Editor {
           id = sidebarContent.getAttribute('data-id'),
           property = e.target.name,
           type = e.target.type,
-          value = type === 'checkbox' ? e.target.checked : type === 'number' ? parseInt(e.target.value) : e.target.value,
+          value = type === 'checkbox' ? e.target.checked : type === 'number' && e.target.step.includes('.') ? parseFloat(e.target.value) : type === 'number' ? parseInt(e.target.value) : e.target.value,
           locationObject = location ? this.game.world[location] : this.game.world;
     if (!this.checkValueValidity(value, type)) return;
     let prop;
@@ -373,9 +382,17 @@ export class Editor {
       document.querySelector('[data-text="level"]').value = levelData;
     });
     // Copy level data
-    document.querySelector('[data-action="copy-level"]').addEventListener('click', () => {
-      const levelData = JSON.stringify(this.createLevelJson());
-      navigator.clipboard.writeText(levelData);
+    document.querySelector('[data-action="copy-level"]').addEventListener('click', (e) => {
+      const levelData = JSON.stringify(this.createLevelJson()),
+            button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
+      button.classList.add('loading');
+      button.disabled = 'disabled';
+      navigator.clipboard.writeText(levelData).then(() => {
+        setTimeout(() => {
+          button.classList.remove('loading');
+          button.disabled = '';
+        }, 500);
+      });
     });
     // Create level thumbnail
     document.querySelector('[data-action="create-thumbnail"]').addEventListener('click', () => {
@@ -423,6 +440,10 @@ export class Editor {
           this.game.offset.y = e.target.value - this.game.center.y;
         }
       });
+    });
+    // Keep center checkbox
+    document.querySelector('[name="keepCenter"]').addEventListener('change', (e) => {
+      this.game.keepCenter = e.target.checked ? true : false;
     });
   }
 
@@ -579,7 +600,7 @@ export class Editor {
       for (let prop of worldLocation) {
         const propJson = { id: prop.id, class: prop.constructor.name };
         for (let [key, value] of Object.entries(prop)) {
-          if (!EDITORVALUES.skipProperties.includes(key)) {
+          if (!EDITORVALUES.skipProperties.default.includes(key)) {
             propJson[key] = value;
           }
         }
@@ -599,6 +620,7 @@ class Game {
     this.loadLevel(level);
     this.activeControls = new Set();
     this.pictureMode = false;
+    this.keepCenter = false;
   }
 
   loadLevel(level) {
@@ -633,8 +655,13 @@ class Game {
   }
 
   setCenter(prop) {
-    this.center = { ...prop};
-    this.offset = { x: 0, y: 0 };
+    if (this.keepCenter) {
+      this.offset = { x: (this.center.x + this.offset.x) - prop.x, y: (this.center.y + this.offset.y) - prop.y };
+    }
+    else {
+      this.offset = { x: 0, y: 0 };
+    }
+    this.center = { ...prop };
     this.center.type = 'default';
     this.refreshCenter();
   }

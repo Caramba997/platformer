@@ -55,7 +55,8 @@ const locales = {
     statusSounds: 'Lade Sounds',
     statusScripts: 'Lade Scripte',
     statusExecution: 'Scripts ausführen',
-    statusLoaded: 'Laden erfolgreich'
+    statusLoaded: 'Laden erfolgreich',
+    keepCenter: 'Marker-Position behalten'
   },
   EN: {
     undefined: '???',
@@ -84,7 +85,7 @@ const locales = {
     movingProp: 'Moving Prop',
     block: 'Block',
     enemy: 'Enemy',
-    coin: 'coin',
+    coin: 'Coin',
     create: 'Create',
     saveLevel: 'Save level',
     copy: 'Copy',
@@ -113,7 +114,8 @@ const locales = {
     statusSounds: 'Loading sounds',
     statusScripts: 'Loading scripts',
     statusExecution: 'Executing scripts',
-    statusLoaded: 'Loading successfull'
+    statusLoaded: 'Loading successfull',
+    keepCenter: 'Keep center position'
   }
 }
 

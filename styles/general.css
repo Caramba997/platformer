@@ -150,3 +150,27 @@ span[data-t] {
     height: 1rem;
     font-size: 1rem;
 }
+
+.loading {
+    color: transparent;
+    position: relative;
+}
+
+.loading::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: 3px solid rgb(97, 97, 97);
+    border-top: 3px solid rgb(45, 40, 78);
+    animation: loading-circle 1s linear 0s infinite;
+}
+
+@keyframes loading-circle {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}

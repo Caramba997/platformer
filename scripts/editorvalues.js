@@ -1,5 +1,5 @@
 export const EDITORVALUES = {
-  backgroundTypes: ['forest', 'desert'],
+  backgroundTypes: ['forest', 'desert', 'hills'],
   blockItemTypes: ['', 'default'],
   blockTypes: ['brick', 'brickhit', 'itemblock', 'itemblockhit', 'solidblock'],
   coinTypes: ['coin'],
@@ -11,9 +11,9 @@ export const EDITORVALUES = {
   },
   enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'toxicplant', 'rocket'],
   finishTypes: ['finishflag'],
-  levels: ['level1', 'level2', 'dev'],
+  levels: ['level1', 'level2', 'level3', 'dev'],
   moveSpeed: 1,
-  musicTypes: ['supermariomedley', 'mariobros', 'mariobrosdesert'],
+  musicTypes: ['supermariomedley', 'mariobros', 'mariobrosdesert', 'mariobrosathletic', 'mariobrostower', 'mariobrosunderwater'],
   playerStates: ["normal", "super", "fire"],
   propDefaults: {
     staticprop: {
@@ -120,6 +120,8 @@ export const EDITORVALUES = {
     initialForward: 'checkbox',
     stayOnGround: 'checkbox',
     speedFactor: 'number',
+    speedFactorX: 'number',
+    speedFactorY: 'number',
     forward: 'checkbox',
     bounce: 'checkbox',
     bounceFactor: 'number',
@@ -130,7 +132,7 @@ export const EDITORVALUES = {
     music: 'select',
     state: 'select'
   },
-  propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomstem', 'rocketspawner'],
+  propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem'],
   skipProperties: {
     Player: ['type', 'width', 'height', 'speedX', 'speedY', 'grounded', 'ground', 'forward', 'invincible'],
     Finish: ['width', 'height', 'hitbox'],
@@ -140,12 +142,13 @@ export const EDITORVALUES = {
     Coin: ['width', 'height', 'hitbox'],
     default: ['hit', 'id', 'startX', 'startY', 'nextSpawn', 'spawner', 'shotCooldown', 'lastY']
   },
+  spawnerTypes: ['rocketspawner'],
   worldDefaults: {
     world: {
       width: 5000,
       height: 4000,
       background: 'forest',
-      music: 'supermario'
+      music: 'mariobros'
     },
     finish: {
       x: 4500,

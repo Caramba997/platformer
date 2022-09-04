@@ -631,14 +631,14 @@ export class Game {
 
   playerDamage() {
     const player = this.world.player;
-    if (player.state > VALUES.playerStates.super) {
+    if (player.state === VALUES.playerStates.fire) {
       this.setPlayerState(VALUES.playerStates.super);
       player.invincible = VALUES.invincibleTime;
       player.speedX = 0.0;
       player.speedY = 0.0;
       this.sounds.play('damage');
     }
-    else if (player.state > VALUES.playerStates.normal) {
+    else if (player.state === VALUES.playerStates.super) {
       this.setPlayerState(VALUES.playerStates.normal);
       player.invincible = VALUES.invincibleTime;
       player.speedX = 0.0;

@@ -16,6 +16,14 @@ const textures = [
     height: "1800"
   },
   {
+    type: "hills",
+    src: "textures/HillsBackground.png",
+    imageWidth: "1600",
+    imageHeight: "1800",
+    width: "1600",
+    height: "1800"
+  },
+  {
     type: "playernormal",
     src: "textures/PlayerNormal.png",
     imageWidth: "100",
@@ -176,6 +184,14 @@ const textures = [
     height: "50"
   },
   {
+    type: "solidblock2",
+    src: "textures/SolidBlock2.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
     type: "finishground",
     src: "textures/FinishGround.png",
     imageWidth: "100",
@@ -234,6 +250,22 @@ const textures = [
   {
     type: "mushroomcap",
     src: "textures/MushroomCap.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "mushroomcapblue",
+    src: "textures/MushroomCapBlue.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "mushroomcapyellow",
+    src: "textures/MushroomCapYellow.png",
     imageWidth: "100",
     imageHeight: "100",
     width: "50",
@@ -326,6 +358,24 @@ const sounds = [
   {
     type: "mariobrosdesert",
     src: "sounds/Desert Theme - New Super Mario Bros. Wii.mp3",
+    loop: true,
+    volume: 0.5
+  },
+  {
+    type: "mariobrosathletic",
+    src: "sounds/New Super Mario Bros. Soundtrack - Athletic.mp3",
+    loop: true,
+    volume: 0.5
+  },
+  {
+    type: "mariobrostower",
+    src: "sounds/New Super Mario Bros. Soundtrack - Tower.mp3",
+    loop: true,
+    volume: 0.5
+  },
+  {
+    type: "mariobrosunderwater",
+    src: "sounds/New Super Mario Bros. Soundtrack - Underwater.mp3",
     loop: true,
     volume: 0.5
   },
