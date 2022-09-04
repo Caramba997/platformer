@@ -1,7 +1,7 @@
 import { EDITORHTML } from './editorhtml.js';
 import { EDITORVALUES } from './editorvalues.js';
 import { VALUES } from './values.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from './classes.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, FlyingEnemy, Coin, Block, Item, Fire, World } from './classes.js';
 import { Graphics } from './graphics.js';
 
 export class Editor {
@@ -66,6 +66,7 @@ export class Editor {
         html = EDITORHTML.propertySelect.replaceAll('{{property}}', property);
         let options;
         switch (thisProp.constructor.name) {
+          case 'FlyingEnemy':
           case 'Enemy': {
             options = EDITORVALUES.enemyTypes;
             break;
@@ -477,6 +478,13 @@ export class Editor {
       }
       case 'enemy': {
         prop = new Enemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactor, defaults.stayOnGround, defaults.physics, defaults.removeOnCollision);
+        this.game.world.enemies.push(prop);
+        propsOutline = outline.querySelector('[data-outline="enemies"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'enemies').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Enemy');
+        break;
+      }
+      case 'flyingenemy': {
+        prop = new FlyingEnemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
         this.game.world.enemies.push(prop);
         propsOutline = outline.querySelector('[data-outline="enemies"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'enemies').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Enemy');

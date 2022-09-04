@@ -88,6 +88,14 @@ const textures = [
     height: "50"
   },
   {
+    type: "wingman",
+    src: "textures/Wingman.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
     type: "grass",
     src: "textures/Grass.png",
     imageWidth: "100",

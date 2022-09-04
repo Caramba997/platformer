@@ -9,7 +9,7 @@ export const EDITORVALUES = {
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
-  enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'toxicplant', 'rocket'],
+  enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'rocket'],
   finishTypes: ['finishflag'],
   levels: ['level1', 'level2', 'level3', 'dev'],
   moveSpeed: 1,
@@ -71,6 +71,25 @@ export const EDITORVALUES = {
       removeOnCollision: false,
       spawner: null
     },
+    flyingenemy: {
+      x: 0,
+      y: 0,
+      width: 50,
+      height: 50,
+      hitx: 0,
+      hity: 0,
+      hitwidth: 50,
+      hitheight: 50,
+      invincible: false,
+      jumpable: true,
+      moving: true,
+      initialForward: false,
+      type: "wingman",
+      speedFactorX: 0,
+      speedFactorY: 1,
+      endX: 0,
+      endY: 0
+    },
     coin: {
       x: 0,
       y: 0
@@ -130,7 +149,8 @@ export const EDITORVALUES = {
     removeOnCollision: 'checkbox',
     background: 'select',
     music: 'select',
-    state: 'select'
+    state: 'select',
+    flying: 'checkbox'
   },
   propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem'],
   skipProperties: {
@@ -139,6 +159,7 @@ export const EDITORVALUES = {
     Block: ['solid', 'ground', 'bounce', 'bounceFactor'],
     MovingProp: ['speedX', 'speedY', 'moving'],
     Enemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward'],
+    FlyingEnemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward', 'speedFactor', 'startX', 'startY', 'stayOnGround', 'physics', 'removeOnCollision', 'flying'],
     Coin: ['width', 'height', 'hitbox'],
     default: ['hit', 'id', 'startX', 'startY', 'nextSpawn', 'spawner', 'shotCooldown', 'lastY']
   },
@@ -157,7 +178,7 @@ export const EDITORVALUES = {
     player: {
       x: 100,
       y: 100,
-      state: 1
+      state: 'super'
     },
     time: 180000
   }

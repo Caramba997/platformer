@@ -104,6 +104,21 @@ export class Enemy extends InteractableProp {
   }
 }
 
+export class FlyingEnemy extends Enemy {
+  constructor (id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactorX, speedFactorY, endX, endY) {
+    super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, 1, false, false, false, null);
+    this.speedFactorX = speedFactorX;
+    this.speedFactorY = speedFactorY;
+    this.endX = endX;
+    this.endY = endY;
+    this.speedX = speedFactorX * VALUES.propSpeed;
+    this.speedY = speedFactorY * VALUES.propSpeed;
+    this.startX = x;
+    this.startY = y;
+    this.flying = true;
+  }
+}
+
 export class Coin extends InteractableProp {
   constructor(id, x, y) {
     super(id, x, y, VALUES.blockSize, VALUES.blockSize, (VALUES.blockSize - VALUES.coinSize) / 2, (VALUES.blockSize - VALUES.coinSize) / 2, VALUES.coinSize, VALUES.coinSize, 'coin');
@@ -206,7 +221,12 @@ export class World {
         }
         this.enemies = [];
         for (let enemy of data.enemies) {
-          this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner')));
+          if (t.p(enemy, 'class') === 'FlyingEnemy') {
+            this.enemies.push(new FlyingEnemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactorX'), t.p(enemy, 'speedFactorY'), t.p(enemy, 'endX'), t.p(enemy, 'endY')));
+          }
+          else {
+            this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner')));
+          }
         }
         this.finish = new Finish(data.finish.x, data.finish.y);
         this.player = new Player(data.player.x, data.player.y, data.player.state);

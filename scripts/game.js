@@ -1,5 +1,5 @@
 import { VALUES } from './values.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, Coin, Block, Item, Fire, World } from './classes.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, FlyingEnemy, Coin, Block, Item, Fire, World } from './classes.js';
 import { Graphics } from './graphics.js';
 import { Sounds } from './sounds.js';
 
@@ -66,6 +66,12 @@ export class Game {
         this.closePopup(popup);
         this.loadLevel(this.world.id);
         this.sounds.play('restart');
+      });
+    });
+    // Back to menu
+    document.querySelectorAll('[data-href="menu"]').forEach((link) => {
+      link.addEventListener('click', () => {
+        this.sounds.stop(this.world.music);
       });
     });
   }
@@ -379,6 +385,26 @@ export class Game {
       if (!enemy.moving || enemy.remove) continue;
       if (enemy.physics) {
         this.processPropPhysics(enemy);
+      }
+      else if (enemy.flying) {
+        enemy.x += this.deltaTime * enemy.speedX;
+        enemy.y += this.deltaTime * enemy.speedY;
+        if (enemy.speedX > 0 && enemy.x >= enemy.endX) {
+          enemy.speedX *= -1;
+          enemy.x = enemy.endX;
+        }
+        else if (enemy.speedX < 0 && enemy.x <= enemy.startX) {
+          enemy.speedX *= -1;
+          enemy.x = enemy.startX;
+        }
+        if (enemy.speedY > 0 && enemy.y >= enemy.endY) {
+          enemy.speedY *= -1;
+          enemy.y = enemy.endY;
+        }
+        else if (enemy.speedY < 0 && enemy.y <= enemy.startY) {
+          enemy.speedY *= -1;
+          enemy.y = enemy.startY;
+        }
       }
       else {
         enemy.lastY = enemy.y;
