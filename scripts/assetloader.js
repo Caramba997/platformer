@@ -24,6 +24,14 @@ const textures = [
     height: "1800"
   },
   {
+    type: "cave",
+    src: "textures/CaveBackground.png",
+    imageWidth: "1600",
+    imageHeight: "1800",
+    width: "1600",
+    height: "1800"
+  },
+  {
     type: "playernormal",
     src: "textures/PlayerNormal.png",
     imageWidth: "100",
@@ -302,6 +310,38 @@ const textures = [
     imageHeight: "50",
     width: "50",
     height: "25"
+  },
+  {
+    type: "water",
+    src: "textures/Water.png",
+    imageWidth: "200",
+    imageHeight: "200",
+    width: "200",
+    height: "200"
+  },
+  {
+    type: "watertransparent",
+    src: "textures/WaterTransparent.png",
+    imageWidth: "200",
+    imageHeight: "200",
+    width: "200",
+    height: "200"
+  },
+  {
+    type: "watersurface",
+    src: "textures/WaterSurface.png",
+    imageWidth: "200",
+    imageHeight: "200",
+    width: "200",
+    height: "200"
+  },
+  {
+    type: "watersurfacetransparent",
+    src: "textures/WaterSurfaceTransparent.png",
+    imageWidth: "200",
+    imageHeight: "200",
+    width: "200",
+    height: "200"
   }
 ];
 

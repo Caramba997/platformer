@@ -15,7 +15,6 @@ export class Prop {
 export class StaticProp extends Prop {
   constructor(id, x, y, width, height, type, solid, ground, bounce, bounceFactor) {
     super(id, x, y, width, height, type);
-    this.id = id;
     this.solid = solid;
     this.ground = ground;
     this.bounce = bounce;
@@ -47,6 +46,14 @@ export class MovingProp extends StaticProp {
     this.startY = y;
     this.endX = endX;
     this.endY = endY;
+    this.groundedProps = new Set();
+  }
+}
+
+export class Water extends Prop {
+  constructor(id, x, y, width, height, type, isBottom) {
+    super(id, x, y, width, height, type);
+    this.isBottom = isBottom;
   }
 }
 
@@ -171,6 +178,7 @@ export class World {
       this.background = defaults.world.background;
       this.music = defaults.world.music;
       this.props = [];
+      this.water = [];
       this.coinProps = [];
       this.enemies = [];
       this.finish = new Finish(defaults.finish.x, defaults.finish.y);
@@ -214,6 +222,11 @@ export class World {
           else {
             this.props.push(new StaticProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor')));
           }
+        }
+        this.water = [];
+        for (let prop of data.waterProps) {
+          const type = t.p(prop, 'type') || VALUES.propDefault;
+          this.water.push(new Water(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'isBottom')));
         }
         this.coinProps = [];
         for (let coin of data.coins) {

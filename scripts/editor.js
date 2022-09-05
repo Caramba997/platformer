@@ -1,7 +1,7 @@
 import { EDITORHTML } from './editorhtml.js';
 import { EDITORVALUES } from './editorvalues.js';
 import { VALUES } from './values.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, FlyingEnemy, Coin, Block, Item, Fire, World } from './classes.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Water, Spawner, Finish, Player, Enemy, FlyingEnemy, Coin, Block, Item, Fire, World } from './classes.js';
 import { Graphics } from './graphics.js';
 
 export class Editor {
@@ -93,6 +93,10 @@ export class Editor {
           }
           case 'Spawner': {
             options = EDITORVALUES.spawnerTypes;
+            break;
+          }
+          case 'Water': {
+            options = EDITORVALUES.waterTypes;
             break;
           }
           default: {
@@ -294,6 +298,11 @@ export class Editor {
     for (let prop of world.enemies) {
       addPropHeading(enemiesOutline, 'enemies', prop.id, prop.constructor.name);
     }
+    const waterOutline = outline.querySelector('[data-outline="water"] .Outline__Item--Content');
+    waterOutline.innerHTML = '';
+    for (let prop of world.water) {
+      addPropHeading(waterOutline, 'water', prop.id, prop.constructor.name);
+    }
     const coinsOutline = outline.querySelector('[data-outline="coinProps"] .Outline__Item--Content');
     coinsOutline.innerHTML = '';
     for (let prop of world.coinProps) {
@@ -469,6 +478,20 @@ export class Editor {
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'MovingProp');
         break;
       }
+      case 'backgroundprop': {
+        prop = new StaticProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.bounce, defaults.bounceFactor);
+        this.game.world.props.push(prop);
+        propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'StaticProp');
+        break;
+      }
+      case 'water': {
+        prop = new Water(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.isBottom);
+        this.game.world.water.push(prop);
+        propsOutline = outline.querySelector('[data-outline="water"] .Outline__Item--Content');
+        html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'water').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Water');
+        break;
+      }
       case 'block': {
         prop = new Block(id, defaults.x, defaults.y, defaults.type, defaults.breakable, defaults.hasCoin, defaults.invisible, defaults.item);
         this.game.world.props.push(prop);
@@ -541,6 +564,12 @@ export class Editor {
           return prop;
         }
       }
+      for (let prop of world.water) {
+        if (prop.id === game.center.id) continue;
+        if (checkPointInProp(x, y, prop)) {
+          return prop;
+        }
+      }
       for (let prop of world.props) {
         if (prop.id === game.center.id) continue;
         if (checkPointInProp(x, y, prop)) {
@@ -601,6 +630,7 @@ export class Editor {
         y: world.finish.y
       },
       staticProps: [],
+      waterProps: [],
       coins: [],
       enemies: []
     }
@@ -616,6 +646,7 @@ export class Editor {
       }
     }
     convertProps(world.props, this.levelJson.staticProps);
+    convertProps(world.water, this.levelJson.waterProps);
     convertProps(world.enemies, this.levelJson.enemies);
     convertProps(world.coinProps, this.levelJson.coins);
     return this.levelJson;
@@ -753,6 +784,9 @@ class Game {
       graphics.drawMoving(enemy);
     }
     graphics.drawMoving(this.world.player);
+    for (let water of this.world.water) {
+      graphics.drawWater(water);
+    }
     if (!this.pictureMode) {
       graphics.drawProp(this.center);
       graphics.drawProp({

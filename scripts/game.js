@@ -1,5 +1,5 @@
 import { VALUES } from './values.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Spawner, Finish, Player, Enemy, FlyingEnemy, Coin, Block, Item, Fire, World } from './classes.js';
+import { Prop, StaticProp, InteractableProp, MovingProp, Water, Spawner, Finish, Player, Enemy, FlyingEnemy, Coin, Block, Item, Fire, World } from './classes.js';
 import { Graphics } from './graphics.js';
 import { Sounds } from './sounds.js';
 
@@ -36,7 +36,7 @@ export class Game {
 
   keyDownListener(e) {
     const control = VALUES.controls[e.code];
-    if (!this.running || !control || this.activeControls.has(control)) return;
+    if (!this.running || !control || this.activeControls.has(control) || e.repeat) return;
     this.activeControls.add(control);
   }
 
@@ -96,6 +96,9 @@ export class Game {
     const gradient = 2 * VALUES.maxJumpHeight / (VALUES.jumpTime * VALUES.jumpTime);
     this.playerInitialJumpSpeed = gradient * VALUES.jumpTime;
     this.playerSpeedShrinkY = gradient;
+    const waterGradient = 2 * VALUES.maxWaterJumpHeight / (VALUES.jumpTimeWater * VALUES.jumpTimeWater);
+    this.playerInitialJumpSpeedWater = waterGradient * VALUES.jumpTimeWater;
+    this.playerSpeedShrinkYWater = waterGradient;
   }
 
   loadLevel(level) {
@@ -112,35 +115,71 @@ export class Game {
 
   processInput() {
     const player = this.world.player;
-    let maxSpeedX = this.activeControls.has('run') ? VALUES.maxPlayerRunSpeed : VALUES.maxPlayerWalkSpeed;
     if (this.activeControls.has('pause')) {
       this.openPopup('start');
       this.activeControls.delete('pause');
       return;
     }
-    if (this.activeControls.has('right')) {
-      if (player.speedX > maxSpeedX) maxSpeedX = player.speedX - this.deltaTime * VALUES.playerSpeedGrowth;
-      player.speedX = Math.min(maxSpeedX, player.speedX + this.deltaTime * VALUES.playerSpeedGrowth);
-    }
-    else {
-      if (player.speedX > 0) {
-        player.speedX = Math.max(0.0, player.speedX - this.deltaTime * VALUES.playerSpeedGrowth);
+    player.inWater = this.checkInWater(player, true);
+    if (player.inWater) {
+      let maxSpeedX = this.activeControls.has('run') ? VALUES.maxWaterSpeedRunX : VALUES.maxWaterSpeedX;
+      if (this.activeControls.has('right')) {
+        if (player.speedX > maxSpeedX) maxSpeedX = player.speedX - this.deltaTime * VALUES.playerSpeedGrowthWater;
+        player.speedX = Math.min(maxSpeedX, player.speedX + this.deltaTime * VALUES.playerSpeedGrowthWater);
       }
-    }
-    if (this.activeControls.has('left')) {
-      if (player.speedX > maxSpeedX) maxSpeedX = player.speedX - this.deltaTime * VALUES.playerSpeedGrowth;
-      player.speedX = Math.max(-maxSpeedX, player.speedX - this.deltaTime * VALUES.playerSpeedGrowth);
-    }
-    else {
-      if (player.speedX < 0) {
-        player.speedX = Math.min(0.0, player.speedX + this.deltaTime * VALUES.playerSpeedGrowth);
+      else {
+        if (player.speedX > 0) {
+          player.speedX = Math.max(0.0, player.speedX - this.deltaTime * VALUES.playerSpeedGrowthWater);
+        }
       }
-    }
-    if (this.activeControls.has('jump')) {
-      if (player.grounded) {
-        player.speedY = this.playerInitialJumpSpeed;
+      if (this.activeControls.has('left')) {
+        if (player.speedX > maxSpeedX) maxSpeedX = player.speedX - this.deltaTime * VALUES.playerSpeedGrowthWater;
+        player.speedX = Math.max(-maxSpeedX, player.speedX - this.deltaTime * VALUES.playerSpeedGrowthWater);
+      }
+      else {
+        if (player.speedX < 0) {
+          player.speedX = Math.min(0.0, player.speedX + this.deltaTime * VALUES.playerSpeedGrowthWater);
+        }
+      }
+      if (this.activeControls.has('jump')) {
+        if (!this.checkInWater({ x: player.x, y: player.y + player.height / 2, width: player.width, height: player.height / 2 }, false)) {
+          player.speedY = this.playerInitialJumpSpeed * VALUES.playerWaterLeaveSpeedFactor;
+        }
+        else {
+          player.speedY = this.playerInitialJumpSpeedWater;
+          this.activeControls.delete('jump');
+        }
         player.grounded = false;
         this.sounds.play('jump');
+      }
+    }
+    else {
+      let maxSpeedX = this.activeControls.has('run') ? VALUES.maxPlayerRunSpeed : VALUES.maxPlayerWalkSpeed;
+      if (this.activeControls.has('right')) {
+        if (player.speedX > maxSpeedX) maxSpeedX = player.speedX - this.deltaTime * VALUES.playerSpeedGrowth;
+        player.speedX = Math.min(maxSpeedX, player.speedX + this.deltaTime * VALUES.playerSpeedGrowth);
+      }
+      else {
+        if (player.speedX > 0) {
+          player.speedX = Math.max(0.0, player.speedX - this.deltaTime * VALUES.playerSpeedGrowth);
+        }
+      }
+      if (this.activeControls.has('left')) {
+        if (player.speedX > maxSpeedX) maxSpeedX = player.speedX - this.deltaTime * VALUES.playerSpeedGrowth;
+        player.speedX = Math.max(-maxSpeedX, player.speedX - this.deltaTime * VALUES.playerSpeedGrowth);
+      }
+      else {
+        if (player.speedX < 0) {
+          player.speedX = Math.min(0.0, player.speedX + this.deltaTime * VALUES.playerSpeedGrowth);
+        }
+      }
+      if (this.activeControls.has('jump')) {
+        if (player.grounded) {
+          player.speedY = this.playerInitialJumpSpeed;
+          player.grounded = false;
+          if (player.ground.moving) player.ground.groundedProps.delete(player);
+          this.sounds.play('jump');
+        }
       }
     }
     if (player.state === VALUES.playerStates.fire && this.activeControls.has('shoot') && player.shotCooldown === 0) {
@@ -170,10 +209,7 @@ export class Game {
       const prop = player.ground;
       if (prop.x > player.x + player.width || prop.x + prop.width < player.x) {
         player.grounded = false;
-      }
-      else if (prop.moving) {
-        player.x += prop.speedX * this.deltaTime;
-        player.y += prop.speedY * this.deltaTime;
+        if (prop.moving) prop.groundedProps.delete(player);
       }
     }
     let groundResult = null;
@@ -183,7 +219,7 @@ export class Game {
         this.gameOver();
         return;
       }
-      player.speedY = Math.max(VALUES.maxFallSpeed, player.speedY - this.deltaTime * this.playerSpeedShrinkY);
+      player.speedY = player.inWater ? Math.max(VALUES.maxWaterSinkSpeed, player.speedY - this.deltaTime * this.playerSpeedShrinkYWater) : Math.max(VALUES.maxFallSpeed, player.speedY - this.deltaTime * this.playerSpeedShrinkY);
       if (player.invincible === 0) {
         for (let enemy of this.world.enemies) {
           if (player.speedY < 0 && enemy.y + enemy.height <= player.lastY && enemy.x <= player.x + player.width && enemy.x + enemy.width >= player.x && enemy.y + enemy.height >= player.y && enemy.y <= player.y) {
@@ -291,46 +327,12 @@ export class Game {
         player.grounded = groundResult.grounded;
         player.ground = groundResult.ground;
         player.y = groundResult.y;
-        if (player.ground.moving) {
-          player.x += player.ground.speedX * this.deltaTime;
-          player.y += player.ground.speedY * this.deltaTime;
-        }
+        if (player.ground.moving) player.ground.groundedProps.add(player);
       }
     }
   }
 
   processPropActions() {
-    for (let prop of this.world.props) {
-      if (prop.constructor.name === 'Spawner' && Math.abs(prop.x - this.world.player.x) < VALUES.spawnDistance) {
-        if (prop.nextSpawn === 0) {
-          this.world.enemies.push(new Enemy('rocket' + Date.now(), prop.x, prop.y + 13, 50, 25, 0, 0, 50, 25, 'rocket', false, true, true, prop.forward, prop.speedFactor, false, false, true, prop));
-          prop.nextSpawn = prop.spawnRate * 1000;
-          this.sounds.play('spawner');
-        }
-        else {
-          prop.nextSpawn = Math.max(prop.nextSpawn - this.deltaTime, 0);
-        }
-      }
-      if (!prop.moving) continue;
-      prop.x += this.deltaTime * prop.speedX;
-      prop.y += this.deltaTime * prop.speedY;
-      if (prop.speedX > 0 && prop.x >= prop.endX) {
-        prop.speedX *= -1;
-        prop.x = prop.endX;
-      }
-      else if (prop.speedX < 0 && prop.x <= prop.startX) {
-        prop.speedX *= -1;
-        prop.x = prop.startX;
-      }
-      if (prop.speedY > 0 && prop.y >= prop.endY) {
-        prop.speedY *= -1;
-        prop.y = prop.endY;
-      }
-      else if (prop.speedY < 0 && prop.y <= prop.startY) {
-        prop.speedY *= -1;
-        prop.y = prop.startY;
-      }
-    }
     for (let item of this.world.items) {
       if (item.state === VALUES.itemStates.spawn) {
         item.y += this.deltaTime * VALUES.itemSpeed;
@@ -423,10 +425,61 @@ export class Game {
         }
       }
     }
+    for (let prop of this.world.props) {
+      if (prop.constructor.name === 'Spawner' && Math.abs(prop.x - this.world.player.x) < VALUES.spawnDistance) {
+        if (prop.nextSpawn === 0) {
+          this.world.enemies.push(new Enemy('rocket' + Date.now(), prop.x, prop.y + 13, 50, 25, 0, 0, 50, 25, 'rocket', false, true, true, prop.forward, prop.speedFactor, false, false, true, prop));
+          prop.nextSpawn = prop.spawnRate * 1000;
+          this.sounds.play('spawner');
+        }
+        else {
+          prop.nextSpawn = Math.max(prop.nextSpawn - this.deltaTime, 0);
+        }
+      }
+      if (!prop.moving) continue;
+      prop.x += this.deltaTime * prop.speedX;
+      prop.y += this.deltaTime * prop.speedY;
+      let moveX = this.deltaTime * prop.speedX,
+          moveY = this.deltaTime * prop.speedY;
+      if (prop.speedX > 0 && prop.x >= prop.endX) {
+        moveX = moveX - (prop.x - prop.endX);
+        prop.speedX *= -1;
+        prop.x = prop.endX;
+      }
+      else if (prop.speedX < 0 && prop.x <= prop.startX) {
+        moveX = moveX + (prop.startX - prop.x);
+        prop.speedX *= -1;
+        prop.x = prop.startX;
+      }
+      if (prop.speedY > 0 && prop.y >= prop.endY) {
+        moveY = moveY - (prop.y - prop.endY);
+        prop.speedY *= -1;
+        prop.y = prop.endY;
+      }
+      else if (prop.speedY < 0 && prop.y <= prop.startY) {
+        moveY = moveY + (prop.startY - prop.y);
+        prop.speedY *= -1;
+        prop.y = prop.startY;
+      }
+      prop.groundedProps.forEach((groundedProp) => {
+        groundedProp.y += moveY;
+        groundedProp.x += moveX;
+      });
+    }
   }
 
   processPropPhysics(thisProp) {
     thisProp.lastY = thisProp.y;
+    const inWater = this.checkInWater(thisProp, true);
+    if (inWater !== thisProp.inWater) {
+      if (inWater) {
+        thisProp.speedX = thisProp.speedFactor * VALUES.maxEnemyWaterSpeed * (thisProp.forward ? 1 : -1);
+      }
+      else {
+        thisProp.speedX = thisProp.speedFactor * VALUES.maxEnemySpeed * (thisProp.forward ? 1 : -1);
+      }
+      thisProp.inWater = inWater;
+    }
     thisProp.x += thisProp.speedX * this.deltaTime;
     thisProp.y += thisProp.speedY * this.deltaTime;
     if (thisProp.forward && thisProp.speedX < 0) {
@@ -440,10 +493,7 @@ export class Game {
       const prop = thisProp.ground;
       if (prop.x > thisProp.x + thisProp.width || prop.x + prop.width < thisProp.x) {
         thisProp.grounded = false;
-      }
-      else if (thisProp.ground.moving) {
-        thisProp.x += thisProp.ground.speedX * this.deltaTime;
-        thisProp.y += thisProp.ground.speedY * this.deltaTime;
+        if (prop.moving) prop.groundedProps.delete(thisProp);
       }
     }
     let groundResult = null;
@@ -453,7 +503,7 @@ export class Game {
         thisProp.remove = true;
         return;
       }
-      thisProp.speedY = Math.max(VALUES.maxFallSpeed, thisProp.speedY - this.deltaTime * VALUES.gravity);
+      thisProp.speedY = thisProp.inWater ? Math.max(VALUES.maxWaterSinkSpeed, thisProp.speedY - this.deltaTime * this.playerSpeedShrinkYWater) : Math.max(VALUES.maxFallSpeed, thisProp.speedY - this.deltaTime * VALUES.gravity);
       const stayOnGroundOffset = thisProp.stayOnGround ? 1 : 0;
       for (let prop of this.world.props) {
         if (!prop.ground || prop.invisible) continue;
@@ -523,10 +573,7 @@ export class Game {
       thisProp.grounded = groundResult.grounded;
       thisProp.ground = groundResult.ground;
       thisProp.y = groundResult.y;
-      if (thisProp.ground.moving) {
-        thisProp.x += this.deltaTime * thisProp.ground.speedX;
-        thisProp.y += this.deltaTime * thisProp.ground.speedY;
-      }
+      if (thisProp.ground.moving) thisProp.ground.groundedProps.add(thisProp);
     }
     else if (!thisProp.grounded && thisProp.stayOnGround) {
       thisProp.speedX *= -1;
@@ -534,7 +581,7 @@ export class Game {
       thisProp.grounded = true;
       const ground = thisProp.ground;
       thisProp.x = ground.x > thisProp.x + thisProp.width ? ground.x - thisProp.width : ground.x + ground.width;
-      if (ground.moving) thisProp.x += this.deltaTime * ground.speedX;
+      if (ground.moving) ground.groundedProps.add(thisProp);
     }
   }
 
@@ -611,6 +658,13 @@ export class Game {
 
   checkCollision(p1, p2) {
     return p1.x <= p2.x + p2.width && p1.x + p1.width >= p2.x && p1.y <= p2.y + p2.height && p1.y + p1.height >= p2.y;
+  }
+
+  checkInWater(prop, reduce) {
+    const hitbox = reduce ? { x: prop.x + prop.width / 4, y: prop.y + prop.height / 4, width: prop.width / 2, height: prop.height / 2 } : prop;
+    for (let water of this.world.water) {
+      if (this.checkCollision(hitbox, water)) return true;
+    }
   }
 
   handleBlockCollision(block) {
@@ -754,6 +808,9 @@ export class Game {
       graphics.drawProp(shot);
     }
     graphics.drawMoving(this.world.player);
+    for (let water of this.world.water) {
+      graphics.drawWater(water);
+    }
   }
 
   start() {

@@ -1,5 +1,5 @@
 export const EDITORVALUES = {
-  backgroundTypes: ['forest', 'desert', 'hills'],
+  backgroundTypes: ['forest', 'desert', 'hills', 'cave'],
   blockItemTypes: ['', 'default'],
   blockTypes: ['brick', 'brickhit', 'itemblock', 'itemblockhit', 'solidblock'],
   coinTypes: ['coin'],
@@ -11,7 +11,7 @@ export const EDITORVALUES = {
   },
   enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'rocket'],
   finishTypes: ['finishflag'],
-  levels: ['level1', 'level2', 'level3', 'dev'],
+  levels: ['level1', 'level2', 'level3', 'level4', 'dev'],
   moveSpeed: 1,
   musicTypes: ['supermariomedley', 'mariobros', 'mariobrosdesert', 'mariobrosathletic', 'mariobrostower', 'mariobrosunderwater'],
   playerStates: ["normal", "super", "fire"],
@@ -41,6 +41,25 @@ export const EDITORVALUES = {
       speedFactorY: 0,
       endX: 200,
       endY: 0
+    },
+    backgroundprop: {
+      x: 0,
+      y: 0,
+      width: 50,
+      height: 50,
+      type: 'solidblock2',
+      solid: false,
+      ground: false,
+      bounce: false,
+      bounceFactor: 0
+    },
+    water: {
+      x: 0,
+      y: 0,
+      width: 50,
+      height: 50,
+      type: 'watertransparent',
+      isBottom: true
     },
     block: {
       x: 0,
@@ -150,9 +169,10 @@ export const EDITORVALUES = {
     background: 'select',
     music: 'select',
     state: 'select',
-    flying: 'checkbox'
+    flying: 'checkbox',
+    isBottom: 'checkbox'
   },
-  propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem'],
+  propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem', 'water', 'watersurface'],
   skipProperties: {
     Player: ['type', 'width', 'height', 'speedX', 'speedY', 'grounded', 'ground', 'forward', 'invincible'],
     Finish: ['width', 'height', 'hitbox'],
@@ -161,9 +181,11 @@ export const EDITORVALUES = {
     Enemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward'],
     FlyingEnemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward', 'speedFactor', 'startX', 'startY', 'stayOnGround', 'physics', 'removeOnCollision', 'flying'],
     Coin: ['width', 'height', 'hitbox'],
-    default: ['hit', 'id', 'startX', 'startY', 'nextSpawn', 'spawner', 'shotCooldown', 'lastY']
+    Water: ['waterAnimationOffsetX', 'waterAnimationOffsetY', 'waterAnimationSpeedY'],
+    default: ['hit', 'id', 'startX', 'startY', 'nextSpawn', 'spawner', 'shotCooldown', 'lastY', 'groundedProps']
   },
   spawnerTypes: ['rocketspawner'],
+  waterTypes: ['watertransparent', 'watersurfacetransparent'],
   worldDefaults: {
     world: {
       width: 5000,

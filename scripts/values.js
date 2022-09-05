@@ -51,20 +51,28 @@ export const VALUES = {
     move: 1
   },
   jumpTime: 300.0,
+  jumpTimeWater: 300.0,
   maxEnemySpeed: 0.07,
+  maxEnemyWaterSpeed: 0.03,
   maxJumpHeight: 220.0,
   maxPlayerRunSpeed: 0.8,
   maxFallSpeed: -1.3,
   maxPlayerWalkSpeed: 0.5,
+  maxWaterSinkSpeed: -0.2,
+  maxWaterSpeedRunX: 0.4,
+  maxWaterSpeedX: 0.2,
+  maxWaterJumpHeight: 40,
   parallaxFactor: 0.5,
   playerHeight: 60,
   playerHeightSuper: 100,
   playerSpeedGrowth: 0.002,
+  playerSpeedGrowthWater: 0.001,
   playerStates: {
     normal: "normal",
     super: "super",
     fire: "fire"
   },
+  playerWaterLeaveSpeedFactor: 0.8,
   playerWidth: 30,
   playerWidthSuper: 50,
   points: {

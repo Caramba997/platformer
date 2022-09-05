@@ -57,7 +57,9 @@ const locales = {
     statusScripts: 'Lade Scripte',
     statusExecution: 'Scripts ausführen',
     statusLoaded: 'Laden erfolgreich',
-    keepCenter: 'Marker-Position behalten'
+    keepCenter: 'Marker-Position behalten',
+    backgroundProp: 'Hintergrund-Objekt',
+    water: 'Wasser'
   },
   EN: {
     undefined: '???',
@@ -117,7 +119,9 @@ const locales = {
     statusScripts: 'Loading scripts',
     statusExecution: 'Executing scripts',
     statusLoaded: 'Loading successfull',
-    keepCenter: 'Keep center position'
+    keepCenter: 'Keep center position',
+    backgroundProp: 'Background Prop',
+    water: 'Water'
   }
 }
 
