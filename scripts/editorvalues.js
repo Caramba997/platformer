@@ -9,7 +9,7 @@ export const EDITORVALUES = {
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
-  enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'rocket'],
+  enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'fish', 'rocket'],
   finishTypes: ['finishflag'],
   levels: ['level1', 'level2', 'level3', 'level4', 'dev'],
   moveSpeed: 1,
@@ -59,7 +59,7 @@ export const EDITORVALUES = {
       width: 50,
       height: 50,
       type: 'watertransparent',
-      isBottom: true
+      isTop: false
     },
     block: {
       x: 0,
@@ -170,9 +170,10 @@ export const EDITORVALUES = {
     music: 'select',
     state: 'select',
     flying: 'checkbox',
-    isBottom: 'checkbox'
+    isTop: 'checkbox',
+    verticalParallax: 'checkbox'
   },
-  propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem', 'water', 'watersurface'],
+  propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'rocks', 'rockstop', 'rockstopdirt', 'rockstopsand', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem', 'water', 'watersurface'],
   skipProperties: {
     Player: ['type', 'width', 'height', 'speedX', 'speedY', 'grounded', 'ground', 'forward', 'invincible'],
     Finish: ['width', 'height', 'hitbox'],
@@ -191,7 +192,8 @@ export const EDITORVALUES = {
       width: 5000,
       height: 4000,
       background: 'forest',
-      music: 'mariobros'
+      music: 'mariobros',
+      verticalParallax: true
     },
     finish: {
       x: 4500,

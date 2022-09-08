@@ -394,10 +394,12 @@ export class Game {
         if (enemy.speedX > 0 && enemy.x >= enemy.endX) {
           enemy.speedX *= -1;
           enemy.x = enemy.endX;
+          enemy.forward = false;
         }
         else if (enemy.speedX < 0 && enemy.x <= enemy.startX) {
           enemy.speedX *= -1;
           enemy.x = enemy.startX;
+          enemy.forward = true;
         }
         if (enemy.speedY > 0 && enemy.y >= enemy.endY) {
           enemy.speedY *= -1;

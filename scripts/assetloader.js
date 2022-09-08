@@ -168,6 +168,38 @@ const textures = [
     height: "50"
   },
   {
+    type: "rocks",
+    src: "textures/Rocks.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "rockstop",
+    src: "textures/RocksTop.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "rockstopdirt",
+    src: "textures/RocksTopDirt.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
+    type: "rockstopsand",
+    src: "textures/RocksTopSand.png",
+    imageWidth: "100",
+    imageHeight: "100",
+    width: "50",
+    height: "50"
+  },
+  {
     type: "coin",
     src: "textures/Coin.png",
     imageWidth: "100",
@@ -310,6 +342,14 @@ const textures = [
     imageHeight: "50",
     width: "50",
     height: "25"
+  },
+  {
+    type: "fish",
+    src: "textures/Fish.png",
+    imageWidth: "100",
+    imageHeight: "80",
+    width: "50",
+    height: "40"
   },
   {
     type: "water",

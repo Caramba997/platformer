@@ -51,9 +51,9 @@ export class MovingProp extends StaticProp {
 }
 
 export class Water extends Prop {
-  constructor(id, x, y, width, height, type, isBottom) {
+  constructor(id, x, y, width, height, type, isTop) {
     super(id, x, y, width, height, type);
-    this.isBottom = isBottom;
+    this.isTop = isTop;
   }
 }
 
@@ -177,6 +177,7 @@ export class World {
       this.height = defaults.world.height;
       this.background = defaults.world.background;
       this.music = defaults.world.music;
+      this.verticalParallax = defaults.world.verticalParallax;
       this.props = [];
       this.water = [];
       this.coinProps = [];
@@ -207,6 +208,7 @@ export class World {
         this.height = data.meta.height;
         this.background = data.meta.background;
         this.music = data.meta.music;
+        this.verticalParallax = data.meta.verticalParallax;
         this.props = [];
         for (let prop of data.staticProps) {
           const type = t.p(prop, 'type') || VALUES.propDefault;
@@ -226,7 +228,7 @@ export class World {
         this.water = [];
         for (let prop of data.waterProps) {
           const type = t.p(prop, 'type') || VALUES.propDefault;
-          this.water.push(new Water(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'isBottom')));
+          this.water.push(new Water(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'isTop')));
         }
         this.coinProps = [];
         for (let coin of data.coins) {

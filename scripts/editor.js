@@ -180,6 +180,7 @@ export class Editor {
       addProperty('music', this.game.world.music);
       addProperty('width', this.game.world.width);
       addProperty('height', this.game.world.height);
+      addProperty('verticalParallax', this.game.world.verticalParallax);
     }
     contentElement.querySelectorAll('input, select').forEach((input) => {
       input.addEventListener('change', this.updateProperty.bind(this));
@@ -244,6 +245,16 @@ export class Editor {
     if (id === 'player' && property === 'state') {
       locationFixed.width = value === VALUES.playerStates.normal ? VALUES.playerWidth : VALUES.playerWidthSuper;
       locationFixed.height = value === VALUES.playerStates.normal ? VALUES.playerHeight : VALUES.playerHeightSuper;
+    }
+    else if (location === 'enemies' && property === 'type') {
+      const texture = this.game.graphics.getTexture(value);
+      if (texture) {
+        locationFixed.width = texture.width;
+        locationFixed.height = texture.height;
+        locationFixed.hitbox.width = texture.width;
+        locationFixed.hitbox.height = texture.height;
+        this.initPropertiesView(location, id);
+      }
     }
     else if (property === 'initialForward') {
       locationFixed.forward = value;
@@ -486,7 +497,7 @@ export class Editor {
         break;
       }
       case 'water': {
-        prop = new Water(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.isBottom);
+        prop = new Water(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.isTop);
         this.game.world.water.push(prop);
         propsOutline = outline.querySelector('[data-outline="water"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'water').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Water');
@@ -618,7 +629,8 @@ export class Editor {
         background: world.background,
         music: world.music,
         width: world.width,
-        height: world.height
+        height: world.height,
+        verticalParallax: world.verticalParallax
       },
       player: {
         x: world.player.x,
