@@ -142,6 +142,8 @@ export const EDITORVALUES = {
     class: 'text',
     speedX: 'number',
     speedY: 'number',
+    startX: 'number',
+    startY: 'number',
     endX: 'number',
     endY: 'number',
     breakable: 'checkbox',
@@ -180,10 +182,10 @@ export const EDITORVALUES = {
     Block: ['solid', 'ground', 'bounce', 'bounceFactor'],
     MovingProp: ['speedX', 'speedY', 'moving'],
     Enemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward'],
-    FlyingEnemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward', 'speedFactor', 'startX', 'startY', 'stayOnGround', 'physics', 'removeOnCollision', 'flying'],
+    FlyingEnemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward', 'speedFactor', 'stayOnGround', 'physics', 'removeOnCollision', 'flying'],
     Coin: ['width', 'height', 'hitbox'],
     Water: ['waterAnimationOffsetX', 'waterAnimationOffsetY', 'waterAnimationSpeedY'],
-    default: ['hit', 'id', 'startX', 'startY', 'nextSpawn', 'spawner', 'shotCooldown', 'lastY', 'groundedProps']
+    default: ['hit', 'id', 'nextSpawn', 'spawner', 'shotCooldown', 'lastY', 'groundedProps']
   },
   spawnerTypes: ['rocketspawner'],
   waterTypes: ['watertransparent', 'watersurfacetransparent'],

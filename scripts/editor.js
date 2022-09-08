@@ -483,7 +483,7 @@ export class Editor {
         break;
       }
       case 'movingprop': {
-        prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.bounce, defaults.bounceFactor, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
+        prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.bounce, defaults.bounceFactor, defaults.speedFactorX, defaults.speedFactorY, defaults.x, defaults.y, defaults.endX, defaults.endY);
         this.game.world.props.push(prop);
         propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'MovingProp');
@@ -518,7 +518,7 @@ export class Editor {
         break;
       }
       case 'flyingenemy': {
-        prop = new FlyingEnemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactorX, defaults.speedFactorY, defaults.endX, defaults.endY);
+        prop = new FlyingEnemy(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.hitx, defaults.hity, defaults.hitwidth, defaults.hitheight, defaults.type, defaults.invincible, defaults.jumpable, defaults.moving, defaults.initialForward, defaults.speedFactorX, defaults.speedFactorY, defaults.x, defaults.y, defaults.endX, defaults.endY);
         this.game.world.enemies.push(prop);
         propsOutline = outline.querySelector('[data-outline="enemies"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'enemies').replaceAll('{{id}}', id).replaceAll('{{class}}', 'Enemy');
