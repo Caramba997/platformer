@@ -16,7 +16,11 @@ export const VALUES = {
     'ShiftLeft': 'run',
     'ShiftRight': 'shoot',
     'Enter': 'shoot',
-    'Escape': 'pause'
+    'Escape': 'pause',
+    'Jump': 'jump',
+    'Fire': 'fire',
+    'Left': 'left',
+    'Right': 'right'
   },
   defaultColor: '#FF000088',
   devMode: false,

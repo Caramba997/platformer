@@ -1,6 +1,3 @@
-html {
-    font-size: 16px;
-}
 body {
     margin: 0;
     background: black;
@@ -62,4 +59,65 @@ body {
     border: 4px solid black;
     color: black;
     opacity: 0.5;
+}
+
+#controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+@media only screen and (min-width: 1000px) {
+    #controls {
+      display: none;
+    }
+  }
+
+#controls > div {
+    margin: 2px;
+    border-bottom: 3px solid white;
+    border-radius: 5px;
+    opacity: 0.3;
+    height: 100%;
+}
+
+#controls > div > div {
+    position: absolute;
+    bottom: 0;
+    margin: 10px 0px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 20px;
+    width: 50px;
+}
+
+.controls__jump {
+    flex: 0 0.25 35%;
+}
+.controls__jump--icon {
+    background-image: url(../textures/ControlsJump.png);
+}
+.controls__fire {
+    flex: 0 0.25 15%;
+}
+.controls__fire--icon {
+    width: 20px !important;
+    background-image: url(../textures/ControlsFire.png);
+}
+.controls__left {
+    flex: 0 0.25 25%;
+}
+.controls__left--icon {
+    background-image: url(../textures/ControlsArrowLeft.png);
+}
+.controls__right {
+    flex: 0 0.25 25%;
+}
+.controls__right--icon {
+    background-image: url(../textures/ControlsArrowRight.png);
 }

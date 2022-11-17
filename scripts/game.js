@@ -11,6 +11,8 @@ export class Game {
     this.calcJumpParameters();
     this._keyDownListener = this.keyDownListener.bind(this);
     this._keyUpListener = this.keyUpListener.bind(this);
+    this._touchStartListener = this.touchStartListener.bind(this);
+    this._touchEndListener = this.touchEndListener.bind(this);
     this.initControls();
     this.initListeners();
     const storageLevel = localStorage.getItem('level');
@@ -32,6 +34,26 @@ export class Game {
   initControls() {
     window.addEventListener('keydown', this._keyDownListener);
     window.addEventListener('keyup', this._keyUpListener);
+    const mobileControls = document.querySelector('#controls'),
+          controls = mobileControls.querySelectorAll('.controls__jump, .controls__fire, .controls__left, .controls__right');
+    controls.forEach((control) => {
+      control.addEventListener('touchstart', this._touchStartListener);
+      control.addEventListener('touchend', this._touchEndListener);
+    });
+  }
+
+  touchStartListener(e) {
+    const command = e.target.getAttribute('data-command'),
+          control = VALUES.controls[command];
+    if (!this.running || !control || this.activeControls.has(control)) return;
+    this.activeControls.add(control);
+  }
+
+  touchEndListener(e) {
+    const command = e.target.getAttribute('data-command'),
+          control = VALUES.controls[command];
+    if (!this.activeControls.has(control)) return;
+    this.activeControls.delete(control);
   }
 
   keyDownListener(e) {

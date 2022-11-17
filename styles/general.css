@@ -7,6 +7,18 @@
     --color-text-dark: rgb(40, 35, 50);
     --color-subheading: rgba(255, 255, 255, 0.2);
     --color-text-highlight: rgb(180, 180, 250);
+    --base-font-size: 16px;
+    --mobile-font-size: 12px;
+}
+
+html {
+    font-size: var(--base-font-size);
+}
+
+@media only screen and (max-width: 1000px) {
+    html {
+        font-size: var(--mobile-font-size);
+    }
 }
 
 html, input, button, select {
