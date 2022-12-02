@@ -94,6 +94,7 @@ body {
     background-repeat: no-repeat;
     height: 20px;
     width: 50px;
+    pointer-events: none;
 }
 
 .controls__jump {

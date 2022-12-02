@@ -483,7 +483,7 @@ export class Editor {
         break;
       }
       case 'movingprop': {
-        prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.bounce, defaults.bounceFactor, defaults.speedFactorX, defaults.speedFactorY, defaults.x, defaults.y, defaults.endX, defaults.endY);
+        prop = new MovingProp(id, defaults.x, defaults.y, defaults.width, defaults.height, defaults.type, defaults.solid, defaults.ground, defaults.bounce, defaults.bounceFactor, defaults.speedFactorX, defaults.speedFactorY, defaults.x, defaults.y, defaults.endX, defaults.endY, defaults.stopOnPlayer);
         this.game.world.props.push(prop);
         propsOutline = outline.querySelector('[data-outline="props"] .Outline__Item--Content');
         html = EDITORHTML.outlineProp.replaceAll('{{location}}', 'props').replaceAll('{{id}}', id).replaceAll('{{class}}', 'MovingProp');
@@ -677,19 +677,23 @@ class Game {
   loadLevel(level) {
     if (level) {
       window.addEventListener('world:loaded', () => {
+        this.keepCenter = false;
         this.setCenter(this.world.player);
         this.start();
         document.querySelector('input[name="centerX"]').setAttribute('max', this.world.width);
         document.querySelector('input[name="centerY"]').setAttribute('max', this.world.height);
+        this.keepCenter = document.querySelector('[name="keepCenter"]').checked;
       }, { once: true });
       this.world = new World(level);
     }
     else {
+      this.keepCenter = false;
       this.world = new World(level);
       this.setCenter(this.world.player);
       this.start();
       document.querySelector('input[name="centerX"]').setAttribute('max', this.world.width);
       document.querySelector('input[name="centerY"]').setAttribute('max', this.world.height);
+      this.keepCenter = document.querySelector('[name="keepCenter"]').checked;
     }
     this.activeControls = new Set();
   }

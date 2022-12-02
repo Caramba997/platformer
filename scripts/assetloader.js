@@ -352,6 +352,14 @@ const textures = [
     height: "40"
   },
   {
+    type: "mine",
+    src: "textures/Mine.png",
+    imageWidth: "200",
+    imageHeight: "200",
+    width: "100",
+    height: "100"
+  },
+  {
     type: "water",
     src: "textures/Water.png",
     imageWidth: "200",

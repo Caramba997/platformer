@@ -13,6 +13,7 @@ export class Game {
     this._keyUpListener = this.keyUpListener.bind(this);
     this._touchStartListener = this.touchStartListener.bind(this);
     this._touchEndListener = this.touchEndListener.bind(this);
+    this._contextMenuListener = this.contextMenuListener.bind(this);
     this.initControls();
     this.initListeners();
     const storageLevel = localStorage.getItem('level');
@@ -22,6 +23,7 @@ export class Game {
     else {
       this.loadLevel('level1');
     }
+    window.addEventListener('contextmenu', (event) => {});
     window.dispatchEvent(new CustomEvent('progress:executed'));
   }
 
@@ -29,9 +31,11 @@ export class Game {
     this.stop();
     window.removeEventListener('keydown', this._keyDownListener);
     window.removeEventListener('keyup', this._keyUpListener);
+    window.removeEventListener('contextmenu', this._contextMenuListener);
   }
 
   initControls() {
+    window.addEventListener('contextmenu', this._contextMenuListener);
     window.addEventListener('keydown', this._keyDownListener);
     window.addEventListener('keyup', this._keyUpListener);
     const mobileControls = document.querySelector('#controls'),
@@ -42,11 +46,16 @@ export class Game {
     });
   }
 
+  contextMenuListener(e) {
+    e.preventDefault();
+  }
+
   touchStartListener(e) {
     const command = e.target.getAttribute('data-command'),
           control = VALUES.controls[command];
     if (!this.running || !control || this.activeControls.has(control)) return;
     this.activeControls.add(control);
+    if (control === 'left' || control === 'right') this.activeControls.add('run');
   }
 
   touchEndListener(e) {
@@ -54,6 +63,7 @@ export class Game {
           control = VALUES.controls[command];
     if (!this.activeControls.has(control)) return;
     this.activeControls.delete(control);
+    if (control === 'left' || control === 'right') this.activeControls.delete('run');
   }
 
   keyDownListener(e) {
@@ -244,7 +254,8 @@ export class Game {
       player.speedY = player.inWater ? Math.max(VALUES.maxWaterSinkSpeed, player.speedY - this.deltaTime * this.playerSpeedShrinkYWater) : Math.max(VALUES.maxFallSpeed, player.speedY - this.deltaTime * this.playerSpeedShrinkY);
       if (player.invincible === 0) {
         for (let enemy of this.world.enemies) {
-          if (player.speedY < 0 && enemy.y + enemy.height <= player.lastY && enemy.x <= player.x + player.width && enemy.x + enemy.width >= player.x && enemy.y + enemy.height >= player.y && enemy.y <= player.y) {
+          const hitbox = this.calcHitbox(enemy);
+          if (player.speedY < 0 && hitbox.y + hitbox.height <= player.lastY && hitbox.x <= player.x + player.width && hitbox.x + hitbox.width >= player.x && hitbox.y + hitbox.height >= player.y && hitbox.y <= player.y) {
             if (enemy.jumpable) {
               enemy.remove = true;
               player.y = enemy.y + enemy.height + 1;
@@ -461,6 +472,7 @@ export class Game {
         }
       }
       if (!prop.moving) continue;
+      if (prop.stopOnPlayer && this.world.player.ground === prop) continue;
       prop.x += this.deltaTime * prop.speedX;
       prop.y += this.deltaTime * prop.speedY;
       let moveX = this.deltaTime * prop.speedX,
@@ -497,10 +509,10 @@ export class Game {
     const inWater = this.checkInWater(thisProp, true);
     if (inWater !== thisProp.inWater) {
       if (inWater) {
-        thisProp.speedX = thisProp.speedFactor * VALUES.maxEnemyWaterSpeed * (thisProp.forward ? 1 : -1);
+        thisProp.speedX = thisProp.speedFactor * (thisProp.constructor.name === 'Item' ? VALUES.itemWaterSpeed : VALUES.maxEnemyWaterSpeed) * (thisProp.forward ? 1 : -1);
       }
       else {
-        thisProp.speedX = thisProp.speedFactor * VALUES.maxEnemySpeed * (thisProp.forward ? 1 : -1);
+        thisProp.speedX = thisProp.speedFactor * (thisProp.constructor.name === 'Item' ? VALUES.itemSpeed : VALUES.maxEnemySpeed) * (thisProp.forward ? 1 : -1);
       }
       thisProp.inWater = inWater;
     }
@@ -649,7 +661,9 @@ export class Game {
     if (player.invincible === 0) {
       for (let enemy of this.world.enemies) {
         if (enemy.remove) continue;
-        if (this.checkPlayerCollision({x: enemy.x, y: enemy.y - 1, width: enemy.width, height: enemy.height})) {
+        const enemyHitbox = this.calcHitbox(enemy);
+        enemyHitbox.y--;
+        if (this.checkPlayerCollision(enemyHitbox)) {
           this.playerDamage();
           if (!this.running) return;
         }

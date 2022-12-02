@@ -9,7 +9,7 @@ export const EDITORVALUES = {
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
-  enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'fish', 'rocket'],
+  enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'fish', 'rocket', 'mine'],
   finishTypes: ['finishflag'],
   levels: ['level1', 'level2', 'level3', 'level4', 'dev'],
   moveSpeed: 1,
@@ -40,7 +40,8 @@ export const EDITORVALUES = {
       speedFactorX: 1.0,
       speedFactorY: 0,
       endX: 200,
-      endY: 0
+      endY: 0,
+      stopOnPlayer: false
     },
     backgroundprop: {
       x: 0,
@@ -150,10 +151,10 @@ export const EDITORVALUES = {
     hasCoin: 'checkbox',
     invisible: 'checkbox',
     item: 'select',
-    hitx: 'number',
-    hity: 'number',
-    hitwidth: 'number',
-    hitheight: 'number',
+    'hitbox.x': 'number',
+    'hitbox.y': 'number',
+    'hitbox.width': 'number',
+    'hitbox.height': 'number',
     invincible: 'checkbox',
     jumpable: 'checkbox',
     moving: 'checkbox',
@@ -173,7 +174,8 @@ export const EDITORVALUES = {
     state: 'select',
     flying: 'checkbox',
     isTop: 'checkbox',
-    verticalParallax: 'checkbox'
+    verticalParallax: 'checkbox',
+    stopOnPlayer: 'checkbox'
   },
   propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'rocks', 'rockstop', 'rockstopdirt', 'rockstopsand', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem', 'water', 'watersurface'],
   skipProperties: {

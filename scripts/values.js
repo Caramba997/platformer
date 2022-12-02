@@ -50,6 +50,7 @@ export const VALUES = {
   itemDefault: 'default',
   itemSize: 50,
   itemSpeed: 0.1,
+  itemWaterSpeed: 0.05,
   itemStates: {
     spawn: 0,
     move: 1

@@ -35,7 +35,7 @@ export class InteractableProp extends Prop {
 }
 
 export class MovingProp extends StaticProp {
-  constructor(id, x, y, width, height, type, solid, ground, bounce, bounceFactor, speedFactorX, speedFactorY, startX, startY, endX, endY) {
+  constructor(id, x, y, width, height, type, solid, ground, bounce, bounceFactor, speedFactorX, speedFactorY, startX, startY, endX, endY, stopOnPlayer) {
     super(id, x, y, width, height, type, solid, ground, bounce, bounceFactor);
     this.moving = true;
     this.speedFactorX = speedFactorX;
@@ -47,6 +47,7 @@ export class MovingProp extends StaticProp {
     this.endX = endX;
     this.endY = endY;
     this.groundedProps = new Set();
+    this.stopOnPlayer = stopOnPlayer;
   }
 }
 
@@ -153,6 +154,7 @@ export class Item extends InteractableProp {
     this.lastY = 0;
     this.speedX = VALUES.itemSpeed;
     this.speedY = 0.0;
+    this.speedFactor = 1;
     this.forward = true;
   }
 }
@@ -216,7 +218,7 @@ export class World {
             this.props.push(new Block(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), type, t.p(prop, 'breakable'), t.p(prop, 'hasCoin'), t.p(prop, 'invisible'), t.p(prop, 'item')));
           }
           else if (t.p(prop, 'class') === 'MovingProp') {
-            this.props.push(new MovingProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor'), t.p(prop, 'speedFactorX'), t.p(prop, 'speedFactorY'), t.p(prop, 'startX'), t.p(prop, 'startY'), t.p(prop, 'endX'), t.p(prop, 'endY')));
+            this.props.push(new MovingProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor'), t.p(prop, 'speedFactorX'), t.p(prop, 'speedFactorY'), t.p(prop, 'startX'), t.p(prop, 'startY'), t.p(prop, 'endX'), t.p(prop, 'endY'), t.p(prop, 'stopOnPlayer')));
           }
           else if (t.p(prop, 'class') === 'Spawner') {
             this.props.push(new Spawner(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'speedFactor'), t.p(prop, 'forward'), t.p(prop, 'spawnRate')));
