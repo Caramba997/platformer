@@ -11,12 +11,21 @@ body {
 }
 
 
+.TopBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-basis: 100%;
+    flex-wrap: wrap-reverse;
+}
+.TopBar > * {
+    margin-left: auto;
+    margin-right: auto;
+}
 .Actions {
-    position: absolute;
-    top: var(--page-margin);
-    right: var(--page-margin);
     display: flex;
     gap: 5px;
+    align-items: center;
 }
 .Actions [data-action="toggle-sound"] {
     background-image: url(/images/SoundOn.png);
@@ -28,6 +37,14 @@ body {
 }
 .Actions [data-action="toggle-sound"][data-sounds="off"] {
     background-image: url(/images/SoundOff.png);
+}
+.Actions [data-href="profile"] {
+    background-image: url(/images/Profile.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 1.2rem;
+    height: 1.2rem;
 }
 .Actions select {
     border: 2px solid white;

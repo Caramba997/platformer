@@ -1,0 +1,51 @@
+a {
+  padding: 5px;
+  border-radius: 5px;
+  border: 2px solid white;
+}
+
+.LoginContainer {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+
+.UserData {
+  border: 2px solid white;
+  padding: 1rem;
+  border-radius: 5px;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.UserData button {
+  color: black;
+  background: white;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.InputRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}
+.InputRow input {
+  min-width: 210px;
+  height: 1.5rem;
+}
+
+.LoginHint, .Error {
+  text-align: center;
+  max-width: 400px;
+}
+
+.Error {
+  color: var(--color-error);
+}

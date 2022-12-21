@@ -1,0 +1,28 @@
+<div id="head">
+  <link rel="stylesheet" href="styles/menu.css">
+  <link rel="stylesheet" href="styles/login.css">
+  <script src="scripts/login.js" defer></script>
+</div>
+<div id="content">
+  <h1 data-t="login"></h1>
+  <div class="LoginContainer">
+    <div class="UserData">
+      <h2 data-t="enterUserData"></h2>
+      <div class="InputRow">
+        <label for="username" data-t="username"></label>
+        <input type="text" name="username">
+      </div>
+      <div class="InputRow">
+        <label for="password" data-t="password"></label>
+        <input type="password" name="password">
+      </div>
+      <div class="Error"></div>
+      <button data-action="login" data-t="login"></button>
+      <p class="LoginHint" data-t="noAccountYet"></p>
+      <button data-action="register" data-t="register"></button>
+    </div>
+  </div>
+  <div class="LoginContainer">
+    <a data-t="backToStart" data-href="menu"></a>
+  </div>
+</div>

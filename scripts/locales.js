@@ -59,7 +59,16 @@ const locales = {
     statusLoaded: 'Laden erfolgreich',
     keepCenter: 'Marker-Position behalten',
     backgroundProp: 'Hintergrund-Objekt',
-    water: 'Wasser'
+    water: 'Wasser',
+    login: 'Anmelden',
+    profile: 'Profil',
+    enterUserData: 'Nutzerdaten eingeben',
+    username: 'Nutzername',
+    password: 'Passwort',
+    noAccountYet: 'Du hast noch keinen Account? Registriere dich mit dem folgenden Button.',
+    register: 'Registrieren',
+    errorMissingUserData: 'Du musst Nutzername und Passwort eingeben',
+    errorUsernameTaken: 'Der Nutzername ist bereits vergeben, versuche einen anderen'
   },
   EN: {
     undefined: '???',
@@ -121,7 +130,16 @@ const locales = {
     statusLoaded: 'Loading successfull',
     keepCenter: 'Keep center position',
     backgroundProp: 'Background Prop',
-    water: 'Water'
+    water: 'Water',
+    login: 'Login',
+    profile: 'Profile',
+    enterUserData: 'Enter user data',
+    username: 'Username',
+    password: 'Password',
+    noAccountYet: 'You don\'t have an account yet? Register instead with the button below.',
+    register: 'Register',
+    errorMissingUserData: 'You need to fill in your username and password',
+    errorUsernameTaken: 'Username is already taken, try another one'
   }
 }
 
