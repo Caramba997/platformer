@@ -391,7 +391,7 @@ export class Editor {
       }
       this.game = new Game(null);
       this.selectPropInOutline('player');
-      document.querySelector('[data-data="level"]').innerText = 'New level';
+      document.querySelector('[data-data="level"]').innerText = window.locales.getTranslation('newLevel');
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
       const playButton = document.querySelector('a[data-action="play"]');
       playButton.href = '?page=game&level=' + this.game.world.id;
@@ -671,7 +671,7 @@ class Game {
     this.loadLevel(level);
     this.activeControls = new Set();
     this.pictureMode = false;
-    this.keepCenter = false;
+    this.keepCenter = document.querySelector('[name="keepCenter"]').checked;
   }
 
   loadLevel(level) {

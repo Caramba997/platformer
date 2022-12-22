@@ -1,0 +1,3 @@
+aws s3 cp D:\Projekte\Platformer\platformer s3://platformer-stack-customresourcestack-s3bucketroot-12xerl3ivrrzg/ --recursive --exclude ".git/*" --exclude "aws/*"
+
+aws s3 sync D:\Projekte\Platformer\platformer s3://platformer-stack-customresourcestack-s3bucketroot-12xerl3ivrrzg/ --exclude ".git/*" --exclude "aws/*"
