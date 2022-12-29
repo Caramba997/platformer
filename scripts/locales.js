@@ -66,10 +66,13 @@ const locales = {
     enterUserData: 'Nutzerdaten eingeben',
     username: 'Nutzername',
     password: 'Passwort',
-    noAccountYet: 'Du hast noch keinen Account? Registriere dich mit dem folgenden Button.',
+    noAccountYet: 'Du hast noch keinen Account? Gebe oben Nutzername und Passwort ein und registriere dich mit dem folgenden Button.',
     register: 'Registrieren',
     errorMissingUserData: 'Du musst Nutzername und Passwort eingeben',
-    errorUsernameTaken: 'Der Nutzername ist bereits vergeben, versuche einen anderen'
+    errorUsernameTaken: 'Der Nutzername ist bereits vergeben, versuche einen anderen',
+    errorLoginFailed: 'Anmeldung fehlgeschlagen. Überprüfe deine Eingaben oder versuche es später erneut',
+    errorRegisterFailed: 'Registrierung fehlgeschlagen. Überprüfe deine Eingaben oder versuche es später erneut',
+    errorInvalidCredentials: 'Anmeldung fehlgeschlagen. Password nicht korrekt'
   },
   EN: {
     undefined: '???',
@@ -138,25 +141,28 @@ const locales = {
     enterUserData: 'Enter user data',
     username: 'Username',
     password: 'Password',
-    noAccountYet: 'You don\'t have an account yet? Register instead with the button below.',
+    noAccountYet: 'You don\'t have an account yet? Enter your credentials above and register with the following button.',
     register: 'Register',
     errorMissingUserData: 'You need to fill in your username and password',
-    errorUsernameTaken: 'Username is already taken, try another one'
+    errorUsernameTaken: 'Username is already taken, try another one',
+    errorLoginFailed: 'Login failed. Check your credentials or try again later',
+    errorRegisterFailed: 'Registration failed. Check your credentials or try again later',
+    errorInvalidCredentials: 'Login failed. Invalid password'
   }
 }
 
 class Locales {
   constructor() {
     this.locales = locales;
-    if (!localStorage.getItem('language')) {
-      localStorage.setItem('language', 'DE');
+    if (!window.ps.load('language')) {
+      window.ps.save('language', 'DE');
     }
-    this.language = localStorage.getItem('language');
+    this.language = window.ps.load('language');
     this.t = this.locales[this.language];
   }
 
   changeLanguage(language) {
-    localStorage.setItem('language', language);
+    window.ps.save('language', language);
     this.language = language;
     this.t = this.locales[this.language];
   }

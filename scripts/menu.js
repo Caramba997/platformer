@@ -14,7 +14,7 @@
   </a>`;
 
   const levelContainer = document.querySelector('#levels'),
-        storageProgress = localStorage.getItem('progress'),
+        storageProgress = window.ps.load('progress'),
         progress = storageProgress ? JSON.parse(storageProgress) : {};
   levels.forEach((level) => {
     levelContainer.innerHTML += window.locales.translateRaw(levelHtml.replaceAll('{{name}}', level));
@@ -41,33 +41,41 @@
         else {
           level = e.target.closest('[data-name]').getAttribute('data-name');
         }
-        localStorage.setItem('level', level);
+        window.ps.save('level', level);
       });
     });
   });
 
   const soundButton = document.querySelector('[data-action="toggle-sound"]');
-  if (localStorage.getItem('sounds')) soundButton.setAttribute('data-sounds', localStorage.getItem('sounds'));
+  if (window.ps.load('sounds')) soundButton.setAttribute('data-sounds', window.ps.load('sounds'));
   soundButton.addEventListener('click', (e) => {
     if (e.target.getAttribute('data-sounds') === 'on') {
-      localStorage.setItem('sounds', 'off');
+      window.ps.save('sounds', 'off');
       e.target.setAttribute('data-sounds', 'off');
     }
     else {
-      localStorage.setItem('sounds', 'on');
+      window.ps.save('sounds', 'on');
       e.target.setAttribute('data-sounds', 'on');
     }
   });
 
   const languageSelector = document.querySelector('select[name="language"]');
-  if (localStorage.getItem('language') !== languageSelector.value) {
-    languageSelector.value = localStorage.getItem('language');
+  if (window.ps.load('language') !== languageSelector.value) {
+    languageSelector.value = window.ps.load('language');
   }
   languageSelector.addEventListener('change', (e) => {
-    if (e.target.value !== localStorage.getItem('language')) {
+    if (e.target.value !== window.ps.load('language')) {
       window.locales.changeLanguage(e.target.value);
       window.locales.translatePage(document);
     }
   });
+
+  const user = window.ps.load('user');
+  if (user && window.ps.getCookie(window.api.tokenCookieName) != '') {
+    document.querySelector('a[data-href="profile"]').classList.remove('dn');
+  }
+  else {
+    document.querySelector('a[data-href="login"]').classList.remove('dn');
+  }
   window.dispatchEvent(new CustomEvent('progress:executed'));
 })();

@@ -69,6 +69,9 @@ a {
 .text-center {
     text-align: center;
 }
+.dn {
+    display: none;
+}
 
 span[data-t] {
     pointer-events: none;

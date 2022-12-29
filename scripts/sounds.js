@@ -1,7 +1,7 @@
 export class Sounds {
   constructor() {
-    if (!localStorage.getItem('sounds')) localStorage.setItem('sounds', 'on');
-    this.on = localStorage.getItem('sounds') === 'on';
+    if (!window.ps.load('sounds')) window.ps.save('sounds', 'on');
+    this.on = window.ps.load('sounds') === 'on';
     this.sounds = {};
     document.querySelectorAll('#sounds audio').forEach((audio) => {
       this.sounds[audio.getAttribute('data-sound')] = audio;

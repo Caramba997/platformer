@@ -16,7 +16,7 @@ export class Game {
     this._contextMenuListener = this.contextMenuListener.bind(this);
     this.initControls();
     this.initListeners();
-    const storageLevel = localStorage.getItem('level');
+    const storageLevel = window.ps.load('level');
     if (storageLevel) {
       this.loadLevel(storageLevel);
     }
@@ -874,7 +874,7 @@ export class Game {
     this.world.points += Math.ceil(this.world.time * VALUES.points.time);
     this.stats.setPoints(this.world.points);
     this.openPopup('level-complete');
-    const storageProgress = localStorage.getItem('progress'),
+    const storageProgress = window.ps.load('progress'),
           progress = storageProgress ? JSON.parse(storageProgress) : {},
           levelProgress = progress[this.world.id],
           newLevelProgress = {},
@@ -890,7 +890,7 @@ export class Game {
       newLevelProgress.time = time;
     }
     progress[this.world.id] = newLevelProgress;
-    localStorage.setItem('progress', JSON.stringify(progress));
+    window.ps.save('progress', JSON.stringify(progress));
     this.sounds.stop(this.world.music);
     this.sounds.play('completed');
   }

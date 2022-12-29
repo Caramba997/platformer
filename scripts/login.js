@@ -1,10 +1,11 @@
 (function() {
-  const loginButton = document.querySelector('[data-action="login"]'),
-        registerButton = document.querySelector('[data-action="register"]');
+  const errorElement = document.querySelector('.Error'),
+        loginButton = document.querySelector('[data-action="login"]'),
+        registerButton = document.querySelector('[data-action="register"]'),
+        api = window.api;
 
   function validateUserData() {
-    const errorElement = document.querySelector('.Error'),
-          username = document.querySelector('input[name="username"]').value,
+    const username = document.querySelector('input[name="username"]').value,
           password = document.querySelector('input[name="password"]').value;
     errorElement.innerText = '';
     if (username === '' || password === '') {
@@ -17,16 +18,25 @@
     };
   }
 
-  loginButton.addEventListener('click', () => {
+  loginButton.addEventListener('click', async () => {
     const data = validateUserData();
     if (data === null) return;
-    // Send login request
+    api.post('login', data, (result) => {
+      window.ps.save('user', JSON.stringify(result));
+      window.pwa.loadPage('menu');
+    }, (error) => {
+      errorElement.innerText = (error.status === 401) ? window.locales.getTranslation('errorInvalidCredentials') : window.locales.getTranslation('errorLoginFailed');
+    });
   });
-  registerButton.addEventListener('click', () => {
+  registerButton.addEventListener('click', async () => {
     const data = validateUserData();
     if (data === null) return;
-    // Send register request
-    // Handle taken username
+    api.post('register', data, (result) => {
+      window.ps.save('user', JSON.stringify(result));
+      window.pwa.loadPage('menu');
+    }, (error) => {
+      errorElement.innerText = (error.status === 409) ? window.locales.getTranslation('errorUsernameTaken') : window.locales.getTranslation('errorRegisterFailed');
+    });
   });
   window.dispatchEvent(new CustomEvent('progress:executed'));
 })();

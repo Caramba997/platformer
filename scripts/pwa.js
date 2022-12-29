@@ -19,7 +19,7 @@ class PWA {
     if (window.location.search) {
       const search = new URLSearchParams(window.location.search);
       if (search.has('level')) {
-        localStorage.setItem('level', search.get('level'));
+        window.ps.save('level', search.get('level'));
       }
       if (search.has('page')) {
         this.loadPage(search.get('page'));
