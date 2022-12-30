@@ -7,7 +7,7 @@
 
   const logoutButton = document.querySelector('[data-action="logout"]');
   logoutButton.addEventListener('click', async () => {
-    window.ps.setCookie(window.api.tokenCookieName, null, '0m');
+    window.ps.setCookie(window.api.loginStatusCookie, null, '0m');
     window.ps.delete('user');
     window.pwa.loadPage('menu');
   });
@@ -33,6 +33,7 @@
       });
       createdLevels.forEach((level) => {
         const levelElement = createdContainer.querySelector('[data-name="' + level._id + '"]');
+        if (level.thumbnail) levelElement.style.backgroundImage = `url(${level.thumbnail})`;
         if (level.name) levelElement.querySelector('.Level__Name').innerText = level.name;
         levelElement.querySelector('[data-action="edit"]').addEventListener('click', (e) => {
           window.ps.save('editorLevel', e.target.closest('[data-name]').getAttribute('data-name'));

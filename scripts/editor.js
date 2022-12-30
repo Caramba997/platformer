@@ -16,7 +16,15 @@ export class Editor {
         this.game.stop();
       }
       window.addEventListener('world:loaded', () => {
-        window.ps.save('editorData', window.ps.load('levelData'));
+        const levelData = window.ps.load('levelData');
+        if (levelData) {
+          window.ps.save('editorData', window.ps.load('levelData'));
+          const levelJson = JSON.parse(levelData);
+          if (levelJson._id) {
+            this.levelId = levelJson._id;
+            document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
+          }
+        }
         const playButton = document.querySelector('a[data-action="play"]');
         playButton.href = '?page=game&level=' + this.game.world.id;
         document.querySelector('[data-data="level"]').innerText = this.game.world.name;
@@ -25,6 +33,7 @@ export class Editor {
       }, { once: true });
       this.game = new Game(window.ps.load('editorLevel'));
     }
+    if (this.user.role === 'admin') document.querySelector('[data-action="toggle-sourcecode"]').classList.remove('dn');
     this.initControls();
     this.initLevelSelector();
     window.dispatchEvent(new CustomEvent('progress:executed'));
@@ -396,7 +405,15 @@ export class Editor {
         this.game.stop();
       }
       window.addEventListener('world:loaded', () => {
-        window.ps.save('editorData', window.ps.load('levelData'));
+        const levelData = window.ps.load('levelData');
+        if (levelData) {
+          window.ps.save('editorData', window.ps.load('levelData'));
+          const levelJson = JSON.parse(levelData);
+          if (levelJson._id) {
+            this.levelId = levelJson._id;
+            document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
+          }
+        }
         const playButton = document.querySelector('a[data-action="play"]');
         playButton.href = '?page=game&level=' + this.game.world.id;
         document.querySelector('[data-data="level"]').innerText = this.game.world.name;
@@ -521,6 +538,10 @@ export class Editor {
       const statusHint = document.querySelector('.UploadStatus');
       window.api.post('uploadLevel', newLevelData, (result) => {
         window.ps.save('editorData', JSON.stringify(result));
+        if (result._id) {
+          this.levelId = result._id;
+          document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
+        }
         e.target.classList.remove('loading');
         statusHint.innerText = window.locales.getTranslation('uploadComplete');
         const levelSelector = document.querySelector('select[name="level"]'),
@@ -547,6 +568,33 @@ export class Editor {
         }, 4000);
       }, (error) => {
         console.error('Uploading level failed', error);
+        e.target.classList.remove('loading');
+        statusHint.innerText = window.locales.getTranslation('uploadFailed');
+        setTimeout(() => {
+          e.target.disabled = false;
+          statusHint.innerText = '';
+        }, 4000);
+      });
+    });
+    // Create level thumbnail
+    document.querySelector('[data-action="upload-thumbnail"]').addEventListener('click', (e) => {
+      e.target.classList.add('loading');
+      e.target.disabled = true;
+      this.game.pictureMode = true;
+      this.game.render();
+      const dataUrl = this.game.graphics.canvas.toDataURL('png');
+      this.game.pictureMode = false;
+      const statusHint = document.querySelector('.UploadStatus');
+      window.api.post('saveThumbnail', { _id: this.levelId, thumbnail: dataUrl }, (result) => {
+        window.ps.save('editorData', JSON.stringify(result));
+        e.target.classList.remove('loading');
+        statusHint.innerText = window.locales.getTranslation('uploadComplete');
+        setTimeout(() => {
+          e.target.disabled = false;
+          statusHint.innerText = '';
+        }, 4000);
+      }, (error) => {
+        console.error(error);
         e.target.classList.remove('loading');
         statusHint.innerText = window.locales.getTranslation('uploadFailed');
         setTimeout(() => {

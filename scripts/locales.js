@@ -80,8 +80,8 @@ const locales = {
     uploadComplete: 'Speichern erfolgreich',
     uploadFailes: 'Speichern fehlgeschlagen',
     createdLevels: 'Eigene Levels',
-    communityLevels: 'Community Levels',
-    loginForMoreLevels: 'Melde dich an, um eigene Levels zu erstellen und Community Levels zu spielen',
+    communityLevels: 'Community-Levels',
+    loginForMoreLevels: 'Melde dich an, um deinen Fortschritt zu speichern, eigene Levels zu erstellen und Community-Levels zu spielen',
     browseLevels: 'Alle anzeigen',
     browse: 'Alle Levels',
     edit: 'Bearbeiten',
@@ -90,7 +90,8 @@ const locales = {
     subscribe: 'Abonnieren',
     unsubscribe: 'Deabonnieren',
     by: 'von',
-    help: 'Hilfe'
+    help: 'Hilfe',
+    thumbnailInfo: 'Du kannst aus der aktuell sichtbaren Spielszene ein Vorschaubild generieren und hochladen. Positioniere die Szene so, dass die Vorschau dein Level gut repräsentiert.'
   },
   EN: {
     undefined: '???',
@@ -174,7 +175,7 @@ const locales = {
     uploadFailes: 'Upload failed',
     createdLevels: 'Created levels',
     communityLevels: 'Community levels',
-    loginForMoreLevels: 'Login to create your own levels or play community levels',
+    loginForMoreLevels: 'Login to save your progress, create your own levels and play community levels',
     browseLevels: 'Browse levels',
     browse: 'Browse levels',
     edit: 'Edit',
@@ -183,7 +184,8 @@ const locales = {
     subscribe: 'Subscribe',
     unsubscribe: 'Unsubscribe',
     by: 'by',
-    help: 'Help'
+    help: 'Help',
+    thumbnailInfo: 'You can create and upload a thumbnail out of the currently visible scene. Adjust your scene view to provide a good impression of your level.'
   }
 }
 

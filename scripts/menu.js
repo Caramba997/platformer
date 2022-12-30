@@ -14,8 +14,12 @@
   </a>`;
 
   const levelContainer = document.querySelector('#levels'),
-        storageProgress = window.ps.load('progress'),
-        progress = storageProgress ? JSON.parse(storageProgress) : {};
+        userData = window.ps.load('user');
+  let progress = null;
+  if (userData) {
+    const user = JSON.parse(userData);
+    progress = JSON.parse(user.progress);
+  }
   levels.forEach((level) => {
     levelContainer.innerHTML += window.locales.translateRaw(levelHtml.replaceAll('{{name}}', level).replaceAll('{{image}}', level));
   });
@@ -25,7 +29,7 @@
     .then((data) => {
       const levelElement = levelContainer.querySelector('[data-name="' + level + '"]');
       levelElement.querySelector('.Level__Name').innerText = data.meta.name;
-      if (progress[level]) {
+      if (progress && progress[level]) {
         levelElement.setAttribute('data-complete', 'true');
         levelElement.querySelector('[data-stats="points"]').innerText = progress[level].points;
         levelElement.querySelector('[data-stats="time"]').innerText = progress[level].time;
@@ -57,8 +61,9 @@
       });
       createdLevels.forEach((level) => {
         const levelElement = createdContainer.querySelector('[data-name="' + level._id + '"]');
+        if (level.thumbnail) levelElement.style.backgroundImage = `url(${level.thumbnail})`;
         if (level.name) levelElement.querySelector('.Level__Name').innerText = level.name;
-        if (progress[level._id]) {
+        if (progress && progress[level._id]) {
           levelElement.setAttribute('data-complete', 'true');
           levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
           levelElement.querySelector('[data-stats="time"]').innerText = progress[level._id].time;
@@ -82,8 +87,9 @@
       });
       savedLevels.forEach((level) => {
         const levelElement = savedContainer.querySelector('[data-name="' + level._id + '"]');
-        if (level.name) levelElement.querySelector('.Level__Name').innerText = level.name;
-        if (progress[level._id]) {
+        if (level.thumbnail) levelElement.style.backgroundImage = `url(${level.thumbnail})`;
+        if (level.name) levelElement.querySelector('.Level__Name').innerHTML = `${level.name} <span class="Level__Author--Menu" data-t="by">${window.locales.getTranslation('by')} ${level.creator}</span>`;
+        if (progress && progress[level._id]) {
           levelElement.setAttribute('data-complete', 'true');
           levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
           levelElement.querySelector('[data-stats="time"]').innerText = progress[level._id].time;
@@ -132,8 +138,7 @@
     }
   });
 
-  const user = window.ps.load('user');
-  if (user && window.ps.getCookie(window.api.tokenCookieName) != '') {
+  if (userData && window.ps.getCookie(window.api.loginStatusCookie) != '') {
     document.querySelector('a[data-href="profile"]').classList.remove('dn');
     document.querySelector('a[data-href="editor"]').classList.remove('dn');
     document.querySelector('[data-t="browseLevels"]').classList.remove('dn');

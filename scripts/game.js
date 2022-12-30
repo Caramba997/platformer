@@ -875,23 +875,30 @@ export class Game {
     this.world.points += Math.ceil(this.world.time * VALUES.points.time);
     this.stats.setPoints(this.world.points);
     this.openPopup('level-complete');
-    const storageProgress = window.ps.load('progress'),
-          progress = storageProgress ? JSON.parse(storageProgress) : {},
-          levelProgress = progress[this.world.id],
-          newLevelProgress = {},
-          time = Math.ceil((this.world.startTime - this.world.time) / 1000);
-    if (levelProgress) {
-      newLevelProgress.points = levelProgress.points;
-      newLevelProgress.time = levelProgress.time;
-      if (levelProgress.points < this.world.points) newLevelProgress.points = this.world.points;
-      if (levelProgress.time > time) newLevelProgress.time = time;
+    const userData = window.ps.load('user');
+    if (userData) {
+      const user = JSON.parse(userData),
+            progress = JSON.parse(user.progress),
+            levelProgress = progress[this.world.id],
+            newLevelProgress = {},
+            time = Math.ceil((this.world.startTime - this.world.time) / 1000);
+      if (levelProgress) {
+        newLevelProgress.points = levelProgress.points;
+        newLevelProgress.time = levelProgress.time;
+        if (levelProgress.points < this.world.points) newLevelProgress.points = this.world.points;
+        if (levelProgress.time > time) newLevelProgress.time = time;
+      }
+      else {
+        newLevelProgress.points = this.world.points;
+        newLevelProgress.time = time;
+      }
+      progress[this.world.id] = newLevelProgress;
+      window.api.post('updateProgress', { progress: JSON.stringify(progress) }, (result) => {
+        window.ps.save('user', JSON.stringify(result));
+      }, (error) => {
+        console.error(error);
+      });
     }
-    else {
-      newLevelProgress.points = this.world.points;
-      newLevelProgress.time = time;
-    }
-    progress[this.world.id] = newLevelProgress;
-    window.ps.save('progress', JSON.stringify(progress));
     this.sounds.stop(this.world.music);
     this.sounds.play('completed');
   }

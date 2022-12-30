@@ -23,7 +23,7 @@
     if (data === null) return;
     api.post('login', data, (result) => {
       window.ps.save('user', JSON.stringify(result));
-      window.ps.setCookie('logged-in', true, '30d');
+      window.ps.setCookie(window.api.loginStatusCookie, true, '30d');
       window.pwa.loadPage('menu');
     }, (error) => {
       errorElement.innerText = (error.status === 401) ? window.locales.getTranslation('errorInvalidCredentials') : window.locales.getTranslation('errorLoginFailed');
@@ -34,11 +34,14 @@
     if (data === null) return;
     api.post('register', data, (result) => {
       window.ps.save('user', JSON.stringify(result));
-      window.ps.setCookie('logged-in', true, '30d');
+      window.ps.setCookie(window.api.loginStatusCookie, true, '30d');
       window.pwa.loadPage('menu');
     }, (error) => {
       errorElement.innerText = (error.status === 409) ? window.locales.getTranslation('errorUsernameTaken') : window.locales.getTranslation('errorRegisterFailed');
     });
+  });
+  document.querySelector('input[name="password"]').addEventListener('keypress', (e) => {
+    if (e.key === "Enter") loginButton.click();
   });
   window.dispatchEvent(new CustomEvent('progress:executed'));
 })();

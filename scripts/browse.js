@@ -15,7 +15,6 @@
           </div>`;
     const user = JSON.parse(userData);
     window.api.get('getAllLevels', (result) => {
-      console.log(result, user);
       const levelContainer = document.querySelector('#levels');
   
       result.forEach((level) => {
@@ -23,6 +22,7 @@
       });
       result.forEach((level) => {
         const levelElement = levelContainer.querySelector('[data-name="' + level._id + '"]');
+        if (level.thumbnail) levelElement.style.backgroundImage = `url(${level.thumbnail})`;
         if (level.name) levelElement.querySelector('.Level__Name').innerText = level.name;
         const subscribeButton = levelElement.querySelector('[data-action="subscribe"]'),
               unsubscribeButton = levelElement.querySelector('[data-action="unsubscribe"]');

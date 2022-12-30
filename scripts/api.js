@@ -1,6 +1,6 @@
 class API {
   constructor() {
-    this.url = 'https://fc-platformer.herokuapp.com',
+    this.url = 'https://fc-platformer.herokuapp.com', //'http://localhost:3000'
     this.routes = {
       login: '/login',
       register: '/register',
@@ -8,13 +8,15 @@ class API {
       getLevel: '/api/level/get',
       getAllLevels: '/api/level/getall',
       deleteLevel: '/api/level/delete',
+      saveThumbnail: '/api/level/thumbnail',
       userLevels: '/api/user/createdlevels',
       userAllLevels: '/api/user/alllevels',
       getUser: '/api/user',
+      updateProgress: '/api/user/progress',
       subscribe: '/api/user/subscribe',
       unsubscribe: '/api/user/unsubscribe'
     },
-    this.tokenCookieName = 'logged-in'
+    this.loginStatusCookie = 'logged-in'
   }
 
   get(endpoint, onSuccess, onError) {

@@ -6,7 +6,6 @@ class PlatformerStorage {
       levelData: 'levelData',
       editorLevel: 'editorLevel',
       editorData: 'editorData',
-      progress: 'progress',
       language: 'language',
       user: 'user'
     }
