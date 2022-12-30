@@ -1,7 +1,7 @@
 (function() {
   const levels = [ 'level1', 'level2', 'level3', 'level4' ];
   const levelHtml = `<a class="Level" data-href="game">
-    <div class="Level__Content" data-name="{{name}}" data-complete="false" style="background-image: url(/images/{{name}}.png);">
+    <div class="Level__Content" data-name="{{name}}" data-complete="false" style="background-image: url(/images/{{image}}.png);">
       <div class="Level__Text">
         <div class="Level__Name"></div>
         <div class="Level__Complete" data-t="completed">{{t:completed}}</div>
@@ -17,7 +17,7 @@
         storageProgress = window.ps.load('progress'),
         progress = storageProgress ? JSON.parse(storageProgress) : {};
   levels.forEach((level) => {
-    levelContainer.innerHTML += window.locales.translateRaw(levelHtml.replaceAll('{{name}}', level));
+    levelContainer.innerHTML += window.locales.translateRaw(levelHtml.replaceAll('{{name}}', level).replaceAll('{{image}}', level));
   });
   levels.forEach((level) => {
     fetch('/levels/' + level + '.json')
@@ -46,6 +46,68 @@
     });
   });
 
+  if (window.ps.load('user')) {
+    window.api.get('userAllLevels', (result) => {
+      const { createdLevels, savedLevels } = result,
+            createdContainer = document.querySelector('#created-levels'),
+            savedContainer = document.querySelector('#saved-levels');
+  
+      createdLevels.forEach((level) => {
+        createdContainer.innerHTML += window.locales.translateRaw(levelHtml.replaceAll('{{name}}', level._id).replaceAll('{{image}}', 'nothumbnail'));
+      });
+      createdLevels.forEach((level) => {
+        const levelElement = createdContainer.querySelector('[data-name="' + level._id + '"]');
+        if (level.name) levelElement.querySelector('.Level__Name').innerText = level.name;
+        if (progress[level._id]) {
+          levelElement.setAttribute('data-complete', 'true');
+          levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
+          levelElement.querySelector('[data-stats="time"]').innerText = progress[level._id].time;
+        }
+        levelElement.closest('a').addEventListener('click', (e) => {
+          let levelName;
+          if (e.target.tagName === 'A') {
+            levelName = e.target.querySelector('[data-name]').getAttribute('data-name');
+          }
+          else if (e.target.hasAttribute('data-name')) {
+            levelName = e.target.getAttribute('data-name');
+          }
+          else {
+            levelName = e.target.closest('[data-name]').getAttribute('data-name');
+          }
+          window.ps.save('level', levelName);
+        });
+      });
+      savedLevels.forEach((level) => {
+        savedContainer.innerHTML += window.locales.translateRaw(levelHtml.replaceAll('{{name}}', level._id).replaceAll('{{image}}', 'nothumbnail'));
+      });
+      savedLevels.forEach((level) => {
+        const levelElement = savedContainer.querySelector('[data-name="' + level._id + '"]');
+        if (level.name) levelElement.querySelector('.Level__Name').innerText = level.name;
+        if (progress[level._id]) {
+          levelElement.setAttribute('data-complete', 'true');
+          levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
+          levelElement.querySelector('[data-stats="time"]').innerText = progress[level._id].time;
+        }
+        levelElement.closest('a').addEventListener('click', (e) => {
+          let levelName;
+          if (e.target.tagName === 'A') {
+            levelName = e.target.querySelector('[data-name]').getAttribute('data-name');
+          }
+          else if (e.target.hasAttribute('data-name')) {
+            levelName = e.target.getAttribute('data-name');
+          }
+          else {
+            levelName = e.target.closest('[data-name]').getAttribute('data-name');
+          }
+          window.ps.save('level', levelName);
+        });
+      });
+      window.pwa.initLinks();
+    }, (error) => {
+      console.error(error);
+    });
+  }
+
   const soundButton = document.querySelector('[data-action="toggle-sound"]');
   if (window.ps.load('sounds')) soundButton.setAttribute('data-sounds', window.ps.load('sounds'));
   soundButton.addEventListener('click', (e) => {
@@ -73,9 +135,12 @@
   const user = window.ps.load('user');
   if (user && window.ps.getCookie(window.api.tokenCookieName) != '') {
     document.querySelector('a[data-href="profile"]').classList.remove('dn');
+    document.querySelector('a[data-href="editor"]').classList.remove('dn');
+    document.querySelector('[data-t="browseLevels"]').classList.remove('dn');
   }
   else {
     document.querySelector('a[data-href="login"]').classList.remove('dn');
+    document.querySelector('[data-t="loginForMoreLevels"]').classList.remove('dn');
   }
   window.dispatchEvent(new CustomEvent('progress:executed'));
 })();

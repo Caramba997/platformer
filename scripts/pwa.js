@@ -77,6 +77,20 @@ class PWA {
     }
   }
 
+  initLinks() {
+    this.contentContainer.querySelectorAll('a[data-href]:not([data-link-initialized])').forEach((link) => {
+      link.href = 'javascript:void(0);';
+      link.addEventListener('click', (e) => {
+        const a = e.target.tagName === 'A' ? e.target : e.target.closest('a'),
+              href = a.getAttribute('data-href'),
+              hrefArr = href.split('/'),
+              page = hrefArr[hrefArr.length - 1].split('?')[0];
+        this.loadPage(page);
+      });
+      link.setAttribute('data-link-initialized', 'true');
+    });
+  }
+
   loadPage(page) {
     const _this = this;
 
@@ -131,17 +145,7 @@ class PWA {
 
     // Listener for finished script execution
     window.addEventListener('progress:executed', () => {
-      // Add listeners to links
-      this.contentContainer.querySelectorAll('a[data-href]').forEach((link) => {
-        link.href = 'javascript:void(0);';
-        link.addEventListener('click', (e) => {
-          const a = e.target.tagName === 'A' ? e.target : e.target.closest('a'),
-                href = a.getAttribute('data-href'),
-                hrefArr = href.split('/'),
-                page = hrefArr[hrefArr.length - 1].split('?')[0];
-          _this.loadPage(page);
-        });
-      });
+      this.initLinks();
       this.progress.execution.current = 1;
       this.updateProgress();
     }, { once: true });

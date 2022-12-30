@@ -6,15 +6,26 @@
     <div class="TopBar">
         <h1>Platformer</h1>
         <div class="Actions">
+            <a class="Help" data-href="help"></a>
             <button data-action="toggle-sound" data-sounds="on"></button>
             <select name="language">
                 <option value="DE">DE</option>
                 <option value="EN">EN</option>
             </select>
-            <a class="Link--Editor" data-href="editor" data-t="editor"></a>
+            <a class="Link--Editor dn" data-href="editor" data-t="editor"></a>
             <a class="Link--Editor dn" data-href="login" data-t="login"></a>
             <a class="Link--Editor dn" data-href="profile"></a>
         </div>
     </div>
     <div class="Levels" id="levels"></div>
+    <p class="text-center dn" data-t="loginForMoreLevels"></p>
+    <hr>
+    <h2 class="text-center" data-t="createdLevels"></h2>
+    <div class="Levels" id="created-levels"></div>
+    <hr>
+    <h2 class="text-center" data-t="communityLevels"></h2>
+    <div class="Row">
+        <a class="Button--center dn" data-t="browseLevels" data-href="browse"></a>
+    </div>
+    <div class="Levels" id="saved-levels"></div>
 </div>

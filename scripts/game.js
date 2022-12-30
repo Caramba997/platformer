@@ -32,6 +32,7 @@ export class Game {
     window.removeEventListener('keydown', this._keyDownListener);
     window.removeEventListener('keyup', this._keyUpListener);
     window.removeEventListener('contextmenu', this._contextMenuListener);
+    window.ps.delete('levelData');
   }
 
   initControls() {

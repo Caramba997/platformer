@@ -1,0 +1,66 @@
+<div id="head">
+  <link rel="stylesheet" href="styles/menu.css">
+  <script src="scripts/help.js" defer></script>
+</div>
+<div id="content">
+  <div class="TopBar">
+    <h1 data-t="help"></h1>
+    <div class="Actions">
+      <a class="Link--Editor" data-href="menu" data-t="mainMenu"></a>
+    </div>
+  </div>
+  <div class="Help__Text dn" data-translation="DE">
+    <p>Dieses Spiel ist ein simpler Platformer basierend auf bekannten Mario-Titeln.</p>
+    <p>Erwarte unfertige Bereiche und Fehler, da aktuell noch kein weitreichendes Testen durchgeführt wurde.</p>
+    <br>
+    <h2>Steuerung (Keyboard)</h2>
+    <p>Nach links bewegen: [a] oder [Pfeil nach links]</p>
+    <p>Nach rechts bewegen: [d] oder [Pfeil nach rechts]</p>
+    <p>Springen: [w] oder [Leertaste]</p>
+    <p>Schießen: [Enter]</p>
+    <br>
+    <h2>Steuerung (Touch)</h2>
+    <p>Auf Mobilgeräten kann der Charakter mit Berührung der markierten Bereiche gesteuert werden. Das Spiel ist aktuell noch nicht für Mobilgeräte optimiert und funktioniert dort nur sehr oberflächlich. Der Editor sollte mobil am Besten nicht verwendet werden.</p>
+    <br>
+    <h2>Ton</h2>
+    <p>Du kannst den Ton im Hauptmenü an- und ausschalten.</p>
+    <br>
+    <h2>Profil</h2>
+    <p>Du kannst dir mit Nutzernamen und Passwort einen Account erstellen, um selbst im Editor Level zu erstellen oder die Level von anderen Nutzern zu spielen.</p>
+    <p>Im Profil-Bereich kannst du deine Account-Informationen sehen und deine selbst erstellten Level verwalten.</p>
+    <p>Um Level von anderen Nutzern zu abonnieren oder deabonnieren, lasse dir über das Hautmenü über den entsprechenden Button alle vorhandenen Levels anzeigen. Abonnierte Levels findest du stets zum Spielen im Hauptmenü.</p>
+    <br>
+    <h2>Fortschritt</h2>
+    <p>Für abgeschlossene Level wird dein Fortschritt lokal gespeichert. In Zukunft soll der Fortschritt auch mit deinem Profil verknüpft werden können und es soll Bestenlisten geben.</p>
+    <br>
+    <h2>Editor</h2>
+    <p>Der Editor ist eine umfangreiche grafische Oberfläche, in der du selbst Level erstellen und bearbeiten kannst.</p>
+    <p>Die Nutzung wird anfangs etwas schwer fallen, eine umfangreiche Dokumentation aller Funktionen existiert zur Zeit noch nicht aber wird möglicherweise in einer späteren Version dazukommen.</p>
+    <p>Um den Einstieg zu erleichtern, findest du hier eine Kurzanleitung für die grundlegenden Funktionen:</p>
+    <p>Wenn du das erste Mal den Editor besuchst, wirst du gefragt, ob du ein Level bearbeiten oder ein neues erstellen möchtest. Solange du kein Admin bist, kannst du an diesem Punkt nur ein neues erstellen.</p>
+    <p>Nach einem Klick auf [Neu] siehst du einen leeren Entwurf mit ein paar grundlegenden Standardeinstellungen.</p>
+    <br>
+    <p>In der oberen Menüleiste kannst du zurück zum Hauptmenü gelangen, ein anderes Level laden, dein Level speichern und die gespeicherte Version des Levels spielen. Außerdem kannst du hier jegliche neue Spielobjekte erstellen.</p>
+    <p>In der linken Leiste, die du auch einklappen kannst, siehst du eine Übersicht über alle vorhandenen Spielobjekte sowie einige Welt-Einstellungen.</p>
+    <p>In der rechten Leiste siehst du stets die einzelnen Eigenschaften zum ausgewählten Spielobjekt.</p>
+    <p>In den Welteinstellungen kannst du im Abschnitt Meta deinem Level einen Namen geben, die zeit in Millisekunden festlegen, einen Hintergrund und eine Hintergrundmusik auswählen, die Dimensionen des Levels festlegen sowie einstellen, ob sich der Hintergrund vertikal bewegen soll (Deaktiviere diese Einstellung falls dein Level sehr flach ist).</p>
+    <p>Im Abschnitt Spieler kannst du die Startposition sowie den Startzustand des Spielcharakters festlegen.</p>
+    <p>Im Abschnitt Ziel kannst du die Position der Zielflagge festlegen. Achtung: Zusätzlich zur Zielflagge gibt es standardmäßig eine Art kleinen Turm, auf der die Flagge steht, der unter Objekte zu finden ist und bestenfalls auch bewegt werden sollte.</p>
+    <br>
+    <p>In der Mitte siehst du dein Level, wie es nachher auch beim Spielen aussieht. Der Unterschied ist, dass ausgewählte Spielobjekte rot markiert sind und du einen roten Cursor hast, den du mit den Pfeiltasten bewegen kannst.</p>
+    <p>Du kannst die Cursor-Position auch manuell durch Eingabe von Koordinaten setzen. Das Häkchen daneben sorgt sofern gesetzt dafür, dass bei Auswahl eines Spielobjekts der Cursor nicht seine Position ändert.</p>
+    <p>Du kannst Spielobjekte einerseits über die Übersicht in der linken Seite auswählen, andererseits kannst du auch auf das Objekt im Spiel direkt klicken.</p>
+    <br>
+    <p>Jedes Spielobjekt hat unterschiedliche Eigenschaften. Manche Objekte haben komplexere Eigenschaften, die nicht unbedingt selbsterklärend sind. Beispielweise können Gegner auf sehr unterschiedliche Weisen agieren. Sie können statisch sein, zwischen zwei Punkten hin und herfliegen, auf Böden laufen uvm.</p>
+    <p>Außerdem können sie unbesiegbar sein, durch Sprünge auf den Kopf getötet werden oder auch nur durch Schüsse. Probiere einfach aus, welche Einstellung welchen Effekt im Spiel hat.</p>
+    <br>
+    <p>Wenn du fertig bist, kannst du dein Level speichern. Wenn du im Speicherdialog bestätigst, wird dein Level automatisch auf dem Server gespeichert und ist ab sofort zum Spielen verfügbar.</p>
+    <p>Du kannst jederzeit an deinem Level weiterarbeiten und neue Versionen speichern. Dabei wird stets die alter Version überschrieben.</p>
+    <br>
+    <h2>Technologie</h2>
+    <p>Das Projekt basiert auf den grundlegenden Web-Technologien HTML, CSS, und JavaScript. Im Backend steht ein NodeJS-Server angebunden an eine MongoDB-Datenbank.</p>
+  </div>
+  <div class="Help__Text dn" data-translation="EN">
+    <p>This content is currently only available in german, switch your language in the main menu to get help.</p>
+  </div>
+</div>

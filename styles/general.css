@@ -54,6 +54,12 @@ a {
 [data-visible="false"] {
     display: none;
 }
+.m-auto {
+    margin: auto;
+}
+.m-5 {
+    margin: 5px;
+}
 .mt-10 {
     margin-top: 10px;
 }
@@ -70,7 +76,12 @@ a {
     text-align: center;
 }
 .dn {
-    display: none;
+    display: none !important;
+}
+
+button:disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 span[data-t] {

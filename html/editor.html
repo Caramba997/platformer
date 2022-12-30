@@ -144,9 +144,17 @@
             </div>
             <hr>
             <div class="Popup__Content">
-                <textarea class="mb-10" data-text="level"></textarea>
-                <button class="Button" data-action="copy-level"><span data-t="copy"></span></button>
-                <button class="Button" data-action="create-thumbnail"><span data-t="thumbnail"></span></button>
+                <button class="Button m-5" data-action="toggle-sourcecode" data-active-content="online"><span data-t="showSourcecode"></span></button>
+                <div class="Popup__Content" data-content="online">
+                    <button class="Button m-5" data-action="upload-level"><span data-t="save"></span></button>
+                    <button class="Button m-5" data-action="upload-thumbnail" disabled><span data-t="thumbnail"></span></button>
+                    <div class="UploadStatus text-center"></div>
+                </div>
+                <div class="Popup__Content dn" data-content="sourcecode">
+                    <textarea class="mb-10" data-text="level"></textarea>
+                    <button class="Button m-5" data-action="copy-level"><span data-t="copy"></span></button>
+                    <button class="Button m-5" data-action="create-thumbnail"><span data-t="thumbnail"></span></button>
+                </div>
             </div>
         </div>
     </div>

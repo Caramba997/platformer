@@ -3,6 +3,9 @@ class PlatformerStorage {
     this.objects = {
       sounds: 'sounds',
       level: 'level',
+      levelData: 'levelData',
+      editorLevel: 'editorLevel',
+      editorData: 'editorData',
       progress: 'progress',
       language: 'language',
       user: 'user'
@@ -25,6 +28,15 @@ class PlatformerStorage {
       return;
     }
     localStorage.setItem(key, data);
+  }
+
+  delete(object) {
+    const key = this.objects[object];
+    if (!key) {
+      console.error('[Platformer Storage] Delete: Unknown object');
+      return;
+    }
+    localStorage.removeItem(key);
   }
 
   /**
@@ -56,7 +68,7 @@ class PlatformerStorage {
       document.cookie = cname + "=" + cvalue + ";" + expires + ";SameSite=None;Secure;path=/";
     }
     else {
-      document.cookie = cname + "=" + cvalue + ";path=/";
+      document.cookie = cname + "=" + cvalue + ";SameSite=None;Secure;path=/";
     }
   }
 

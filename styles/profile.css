@@ -1,0 +1,19 @@
+.Profile {
+  width: 100%;
+}
+.Profile__List {
+  list-style: none;
+  margin: auto;
+  width: fit-content;
+  padding: 0;
+}
+.Profile__List--Item {
+  display: flex;
+  margin: 10px;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.Profile__List--Label {
+  font-weight: bold;
+  text-decoration: underline;
+}

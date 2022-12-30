@@ -6,9 +6,25 @@ import { Graphics } from './graphics.js';
 
 export class Editor {
   constructor() {
+    this.user = JSON.parse(window.ps.load('user'));
     this._keyDownListener = this.keyDownListener.bind(this);
     this._keyUpListener = this.keyUpListener.bind(this);
     this.initListeners();
+    if (window.ps.load('editorLevel')) {
+      document.querySelector('.Popup[data-visible="true"] [data-action="close-popup"]').click();
+      if (this.game) {
+        this.game.stop();
+      }
+      window.addEventListener('world:loaded', () => {
+        window.ps.save('editorData', window.ps.load('levelData'));
+        const playButton = document.querySelector('a[data-action="play"]');
+        playButton.href = '?page=game&level=' + this.game.world.id;
+        document.querySelector('[data-data="level"]').innerText = this.game.world.name;
+        this.initOutline();
+        this.selectPropInOutline('player');
+      }, { once: true });
+      this.game = new Game(window.ps.load('editorLevel'));
+    }
     this.initControls();
     this.initLevelSelector();
     window.dispatchEvent(new CustomEvent('progress:executed'));
@@ -18,6 +34,8 @@ export class Editor {
     if(this.game) this.game.stop();
     window.removeEventListener('keydown', this._keyDownListener);
     window.removeEventListener('keyup', this._keyUpListener);
+    window.ps.delete('editorData');
+    window.ps.delete('editorLevel');
   }
 
   initControls() {
@@ -246,6 +264,9 @@ export class Editor {
       locationFixed.width = value === VALUES.playerStates.normal ? VALUES.playerWidth : VALUES.playerWidthSuper;
       locationFixed.height = value === VALUES.playerStates.normal ? VALUES.playerHeight : VALUES.playerHeightSuper;
     }
+    else if (id === 'meta' && property === 'name') {
+      document.querySelector('[data-data="level"]').innerText = value;
+    }
     else if (location === 'enemies' && property === 'type') {
       const texture = this.game.graphics.getTexture(value);
       if (texture) {
@@ -375,13 +396,14 @@ export class Editor {
         this.game.stop();
       }
       window.addEventListener('world:loaded', () => {
+        window.ps.save('editorData', window.ps.load('levelData'));
         const playButton = document.querySelector('a[data-action="play"]');
         playButton.href = '?page=game&level=' + this.game.world.id;
+        document.querySelector('[data-data="level"]').innerText = this.game.world.name;
         this.initOutline();
         this.selectPropInOutline('player');
       }, { once: true });
       this.game = new Game(select.value);
-      document.querySelector('[data-data="level"]').innerText = select.value;
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
     });
     // New level
@@ -465,6 +487,73 @@ export class Editor {
     // Keep center checkbox
     document.querySelector('[name="keepCenter"]').addEventListener('change', (e) => {
       this.game.keepCenter = e.target.checked ? true : false;
+    });
+    // Toggle sourcecode
+    document.querySelector('[data-action="toggle-sourcecode"]').addEventListener('click', (e) => {
+      const online = e.target.closest('.Popup').querySelector('[data-content="online"]'),
+            sourcecode = e.target.closest('.Popup').querySelector('[data-content="sourcecode"]');
+      if (e.target.getAttribute('data-active-content') === 'online') {
+        online.classList.add('dn');
+        sourcecode.classList.remove('dn');
+        e.target.setAttribute('data-active-content', 'sourcecode');
+        e.target.innerText = window.locales.getTranslation('hideSourcecode');
+      }
+      else {
+        online.classList.remove('dn');
+        sourcecode.classList.add('dn');
+        e.target.setAttribute('data-active-content', 'online');
+        e.target.innerText = window.locales.getTranslation('showSourcecode');
+      }
+    });
+    // Upload level
+    document.querySelector('[data-action="upload-level"]').addEventListener('click', (e) => {
+      e.target.classList.add('loading');
+      e.target.disabled = true;
+      const levelData = JSON.stringify(this.createLevelJson()),
+            oldLevelData = window.ps.load('editorData'),
+            newLevelData = {};
+      if (oldLevelData) {
+        const oldLevelJson = JSON.parse(oldLevelData);
+        if (this.game.world.id === oldLevelJson._id) newLevelData._id = oldLevelJson._id;
+      }
+      newLevelData.name = this.game.world.name;
+      newLevelData.json = levelData;
+      const statusHint = document.querySelector('.UploadStatus');
+      window.api.post('uploadLevel', newLevelData, (result) => {
+        window.ps.save('editorData', JSON.stringify(result));
+        e.target.classList.remove('loading');
+        statusHint.innerText = window.locales.getTranslation('uploadComplete');
+        const levelSelector = document.querySelector('select[name="level"]'),
+              levelOption = levelSelector.querySelector('[value="' + result._id  +'"]');
+        if (levelOption) {
+          levelOption.innerText = result.name;
+        }
+        else {
+          let html = EDITORHTML.leveloption;
+          html = html.replaceAll('{{level}}', result._id);
+          html = html.replaceAll('{{name}}', result.name);
+          levelSelector.innerHTML += html;
+        }
+        if (!oldLevelData) {
+          window.api.get('getUser', (result) => {
+            window.ps.save('user', JSON.stringify(result));
+          }, (error) => {
+            console.error(error);
+          });
+        }
+        setTimeout(() => {
+          e.target.disabled = false;
+          statusHint.innerText = '';
+        }, 4000);
+      }, (error) => {
+        console.error('Uploading level failed', error);
+        e.target.classList.remove('loading');
+        statusHint.innerText = window.locales.getTranslation('uploadFailed');
+        setTimeout(() => {
+          e.target.disabled = false;
+          statusHint.innerText = '';
+        }, 4000);
+      });
     });
   }
 
@@ -613,11 +702,24 @@ export class Editor {
 
   initLevelSelector() {
     const select = document.querySelector('select[name="level"]');
-    for (let level of EDITORVALUES.levels) {
-      let html = EDITORHTML.leveloption;
-      html = html.replaceAll('{{level}}', level);
-      select.innerHTML += html;
+    if (this.user.role === 'admin') {
+      for (let level of EDITORVALUES.levels) {
+        let html = EDITORHTML.leveloption;
+        html = html.replaceAll('{{level}}', level);
+        html = html.replaceAll('{{name}}', level);
+        select.innerHTML += html;
+      }
     }
+    api.get('userLevels', (result) => {
+      result.forEach((level) => {
+        let html = EDITORHTML.leveloption;
+        html = html.replaceAll('{{level}}', level._id);
+        html = html.replaceAll('{{name}}', level.name);
+        select.innerHTML += html;
+      });
+    }, (error) => {
+      console.error(error);
+    });
   }
 
   createLevelJson() {
@@ -667,11 +769,11 @@ export class Editor {
 
 class Game {
   constructor(level) {
+    this.center = { x: 1, y: 1 };
     this.graphics = new Graphics();
     this.loadLevel(level);
     this.activeControls = new Set();
     this.pictureMode = false;
-    this.keepCenter = document.querySelector('[name="keepCenter"]').checked;
   }
 
   loadLevel(level) {

@@ -1,11 +1,20 @@
 class API {
   constructor() {
-    this.url = 'http://localhost:3000',
+    this.url = 'https://fc-platformer.herokuapp.com',
     this.routes = {
       login: '/login',
-      register: '/register'
+      register: '/register',
+      uploadLevel: '/api/level/save',
+      getLevel: '/api/level/get',
+      getAllLevels: '/api/level/getall',
+      deleteLevel: '/api/level/delete',
+      userLevels: '/api/user/createdlevels',
+      userAllLevels: '/api/user/alllevels',
+      getUser: '/api/user',
+      subscribe: '/api/user/subscribe',
+      unsubscribe: '/api/user/unsubscribe'
     },
-    this.tokenCookieName = 'platformer-token'
+    this.tokenCookieName = 'logged-in'
   }
 
   get(endpoint, onSuccess, onError) {
@@ -16,7 +25,10 @@ class API {
     }
     fetch(this.url + route, {
       method: 'GET',
-      credentials: 'include'
+      credentials: 'include',
+      headers: {
+        'Origin': location.origin
+      }
     })
     .then((response) => {
       if (!response.ok) {
@@ -28,6 +40,7 @@ class API {
       if (onSuccess) onSuccess(result);
     })
     .catch((err) => {
+      if (err.status && err.status === 403) window.ps.setCookie('logged-in', false, '0m');
       if (onError) onError(err);
     });
   }
@@ -42,6 +55,7 @@ class API {
       method: 'POST',
       credentials: 'include',
       headers: {
+        'Origin': location.origin,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
@@ -56,6 +70,7 @@ class API {
       if (onSuccess) onSuccess(result);
     })
     .catch((err) => {
+      if (err.status && err.status === 403) window.ps.setCookie('logged-in', false, '0m');
       if (onError) onError(err);
     });
   }

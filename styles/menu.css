@@ -14,7 +14,7 @@ body {
 .TopBar {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     flex-basis: 100%;
     flex-wrap: wrap-reverse;
 }
@@ -93,7 +93,7 @@ body {
     display: flex;
     align-items: center;
 }
-.Level__Text > * {
+.Level__Text > *, .Level__Name {
     margin: 5px;
     padding: 5px;
     width: fit-content;
@@ -109,6 +109,48 @@ body {
     background: rgba(255, 255, 255, 0.5);
     color: black;
 }
+
+.Level__Buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.Level__Action {
+  padding: 5px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+  margin: 5px;
+}
+
 [data-complete="false"] :is(.Level__Complete, .Level__Stats--Points, .Level__Stats--Time) {
     display: none;
+}
+
+
+.Row {
+    display: flex;
+    justify-content: center;
+}
+.Button--center {
+    margin: auto;
+    border: 2px solid white;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.Help {
+    background-image: url(/images/Help.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+.Help__Text {
+    margin: auto;
+    text-align: center;
+    max-width: 1000px;
 }

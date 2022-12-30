@@ -9,6 +9,6 @@ export const EDITORHTML = {
 </div>`,
   propertyOption: '<option value="{{value}}">{{text}}</option>',
   propActions: `<div><button class="Button mr-10 mt-10" data-action="duplicate-prop">{{ t:duplicate }}</button><div><button class="Button mr-10 mt-10" data-action="remove-prop">{{ t:remove }}</button><button class="Button mt-10" data-action="place-prop" data-active="false">{{ t:place }}</button></div>`,
-  leveloption: `<option value="{{level}}">{{level}}</option>`,
+  leveloption: `<option value="{{level}}">{{name}}</option>`,
   outlineProp: `<button class="Button--Prop" data-action="show-properties" data-location="{{location}}" data-id="{{id}}"><span>{{id}}</span> : <span>{{class}}</span></button>`
 }

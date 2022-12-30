@@ -1,19 +1,45 @@
 <div id="head">
   <link rel="stylesheet" href="styles/menu.css">
+  <link rel="stylesheet" href="styles/profile.css">
   <script src="scripts/profile.js" defer></script>
 </div>
 <div id="content">
   <div class="TopBar">
     <h1 data-t="profile"></h1>
     <div class="Actions">
-        <button data-action="toggle-sound" data-sounds="on"></button>
-        <select name="language">
-            <option value="DE">DE</option>
-            <option value="EN">EN</option>
-        </select>
-        <a class="Link--Editor" data-href="editor" data-t="editor"></a>
-        <a class="Link--Editor" data-href="login" data-t="login"></a>
-        <a class="Link--Editor" data-href="profile"></a>
+      <button class="Link--Editor" data-action="logout" data-t="logout"></button>
+      <a class="Link--Editor" data-href="menu" data-t="mainMenu"></a>
     </div>
   </div>
+  <div class="Profile">
+    <ul class="Profile__List">
+      <li class="Profile__List--Item">
+        <div class="Profile__List--Label" data-t="username"></div><div id="username"></div>
+      </li>
+      <li class="Profile__List--Item">
+        <div class="Profile__List--Label" data-t="id"></div><div id="id"></div>
+      </li>
+    </ul>
+  </div>
+  <br>
+  <hr>
+  <h2 class="text-center" data-t="createdLevels"></h2>
+  <div class="Levels" id="levels"></div>
+  <div id="popups">
+    <div class="Popup" data-visible="false" data-popup="delete">
+      <div class="Popup__Header">
+        <div class="Popup__Header--Title"><span data-t="delete"></span></div>
+        <button class="Popup__Header--Close" data-action="close-popup">X</button>
+      </div>
+      <hr>
+      <div class="Popup__Content">
+        <p class="text-center">
+          <span data-t="sureDelete"></span>
+        </p>
+        <button class="Button m-5" data-action="confirm-delete"><span data-t="confirm"></span></button>
+        <button class="Button m-5" data-action="close-popup">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+  <div class="PageOverlay" data-visible="false"></div>
 </div>

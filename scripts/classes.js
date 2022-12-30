@@ -171,6 +171,64 @@ export class Fire extends InteractableProp {
 
 export class World {
   constructor(level) {
+    const loadLevelFromJson = (data) => {
+      const t = this;
+      this.id = level;
+      this.name = data.meta.name;
+      this.width = data.meta.width;
+      this.height = data.meta.height;
+      this.background = data.meta.background;
+      this.music = data.meta.music;
+      this.verticalParallax = data.meta.verticalParallax;
+      this.props = [];
+      for (let prop of data.staticProps) {
+        const type = t.p(prop, 'type') || VALUES.propDefault;
+        if (t.p(prop, 'class') === 'Block') {
+          this.props.push(new Block(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), type, t.p(prop, 'breakable'), t.p(prop, 'hasCoin'), t.p(prop, 'invisible'), t.p(prop, 'item')));
+        }
+        else if (t.p(prop, 'class') === 'MovingProp') {
+          this.props.push(new MovingProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor'), t.p(prop, 'speedFactorX'), t.p(prop, 'speedFactorY'), t.p(prop, 'startX'), t.p(prop, 'startY'), t.p(prop, 'endX'), t.p(prop, 'endY'), t.p(prop, 'stopOnPlayer')));
+        }
+        else if (t.p(prop, 'class') === 'Spawner') {
+          this.props.push(new Spawner(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'speedFactor'), t.p(prop, 'forward'), t.p(prop, 'spawnRate')));
+        }
+        else {
+          this.props.push(new StaticProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor')));
+        }
+      }
+      this.water = [];
+      for (let prop of data.waterProps) {
+        const type = t.p(prop, 'type') || VALUES.propDefault;
+        this.water.push(new Water(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'isTop')));
+      }
+      this.coinProps = [];
+      for (let coin of data.coins) {
+        this.coinProps.push(new Coin(t.p(coin, 'id'), t.p(coin, 'x'), t.p(coin, 'y')));
+      }
+      this.enemies = [];
+      for (let enemy of data.enemies) {
+        if (t.p(enemy, 'class') === 'FlyingEnemy') {
+          this.enemies.push(new FlyingEnemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactorX'), t.p(enemy, 'speedFactorY'), t.p(enemy, 'startX'), t.p(enemy, 'startY'), t.p(enemy, 'endX'), t.p(enemy, 'endY')));
+        }
+        else {
+          this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner')));
+        }
+      }
+      this.finish = new Finish(data.finish.x, data.finish.y);
+      this.player = new Player(data.player.x, data.player.y, data.player.state);
+      this.view = {
+        width: VALUES.viewWidth,
+        height: VALUES.viewHeight
+      };
+      this.items = [];
+      this.shots = [];
+      this.coins = 0;
+      this.points = 0;
+      this.calcViewPosition(this.player);
+      this.time = data.meta.time;
+      this.startTime = this.time;
+      window.dispatchEvent(new CustomEvent('world:loaded'));
+    }
     if (!level) {
       const defaults = EDITORVALUES.worldDefaults;
       this.id = 'newlevel';
@@ -199,66 +257,19 @@ export class World {
       this.time = defaults.time;
       this.startTime = this.time;
     }
-    else {
+    else if (EDITORVALUES.levels.includes(level)) {
       fetch('levels/' + level + '.json')
       .then(result => result.json())
       .then((data) => {
-        const t = this;
-        this.id = level;
-        this.name = data.meta.name;
-        this.width = data.meta.width;
-        this.height = data.meta.height;
-        this.background = data.meta.background;
-        this.music = data.meta.music;
-        this.verticalParallax = data.meta.verticalParallax;
-        this.props = [];
-        for (let prop of data.staticProps) {
-          const type = t.p(prop, 'type') || VALUES.propDefault;
-          if (t.p(prop, 'class') === 'Block') {
-            this.props.push(new Block(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), type, t.p(prop, 'breakable'), t.p(prop, 'hasCoin'), t.p(prop, 'invisible'), t.p(prop, 'item')));
-          }
-          else if (t.p(prop, 'class') === 'MovingProp') {
-            this.props.push(new MovingProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor'), t.p(prop, 'speedFactorX'), t.p(prop, 'speedFactorY'), t.p(prop, 'startX'), t.p(prop, 'startY'), t.p(prop, 'endX'), t.p(prop, 'endY'), t.p(prop, 'stopOnPlayer')));
-          }
-          else if (t.p(prop, 'class') === 'Spawner') {
-            this.props.push(new Spawner(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'speedFactor'), t.p(prop, 'forward'), t.p(prop, 'spawnRate')));
-          }
-          else {
-            this.props.push(new StaticProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor')));
-          }
-        }
-        this.water = [];
-        for (let prop of data.waterProps) {
-          const type = t.p(prop, 'type') || VALUES.propDefault;
-          this.water.push(new Water(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'isTop')));
-        }
-        this.coinProps = [];
-        for (let coin of data.coins) {
-          this.coinProps.push(new Coin(t.p(coin, 'id'), t.p(coin, 'x'), t.p(coin, 'y')));
-        }
-        this.enemies = [];
-        for (let enemy of data.enemies) {
-          if (t.p(enemy, 'class') === 'FlyingEnemy') {
-            this.enemies.push(new FlyingEnemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactorX'), t.p(enemy, 'speedFactorY'), t.p(enemy, 'startX'), t.p(enemy, 'startY'), t.p(enemy, 'endX'), t.p(enemy, 'endY')));
-          }
-          else {
-            this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner')));
-          }
-        }
-        this.finish = new Finish(data.finish.x, data.finish.y);
-        this.player = new Player(data.player.x, data.player.y, data.player.state);
-        this.view = {
-          width: VALUES.viewWidth,
-          height: VALUES.viewHeight
-        };
-        this.items = [];
-        this.shots = [];
-        this.coins = 0;
-        this.points = 0;
-        this.calcViewPosition(this.player);
-        this.time = data.meta.time;
-        this.startTime = this.time;
-        window.dispatchEvent(new CustomEvent('world:loaded'));
+        loadLevelFromJson(data);
+      });
+    }
+    else {
+      window.api.post('getLevel', { _id: level }, (result) => {
+        window.ps.save('levelData', JSON.stringify(result));
+        loadLevelFromJson(JSON.parse(result.json));
+      }, (error) => {
+        console.error(error);
       });
     }
   }
