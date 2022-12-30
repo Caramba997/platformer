@@ -541,6 +541,8 @@ export class Editor {
         if (result._id) {
           this.levelId = result._id;
           document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
+          const playButton = document.querySelector('a[data-action="play"]');
+          playButton.href = '?page=game&level=' + result._id;
         }
         e.target.classList.remove('loading');
         statusHint.innerText = window.locales.getTranslation('uploadComplete');
