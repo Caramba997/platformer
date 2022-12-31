@@ -18,7 +18,7 @@ export const VALUES = {
     'Enter': 'shoot',
     'Escape': 'pause',
     'Jump': 'jump',
-    'Fire': 'fire',
+    'Fire': 'shoot',
     'Left': 'left',
     'Right': 'right'
   },

@@ -16,8 +16,9 @@
     <h2>Steuerung (Keyboard)</h2>
     <p>Nach links bewegen: [a] oder [Pfeil nach links]</p>
     <p>Nach rechts bewegen: [d] oder [Pfeil nach rechts]</p>
-    <p>Springen: [w] oder [Leertaste]</p>
-    <p>Schießen: [Enter]</p>
+    <p>Springen: [w] oder [Leertaste] oder [Pfeil nach oben]</p>
+    <p>Sprinten: [Shift]</p>
+    <p>Schießen: [f] oder [Enter]</p>
     <br>
     <h2>Steuerung (Touch)</h2>
     <p>Auf Mobilgeräten kann der Charakter mit Berührung der markierten Bereiche gesteuert werden. Das Spiel ist aktuell noch nicht für Mobilgeräte optimiert und funktioniert dort nur sehr oberflächlich. Der Editor sollte mobil am Besten nicht verwendet werden.</p>
@@ -31,7 +32,7 @@
     <p>Um Level von anderen Nutzern zu abonnieren oder deabonnieren, lasse dir über das Hautmenü über den entsprechenden Button alle vorhandenen Levels anzeigen. Abonnierte Levels findest du stets zum Spielen im Hauptmenü.</p>
     <br>
     <h2>Fortschritt</h2>
-    <p>Für abgeschlossene Level wird dein Fortschritt lokal gespeichert. In Zukunft soll der Fortschritt auch mit deinem Profil verknüpft werden können und es soll Bestenlisten geben.</p>
+    <p>Wenn du ein Level abschließt, wird der Fortschritt automatisch in deinem Profil gespeichert. In Zukunft soll es auch Bestenlisten geben.</p>
     <br>
     <h2>Editor</h2>
     <p>Der Editor ist eine umfangreiche grafische Oberfläche, in der du selbst Level erstellen und bearbeiten kannst.</p>
@@ -61,6 +62,55 @@
     <p>Das Projekt basiert auf den grundlegenden Web-Technologien HTML, CSS, und JavaScript. Im Backend steht ein NodeJS-Server angebunden an eine MongoDB-Datenbank.</p>
   </div>
   <div class="Help__Text dn" data-translation="EN">
-    <p>This content is currently only available in german, switch your language in the main menu to get help.</p>
+    <p>This game is a simple platformer based on Super Mario games.</p>
+    <p>Expect unfinished areas and bugs, it is still in early development and requires some more testing.</p>
+    <br>
+    <h2>Controls (Keyboard)</h2>
+    <p>Move left: [a] or [Arrow left]</p>
+    <p>Move right: [d] or [Arrow right]</p>
+    <p>Jump: [w] or [Space] or [Arrow up]</p>
+    <p>Run: [Shift]</p>
+    <p>Shoot: [f] or [Enter]</p>
+    <br>
+    <h2>Controls (Touch)</h2>
+    <p>On mobile devices, the character can be controlled by touching the corresponding areas. The game is currently not optimized for mobile devices and is not well playable there. The editor should only be used on a computer or bigger device.</p>
+    <br>
+    <h2>Sound</h2>
+    <p>You can turn the sound on and off in the main menu.</p>
+    <br>
+    <h2>Profile</h2>
+    <p>You can create an account using an username and password, to create your own levels in the editor and play other users levels.</p>
+    <p>In your profile you can see your account information and your created levels.</p>
+    <p>To subscribe to levels from other users, you can browse all levels using the button on the main menu page. Subscribed levels are always shown in the main menu afterwards.</p>
+    <br>
+    <h2>Fortschritt</h2>
+    <p>If you complete a level, your progress is automatically saved in your profile. Highscore lists may come in the future.</p>
+    <br>
+    <h2>Editor</h2>
+    <p>The editor is an interactive graphical interface to allow creating and modifying your own levels.</p>
+    <p>It may be hard to use in the first instance, a detailed documentation may come in the future.</p>
+    <p>Here is a short tutorial for the basic functionalities:</p>
+    <p>When you open the editor for the first time, you are asked if you want to load or create a level. As an admin, you can also load the standard levels.</p>
+    <p>After clicking [New], you get an empty level with some basic configurations.</p>
+    <br>
+    <p>In the top menu bar, you can return to main menu, load another level, save your level and play the saved version of the level. Additionally, you can create any new game object here.</p>
+    <p>In the left bar, you see an overview of all existing game objects aswell as some global world configuration options.</p>
+    <p>In the right bar, you see the properties of the currently selected game object.</p>
+    <p>In the world section, you can define some meta information about the level like name, time in milliseconds, background, music, dimensions and if you want a vertical parallax (deactivate if the vertical size of the level is small).</p>
+    <p>In the player section, you can set the start position and state of the character.</p>
+    <p>In the finish section, you can set the position of the finish flag. Hint: In addition to the flag, there is a little tower where the flag should be placed on, which can be found in the objects section and should be moved respectively.</p>
+    <br>
+    <p>In the middle you see the game view, which shows how your level will look while playing. Selected objects are marked red. You have a cursor that is a little red box and can be moved with arrow keys.</p>
+    <p>You can also move the cursor manually by entering coordinates. The checkbox defines if the cursor should jump to newly selected objects.</p>
+    <p>You can select game objects from the left bar or by just clicking on them in the game view.</p>
+    <br>
+    <p>Every game object type has different properties. For example, enemies can behave very different. They can be static, fly between two points, stay on a ground etc.</p>
+    <p>They can also be invincible or be killed by jump or shot. Just try which property setting has which effect in the game.</p>
+    <br>
+    <p>If you are done, you should save your level. If you confirm in the save dialog, your game is ready to play.</p>
+    <p>You can always continue working on your level and overwrite the current version.</p>
+    <br>
+    <h2>Technology</h2>
+    <p>This project is based on the core web technologies HTML, CSS and JavaScript. The backend is modelled as a NodeJS server using a MongoDB database.</p>
   </div>
 </div>
