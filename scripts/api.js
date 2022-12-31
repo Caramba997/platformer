@@ -12,9 +12,11 @@ class API {
       userLevels: '/api/user/createdlevels',
       userAllLevels: '/api/user/alllevels',
       getUser: '/api/user',
-      updateProgress: '/api/user/progress',
+      highscore: '/api/user/highscore',
       subscribe: '/api/user/subscribe',
-      unsubscribe: '/api/user/unsubscribe'
+      unsubscribe: '/api/user/unsubscribe',
+      getHighscore: '/api/highscore/get',
+      getAllHighscores: '/api/highscore/getall'
     },
     this.loginStatusCookie = 'logged-in'
   }

@@ -180,6 +180,16 @@ body {
     border-radius: 50%;
     border: 2px solid white;
 }
+.Highscores {
+    background-image: url(/images/Highscores.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 5px;
+    border: 2px solid white;
+}
 .Help__Text {
     margin: auto;
     text-align: center;

@@ -91,6 +91,8 @@ const locales = {
     unsubscribe: 'Deabonnieren',
     by: 'von',
     help: 'Hilfe',
+    highscores: 'Bestenliste',
+    score: 'Score',
     thumbnailInfo: 'Du kannst aus der aktuell sichtbaren Spielszene ein Vorschaubild generieren und hochladen. Positioniere die Szene so, dass die Vorschau dein Level gut repräsentiert.'
   },
   EN: {
@@ -185,6 +187,8 @@ const locales = {
     unsubscribe: 'Unsubscribe',
     by: 'by',
     help: 'Help',
+    highscores: 'Highscores',
+    score: 'Score',
     thumbnailInfo: 'You can create and upload a thumbnail out of the currently visible scene. Adjust your scene view to provide a good impression of your level.'
   }
 }

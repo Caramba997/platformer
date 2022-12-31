@@ -1,0 +1,27 @@
+<div id="head">
+  <link rel="stylesheet" href="styles/menu.css">
+  <link rel="stylesheet" href="styles/highscores.css">
+  <script src="scripts/highscores.js" defer></script>
+</div>
+<div id="content">
+  <div class="TopBar">
+    <h1 data-t="highscores"></h1>
+    <div class="Actions">
+      <select name="level">
+        <option value="none">...</option>
+      </select>
+      <select name="type">
+        <option value="points" data-t="points"></option>
+        <option value="time" data-t="time"></option>
+      </select>
+      <a class="Link--Editor" data-href="menu" data-t="mainMenu"></a>
+    </div>
+  </div>
+  <table id="highscores">
+    <tr>
+      <th>#</th>
+      <th data-t="username"></th>
+      <th data-t="score"></th>
+    </tr>
+  </table>
+</div>
