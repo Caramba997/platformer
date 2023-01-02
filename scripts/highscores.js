@@ -27,7 +27,7 @@
       if (highscores[i].level === level) {
         const scores = highscores[i][type];
         for (let k = 0; k < scores.length; k++) {
-          const score = (type === 'points') ? `${scores[k].score} ${window.locales.getTranslation('points')}` : `${Math.floor(scores[k].score / 1000)}.${scores[k].score % 1000} s`;
+          const score = (type === 'points') ? `${scores[k].score} ${window.locales.getTranslation('points')}` : window.formatter.formatTime(scores[k].score);
           table.innerHTML += `<tr class="Score"><td>${k+1}</td><td>${scores[k].user}</td><td>${score}</td></tr>`;
         }
         break;

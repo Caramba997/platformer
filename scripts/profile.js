@@ -57,6 +57,20 @@
   else {
     levelLoadingSpinner.classList.add('dn');
   }
+  // Refresh profile
+  document.querySelector('[data-action="refresh-profile"]').addEventListener('click', (e) => {
+    e.target.classList.add('loading');
+    e.target.disabled = true;
+    api.get('getUser', (result) => {
+      window.ps.save('user', JSON.stringify(result));
+      e.target.classList.remove('loading');
+      e.target.disabled = false;
+    }, (error) => {
+      console.error(error);
+      e.target.classList.remove('loading');
+      e.target.disabled = false;
+    });
+  });
   // Popup closers
   document.querySelectorAll('[data-action="close-popup"]').forEach((opener) => {
     opener.addEventListener('click', (e) => {

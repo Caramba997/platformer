@@ -32,7 +32,7 @@
       if (progress && progress[level]) {
         levelElement.setAttribute('data-complete', 'true');
         levelElement.querySelector('[data-stats="points"]').innerText = progress[level].points;
-        levelElement.querySelector('[data-stats="time"]').innerText = `${Math.floor(progress[level].time / 1000)}.${progress[level].time % 1000} s`;
+        levelElement.querySelector('[data-stats="time"]').innerText = window.formatter.formatTime(progress[level].time);
       }
       levelElement.closest('a').addEventListener('click', (e) => {
         let level;
@@ -70,7 +70,7 @@
         if (progress && progress[level._id]) {
           levelElement.setAttribute('data-complete', 'true');
           levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
-          levelElement.querySelector('[data-stats="time"]').innerText = `${Math.floor(progress[level._id].time / 1000)}.${progress[level._id].time % 1000} s`;
+          levelElement.querySelector('[data-stats="time"]').innerText = window.formatter.formatTime(progress[level._id].time);
         }
         levelElement.closest('a').addEventListener('click', (e) => {
           let levelName;
@@ -97,7 +97,7 @@
         if (progress && progress[level._id]) {
           levelElement.setAttribute('data-complete', 'true');
           levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
-          levelElement.querySelector('[data-stats="time"]').innerText = `${Math.floor(progress[level._id].time / 1000)}.${progress[level._id].time % 1000} s`;
+          levelElement.querySelector('[data-stats="time"]').innerText = window.formatter.formatTime(progress[level._id].time);
         }
         levelElement.closest('a').addEventListener('click', (e) => {
           let levelName;
