@@ -2,6 +2,7 @@ class PlatformerStorage {
   constructor() {
     this.objects = {
       sounds: 'sounds',
+      fullscreen: 'fullscreen',
       level: 'level',
       levelData: 'levelData',
       editorLevel: 'editorLevel',
@@ -58,7 +59,7 @@ class PlatformerStorage {
    */
   reset() {
     Object.entries(this.objects).forEach(([key, value]) => {
-      if (['language', 'sounds'].includes(key)) return;
+      if (['language', 'sounds', 'fullscreen'].includes(key)) return;
       localStorage.removeItem(value);
     });
     this.setCookie(window.api.loginStatusCookie, false, '0m');

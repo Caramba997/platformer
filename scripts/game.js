@@ -51,7 +51,7 @@ export class Game {
   }
 
   touchListener(e) {
-    const touchList = e.targetTouches,
+    const touchList = e.touches,
           activeTouches = [];
     if (!this.running) {
       this.activeControls.clear();

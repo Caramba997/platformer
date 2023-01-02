@@ -135,6 +135,21 @@
     }
   });
 
+  const fullscreenButton = document.querySelector('[data-action="toggle-fullscreen"]');
+  if (window.ps.load('fullscreen')) fullscreenButton.setAttribute('data-fullscreen', window.ps.load('fullscreen'));
+  fullscreenButton.addEventListener('click', (e) => {
+    if (e.target.getAttribute('data-fullscreen') === 'on') {
+      window.ps.save('fullscreen', 'off');
+      e.target.setAttribute('data-fullscreen', 'off');
+      window.pwa.toggleFullscreen(false);
+    }
+    else {
+      window.ps.save('fullscreen', 'on');
+      e.target.setAttribute('data-fullscreen', 'on');
+      window.pwa.toggleFullscreen(true);
+    }
+  });
+
   const languageSelector = document.querySelector('select[name="language"]');
   if (window.ps.load('language') !== languageSelector.value) {
     languageSelector.value = window.ps.load('language');
@@ -147,6 +162,7 @@
   });
 
   if (userData && window.ps.getCookie(window.api.loginStatusCookie) != '') {
+    document.querySelector('a[data-href="highscores"]').classList.remove('dn');
     document.querySelector('a[data-href="profile"]').classList.remove('dn');
     document.querySelector('a[data-href="editor"]').classList.remove('dn');
     document.querySelector('[data-t="browseLevels"]').classList.remove('dn');

@@ -62,7 +62,7 @@ body {
 }
 
 #controls {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -77,7 +77,16 @@ body {
     #controls {
       display: none;
     }
-  }
+}
+@media only screen and (max-width: 999px) {
+    .stats__fps {
+      display: none;
+    }
+    .Hint--mobile {
+        display: block;
+    }
+}
+
 
 #controls > div {
     margin: 2px;

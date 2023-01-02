@@ -40,6 +40,17 @@ body {
 .Actions [data-action="toggle-sound"][data-sounds="off"] {
     background-image: url(/images/SoundOff.png);
 }
+.Actions [data-action="toggle-fullscreen"] {
+    background-image: url(/images/FullscreenOn.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 2rem;
+    height: 2rem;
+    padding: 5px;
+}
+.Actions [data-action="toggle-fullscreen"][data-fullscreen="off"] {
+    background-image: url(/images/FullscreenOff.png);
+}
 .Actions [data-href="profile"] {
     background-image: url(/images/Profile.png);
     background-size: contain;

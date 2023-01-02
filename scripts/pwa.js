@@ -36,6 +36,44 @@ class PWA {
     else {
       this.loadPage('menu');
     }
+
+    window.addEventListener('fullscreenchange', () => {
+      const fullscreenToggle = document.querySelector('[data-action="toggle-fullscreen"]');
+      if (document.fullscreenElement && window.ps.load('fullscreen') === 'off') {
+        window.ps.save('fullscreen', 'on');
+        if (fullscreenToggle) fullscreenToggle.setAttribute('data-fullscreen', 'on');
+      }
+      else if (!document.fullscreenElement && window.ps.load('fullscreen') === 'on') {
+        window.ps.save('fullscreen', 'off');
+        if (fullscreenToggle) fullscreenToggle.setAttribute('data-fullscreen', 'off');
+      }
+    });
+  }
+
+  toggleFullscreen(fullscreen) {
+    if (fullscreen) {
+      if (this.contentContainer.requestFullscreen) {
+        this.contentContainer.requestFullscreen();
+      }
+      else if (this.contentContainer.webkitRequestFullscreen) { // Safari
+        this.contentContainer.webkitRequestFullscreen();
+      }
+      else if (this.contentContainer.mozRequestFullScreen) { // Firefox
+        this.contentContainer.mozRequestFullScreen();
+      }
+    }
+    else {
+      if (!document.fullscreenElement) return;
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+      else if (document.webkitExitFullscreen) { // Safari
+        document.webkitExitFullscreen();
+      }
+      else if (document.mozCancelFullScreen) { // Firefox
+        document.mozCancelFullScreen();
+      }
+    }
   }
 
   updateProgress() {

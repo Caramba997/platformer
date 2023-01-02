@@ -93,7 +93,8 @@ const locales = {
     help: 'Hilfe',
     highscores: 'Bestenliste',
     score: 'Score',
-    thumbnailInfo: 'Du kannst aus der aktuell sichtbaren Spielszene ein Vorschaubild generieren und hochladen. Positioniere die Szene so, dass die Vorschau dein Level gut repräsentiert.'
+    thumbnailInfo: 'Du kannst aus der aktuell sichtbaren Spielszene ein Vorschaubild generieren und hochladen. Positioniere die Szene so, dass die Vorschau dein Level gut repräsentiert.',
+    hintMobile: 'Auf Mobilgeräten wird Vollbild empfohlen, du kannst dies im Hauptmenü aktivieren.'
   },
   EN: {
     undefined: '???',
@@ -189,7 +190,8 @@ const locales = {
     help: 'Help',
     highscores: 'Highscores',
     score: 'Score',
-    thumbnailInfo: 'You can create and upload a thumbnail out of the currently visible scene. Adjust your scene view to provide a good impression of your level.'
+    thumbnailInfo: 'You can create and upload a thumbnail out of the currently visible scene. Adjust your scene view to provide a good impression of your level.',
+    hintMobile: 'Fullscreen mode is recommended for mobile devices, you can enable it in the main menu.'
   }
 }
 
