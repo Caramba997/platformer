@@ -1,6 +1,7 @@
 class API {
   constructor() {
-    this.url = 'https://fc-platformer.herokuapp.com', //'http://localhost:3000'
+    this.url = 'https://fc-platformer.herokuapp.com'; //'http://localhost:3000'
+    this.version = 'v2.2';
     this.routes = {
       login: '/login',
       register: '/register',
@@ -17,11 +18,18 @@ class API {
       unsubscribe: '/api/user/unsubscribe',
       getHighscore: '/api/highscore/get',
       getAllHighscores: '/api/highscore/getall'
-    },
+    };
     this.loginStatusCookie = 'logged-in'
   }
 
-  get(endpoint, onSuccess, onError) {
+  /**
+   * Do a GET request to the API
+   * @param {String} endpoint A valid endpoint from API.routes
+   * @param {Function} onSuccess A callback function for success with one parameter that holds the JSON result
+   * @param {Function} onError A callback function for error with one parameter that holds the error
+   * @returns undefined
+   */
+  async get(endpoint, onSuccess, onError) {
     const route = this.routes[endpoint];
     if (!route) {
       console.error('[API] Post: Unknown endpoint');
@@ -49,7 +57,14 @@ class API {
     });
   }
 
-  post(endpoint, data, onSuccess, onError) {
+  /**
+   * Do a POST request to the API
+   * @param {String} endpoint A valid endpoint from API.routes
+   * @param {Function} onSuccess A callback function for success with one parameter that holds the JSON result
+   * @param {Function} onError A callback function for error with one parameter that holds the error
+   * @returns undefined
+   */
+  async post(endpoint, data, onSuccess, onError) {
     const route = this.routes[endpoint];
     if (!route) {
       console.error('[API] Post: Unknown endpoint');

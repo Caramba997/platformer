@@ -52,9 +52,10 @@
         });
       });
       window.pwa.initLinks();
+      window.dispatchEvent(new CustomEvent('progress:executed'));
     }, (error) => {
       console.error(error);
+      window.dispatchEvent(new CustomEvent('progress:executed'));
     });
   }
-  window.dispatchEvent(new CustomEvent('progress:executed'));
 })();

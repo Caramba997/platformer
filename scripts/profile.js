@@ -12,6 +12,7 @@
     window.pwa.loadPage('menu');
   });
   
+  const levelLoadingSpinner = document.querySelector('[data-header="createdLevels"] .loading');
   if (window.ps.load('user')) {
     const levelHtml = `<div class="Level">
             <div class="Level__Content" data-name="{{name}}" data-complete="false" style="background-image: url(/images/nothumbnail.png);">
@@ -47,9 +48,14 @@
         });
       });
       window.pwa.initLinks();
+      levelLoadingSpinner.classList.add('dn');
     }, (error) => {
       console.error(error);
+      levelLoadingSpinner.classList.add('dn');
     });
+  }
+  else {
+    levelLoadingSpinner.classList.add('dn');
   }
   // Popup closers
   document.querySelectorAll('[data-action="close-popup"]').forEach((opener) => {

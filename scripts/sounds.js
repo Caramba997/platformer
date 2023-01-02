@@ -8,6 +8,10 @@ export class Sounds {
     });
   }
 
+  /**
+   * Plays a sound
+   * @param {String} type Sound ID
+   */
   play(type) {
     if (!this.on) return;
     const sound = this.sounds[type];
@@ -29,6 +33,10 @@ export class Sounds {
     }
   }
 
+  /**
+   * Pauses a sound
+   * @param {String} type Sound ID
+   */
   pause(type) {
     if (!this.on) return;
     const sound = this.sounds[type];
@@ -40,6 +48,10 @@ export class Sounds {
     }
   }
 
+  /**
+   * Stops a sound
+   * @param {String} type Sound ID
+   */
   stop(type) {
     if (!this.on) return;
     const sound = this.sounds[type];

@@ -11,7 +11,7 @@ export const EDITORVALUES = {
   },
   enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'fish', 'rocket', 'mine'],
   finishTypes: ['finishflag'],
-  levels: ['level1', 'level2', 'level3', 'level4', 'dev'],
+  levels: ['level1', 'level2', 'level3', 'level4'],
   moveSpeed: 1,
   musicTypes: ['supermariomedley', 'mariobros', 'mariobrosdesert', 'mariobrosathletic', 'mariobrostower', 'mariobrosunderwater'],
   playerStates: ["normal", "super", "fire"],

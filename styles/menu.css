@@ -195,3 +195,15 @@ body {
     text-align: center;
     max-width: 1000px;
 }
+
+.Headline__Loading {
+    position: relative;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+.Headline__Loading--spinner {
+    position: absolute;
+    right: -1rem;
+    top: 50%;
+}

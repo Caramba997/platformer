@@ -11,6 +11,11 @@ class PWA {
     this.assetLoader = new AssetLoader();
 
     window.locales.translatePage(document);
+
+    if (window.ps.load('apiVersion') !== window.api.version) {
+      window.ps.reset();
+      window.ps.save('apiVersion', window.api.version);
+    }
   
     window.addEventListener('progress:changed', (e) => {
       this.updateProgress(e.detail);

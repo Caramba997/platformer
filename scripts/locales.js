@@ -203,18 +203,31 @@ class Locales {
     this.t = this.locales[this.language];
   }
 
+  /**
+   * Changes the languages
+   * @param {String} language Language
+   */
   changeLanguage(language) {
     window.ps.save('language', language);
     this.language = language;
     this.t = this.locales[this.language];
   }
 
+  /**
+   * Translates all the [data-t] elements of a given container
+   * @param {Element} container The Element where all recursive children are translated
+   */
   translatePage(container) {
     container.querySelectorAll('[data-t]').forEach((element) => {
       element.innerText = this.getTranslation(element.getAttribute('data-t'));
     });
   }
 
+  /**
+   * Translates a HTML String by replacing all {{example}} occurences
+   * @param {String} raw HTML String to be translated
+   * @returns Translated HTML String
+   */
   translateRaw(raw) {
     const shortcodes = raw.match(/{{\s*t:\w+\s*}}/g);
     let result = raw;
@@ -227,6 +240,11 @@ class Locales {
     return result;
   }
 
+  /**
+   * Translates a single word or String
+   * @param {String} word ID of the text to be translated
+   * @returns Translated String
+   */
   getTranslation(word) {
     return this.t[word] ? this.t[word] : this.t['undefined'];
   }

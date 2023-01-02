@@ -11,12 +11,14 @@ export class Game {
     this.calcJumpParameters();
     this._keyDownListener = this.keyDownListener.bind(this);
     this._keyUpListener = this.keyUpListener.bind(this);
-    this._touchStartListener = this.touchStartListener.bind(this);
-    this._touchEndListener = this.touchEndListener.bind(this);
+    this._touchListener = this.touchListener.bind(this);
     this._contextMenuListener = this.contextMenuListener.bind(this);
     this.initControls();
     this.initListeners();
     const storageLevel = window.ps.load('level');
+    window.addEventListener('world:loaded', () => {
+      window.dispatchEvent(new CustomEvent('progress:executed'));
+    }, { once: true });
     if (storageLevel) {
       this.loadLevel(storageLevel);
     }
@@ -24,7 +26,6 @@ export class Game {
       this.loadLevel('level1');
     }
     window.addEventListener('contextmenu', (event) => {});
-    window.dispatchEvent(new CustomEvent('progress:executed'));
   }
 
   unload() {
@@ -39,32 +40,38 @@ export class Game {
     window.addEventListener('contextmenu', this._contextMenuListener);
     window.addEventListener('keydown', this._keyDownListener);
     window.addEventListener('keyup', this._keyUpListener);
-    const mobileControls = document.querySelector('#controls'),
-          controls = mobileControls.querySelectorAll('.controls__jump, .controls__fire, .controls__left, .controls__right');
-    controls.forEach((control) => {
-      control.addEventListener('touchstart', this._touchStartListener);
-      control.addEventListener('touchend', this._touchEndListener);
-    });
+    const mobileControls = document.querySelector('#controls');
+    mobileControls.addEventListener('touchmove', this._touchListener);
+    mobileControls.addEventListener('touchstart', this._touchListener);
+    mobileControls.addEventListener('touchend', this._touchListener);
   }
 
   contextMenuListener(e) {
     e.preventDefault();
   }
 
-  touchStartListener(e) {
-    const command = e.target.getAttribute('data-command'),
-          control = VALUES.controls[command];
-    if (!this.running || !control || this.activeControls.has(control)) return;
-    this.activeControls.add(control);
-    if (control === 'left' || control === 'right') this.activeControls.add('run');
-  }
-
-  touchEndListener(e) {
-    const command = e.target.getAttribute('data-command'),
-          control = VALUES.controls[command];
-    if (!this.activeControls.has(control)) return;
-    this.activeControls.delete(control);
-    if (control === 'left' || control === 'right') this.activeControls.delete('run');
+  touchListener(e) {
+    const touchList = e.targetTouches,
+          activeTouches = [];
+    if (!this.running) {
+      this.activeControls.clear();
+      return;
+    }
+    for (let i = 0; i < touchList.length; i++) {
+      const currentTouch = touchList.item(i),
+            element = document.elementFromPoint(currentTouch.clientX, currentTouch.clientY);
+      if (element && element.hasAttribute('data-command')) {
+        const control = VALUES.controls[element.getAttribute('data-command')];
+        if (control) activeTouches.push(control);
+      }
+    }
+    if (activeTouches.includes('left') || activeTouches.includes('right')) activeTouches.push('run');
+    activeTouches.forEach((control) => {
+      if (!this.activeControls.has(control)) this.activeControls.add(control);
+    });
+    this.activeControls.forEach((control) => {
+      if (!activeTouches.includes(control)) this.activeControls.delete(control);
+    });
   }
 
   keyDownListener(e) {
@@ -878,7 +885,7 @@ export class Game {
     const userData = window.ps.load('user');
     if (userData) {
       const points = this.world.points,
-            time = Math.ceil((this.world.startTime - this.world.time) / 1000);
+            time = this.world.startTime - Math.floor(this.world.time);
       window.api.post('highscore', { id: this.world.id, time: time, points: points }, (result) => {
         window.ps.save('user', JSON.stringify(result));
       }, (error) => {

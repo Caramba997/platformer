@@ -18,26 +18,34 @@
     };
   }
 
-  loginButton.addEventListener('click', async () => {
+  loginButton.addEventListener('click', async (e) => {
     const data = validateUserData();
     if (data === null) return;
+    e.target.classList.add('loading');
+    e.target.disabled = true;
     api.post('login', data, (result) => {
       window.ps.save('user', JSON.stringify(result));
       window.ps.setCookie(window.api.loginStatusCookie, true, '30d');
       window.pwa.loadPage('menu');
     }, (error) => {
       errorElement.innerText = (error.status === 401) ? window.locales.getTranslation('errorInvalidCredentials') : window.locales.getTranslation('errorLoginFailed');
+      e.target.classList.remove('loading');
+      e.target.disabled = false;
     });
   });
   registerButton.addEventListener('click', async () => {
     const data = validateUserData();
     if (data === null) return;
+    e.target.classList.add('loading');
+    e.target.disabled = true;
     api.post('register', data, (result) => {
       window.ps.save('user', JSON.stringify(result));
       window.ps.setCookie(window.api.loginStatusCookie, true, '30d');
       window.pwa.loadPage('menu');
     }, (error) => {
       errorElement.innerText = (error.status === 409) ? window.locales.getTranslation('errorUsernameTaken') : window.locales.getTranslation('errorRegisterFailed');
+      e.target.classList.remove('loading');
+      e.target.disabled = false;
     });
   });
   document.querySelector('input[name="password"]').addEventListener('keypress', (e) => {

@@ -160,6 +160,8 @@ span[data-t] {
 }
 .Loading__Progress {
     display: flex;
+    width: fit-content;
+    margin: auto;
 }
 .Loading__Bar {
     border: 2px solid white;

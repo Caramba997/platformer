@@ -27,7 +27,8 @@
       if (highscores[i].level === level) {
         const scores = highscores[i][type];
         for (let k = 0; k < scores.length; k++) {
-          table.innerHTML += `<tr class="Score"><td>${k+1}</td><td>${scores[k].user}</td><td>${scores[k].score}</td></tr>`;
+          const score = (type === 'points') ? `${scores[k].score} ${window.locales.getTranslation('points')}` : `${Math.floor(scores[k].score / 1000)}.${scores[k].score % 1000} s`;
+          table.innerHTML += `<tr class="Score"><td>${k+1}</td><td>${scores[k].user}</td><td>${score}</td></tr>`;
         }
         break;
       }
@@ -41,6 +42,7 @@
       const levelSelector = document.querySelector('select[name="level"]'),
             typeSelector = document.querySelector('select[name="type"]');
       highscores.forEach((highscore) => {
+        if (highscore.level.includes('level')) return;
         levelSelector.innerHTML += `<option value="${highscore.level}">${getLevelName(highscore.level, levels)}</option>`;
       });
 

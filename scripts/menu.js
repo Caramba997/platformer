@@ -32,7 +32,7 @@
       if (progress && progress[level]) {
         levelElement.setAttribute('data-complete', 'true');
         levelElement.querySelector('[data-stats="points"]').innerText = progress[level].points;
-        levelElement.querySelector('[data-stats="time"]').innerText = progress[level].time;
+        levelElement.querySelector('[data-stats="time"]').innerText = `${Math.floor(progress[level].time / 1000)}.${progress[level].time % 1000} s`;
       }
       levelElement.closest('a').addEventListener('click', (e) => {
         let level;
@@ -51,6 +51,10 @@
   });
 
   if (window.ps.load('user')) {
+    const createdLoadingSpinner = document.querySelector('[data-header="createdLevels"] .loading'),
+          communityLoadingSpinner = document.querySelector('[data-header="communityLevels"] .loading');
+    createdLoadingSpinner.classList.remove('dn');
+    communityLoadingSpinner.classList.remove('dn');
     window.api.get('userAllLevels', (result) => {
       const { createdLevels, savedLevels } = result,
             createdContainer = document.querySelector('#created-levels'),
@@ -66,7 +70,7 @@
         if (progress && progress[level._id]) {
           levelElement.setAttribute('data-complete', 'true');
           levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
-          levelElement.querySelector('[data-stats="time"]').innerText = progress[level._id].time;
+          levelElement.querySelector('[data-stats="time"]').innerText = `${Math.floor(progress[level._id].time / 1000)}.${progress[level._id].time % 1000} s`;
         }
         levelElement.closest('a').addEventListener('click', (e) => {
           let levelName;
@@ -82,6 +86,7 @@
           window.ps.save('level', levelName);
         });
       });
+      createdLoadingSpinner.classList.add('dn');
       savedLevels.forEach((level) => {
         savedContainer.innerHTML += window.locales.translateRaw(levelHtml.replaceAll('{{name}}', level._id).replaceAll('{{image}}', 'nothumbnail'));
       });
@@ -92,7 +97,7 @@
         if (progress && progress[level._id]) {
           levelElement.setAttribute('data-complete', 'true');
           levelElement.querySelector('[data-stats="points"]').innerText = progress[level._id].points;
-          levelElement.querySelector('[data-stats="time"]').innerText = progress[level._id].time;
+          levelElement.querySelector('[data-stats="time"]').innerText = `${Math.floor(progress[level._id].time / 1000)}.${progress[level._id].time % 1000} s`;
         }
         levelElement.closest('a').addEventListener('click', (e) => {
           let levelName;
@@ -108,9 +113,12 @@
           window.ps.save('level', levelName);
         });
       });
+      communityLoadingSpinner.classList.add('dn');
       window.pwa.initLinks();
     }, (error) => {
       console.error(error);
+      createdLoadingSpinner.classList.add('dn');
+      communityLoadingSpinner.classList.add('dn');
     });
   }
 

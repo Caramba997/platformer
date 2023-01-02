@@ -7,10 +7,16 @@ class PlatformerStorage {
       editorLevel: 'editorLevel',
       editorData: 'editorData',
       language: 'language',
-      user: 'user'
+      user: 'user',
+      apiVersion: 'apiVersion'
     }
   }
 
+  /**
+   * Loads an object from local storage
+   * @param {String} object ID of the object, must be included in PlatformerStorage.objects
+   * @returns The stored String or null if not existent
+   */
   load(object) {
     const key = this.objects[object];
     if (!key) {
@@ -20,6 +26,11 @@ class PlatformerStorage {
     return localStorage.getItem(key);
   }
 
+  /**
+   * Saves an object to local storage
+   * @param {String} object ID of the object, must be included in PlatformerStorage.objects
+   * @param {String} data String to be saved
+   */
   save(object, data) {
     const key = this.objects[object];
     if (!key) {
@@ -29,6 +40,10 @@ class PlatformerStorage {
     localStorage.setItem(key, data);
   }
 
+  /**
+   * Deletes an object from local storage
+   * @param {String} object ID of the object, must be included in PlatformerStorage.objects
+   */
   delete(object) {
     const key = this.objects[object];
     if (!key) {
@@ -36,6 +51,17 @@ class PlatformerStorage {
       return;
     }
     localStorage.removeItem(key);
+  }
+
+  /**
+   * Deletes all user data
+   */
+  reset() {
+    Object.entries(this.objects).forEach(([key, value]) => {
+      if (['language', 'sounds'].includes(key)) return;
+      localStorage.removeItem(value);
+    });
+    this.setCookie(window.api.loginStatusCookie, false, '0m');
   }
 
   /**
