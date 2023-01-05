@@ -23,7 +23,7 @@
             <button class="Button" data-action="open-popup" data-control="create"><span data-t="newProp"></span></button>
         </div>
     </div>
-    <div class="Container">
+    <div class="Container dn">
         <div class="Outline Sidebar" data-expanded="true">
             <div class="Sidebar__Content">
                 <div class="Sidebar__Content--Header">
@@ -58,23 +58,23 @@
                 </div>
             </div>
             <button class="Sidebar__Control" data-action="toggle-sidebar">
-                <span>></span>
+                <span data-sidebar-control="left"><</span>
             </button>
         </div>
         <div class="Canvas">
             <canvas id="canvas" width="1600" height="900"></canvas>
             <div class="Canvas__Toolbar">
                 <div>
-                    <span class="ml-10" data-t="centerPosition"></span> x:<input name="centerX" value="0" type="number" step="200" min="0"> y:<input name="centerY" value="0" type="number" step="200" min="0">
+                    <span class="ml-10" data-t="centerPosition"></span><span class="ml-10">x:</span><input name="centerX" value="0" type="number" step="200" min="0"><span class="ml-10">y:</span><input name="centerY" value="0" type="number" step="200" min="0">
                 </div>
                 <div>
-                    <input class="ml-10" name="keepCenter" checked="checked" type="checkbox"><span data-t="keepCenter"></span>
+                    <input class="ml-10" name="keepCenter" checked="checked" type="checkbox"><span class="ml-10" data-t="keepCenter"></span>
                 </div>
             </div>
         </div>
         <div class="Properties Sidebar" data-expanded="true">
             <button class="Sidebar__Control" data-action="toggle-sidebar"">
-                <span><</span>
+                <span data-sidebar-control="right">></span>
             </button>
             <div class="Sidebar__Content">
                 <div class="Sidebar__Content--Header">

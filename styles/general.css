@@ -72,6 +72,9 @@ a {
 .ml-10 {
     margin-left: 10px;
 }
+.mb-20 {
+    margin-bottom: 20px;
+}
 .text-center {
     text-align: center;
 }
@@ -134,6 +137,7 @@ span[data-t] {
     width: 100vw;
     height: 100vh;
     background: var(--color-overlay);
+    z-index: 5;
 }
 
 /* Loading */

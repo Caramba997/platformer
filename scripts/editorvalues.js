@@ -9,6 +9,7 @@ export const EDITORVALUES = {
     'ArrowUp': 'up',
     'ArrowDown': 'down'
   },
+  dragFactor: 3,
   enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'fish', 'rocket', 'mine'],
   finishTypes: ['finishflag'],
   levels: ['level1', 'level2', 'level3', 'level4'],

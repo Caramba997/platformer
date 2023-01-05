@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <div class="Actions">
-                    <button class="Action__Link" data-action="open-popup" data-control="start"><span data-t="mainMenu"></span></a>
+                    <button class="Action__Link" data-action="open-popup" data-control="start"><span data-t="mainMenu"></span></button>
                 </div>
             </div>
         </div>
@@ -69,7 +69,8 @@
             </div>
             <hr>
             <div class="Popup__Content">
-                <p class="text-center"><span data-t="gameOverText"></span></p>
+                <p class="mb-10" data-hint="game-over"></p>
+                <p class="text-center mt-10"><span data-t="gameOverText"></span></p>
                 <button class="Button" data-action="replay"><span data-t="replay"></span></button>
                 <a class="Button Button--Link mt-10" data-href="menu"><span data-t="backToStart"></span></a>
             </div>
@@ -81,6 +82,10 @@
             <hr>
             <div class="Popup__Content">
                 <p class="text-center"><span data-t="levelCompleteText"></span></p>
+                <div class="text-center mb-20">
+                    <div><span data-t="time"></span>: <span data-result="time"></span></div>
+                    <div><span data-t="points"></span>: <span data-result="points"></span></div>
+                </div>
                 <a class="Button Button--Link" data-href="menu"><span data-t="backToStart"></span></a>
                 <p class="text-center"><span data-t="or"></span></p>
                 <button class="Button" data-action="replay"><span data-t="replay"></span></button>

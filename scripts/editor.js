@@ -9,6 +9,12 @@ export class Editor {
     this.user = JSON.parse(window.ps.load('user'));
     this._keyDownListener = this.keyDownListener.bind(this);
     this._keyUpListener = this.keyUpListener.bind(this);
+    this.cursorStatus = {
+      pressed: false,
+      dragged: false,
+      touchX: null,
+      touchY: null
+    }
     this.initListeners();
     if (window.ps.load('editorLevel')) {
       document.querySelector('.Popup[data-visible="true"] [data-action="close-popup"]').click();
@@ -30,6 +36,7 @@ export class Editor {
         document.querySelector('[data-data="level"]').innerText = this.game.world.name;
         this.initOutline();
         this.selectPropInOutline('player');
+        document.querySelector('.Container').classList.remove('dn');
       }, { once: true });
       this.game = new Game(window.ps.load('editorLevel'));
     }
@@ -140,6 +147,14 @@ export class Editor {
       }
       else {
         html = EDITORHTML.property.replaceAll('{{property}}', property).replaceAll('{{type}}', type).replaceAll('{{value}}', value);
+        if (EDITORVALUES.propertyTypes[property] === 'number') {
+          const minusButton = EDITORHTML.numberAction.replaceAll('{{action}}', '-'),
+                plusButton = EDITORHTML.numberAction.replaceAll('{{action}}', '+');
+          html = html.replace('{{before}}', minusButton).replace('{{after}}', plusButton);
+        }
+        else {
+          html = html.replace('{{before}}', '').replace('{{after}}', '');
+        }
       }
       contentElement.innerHTML += html;
     }
@@ -209,6 +224,19 @@ export class Editor {
       addProperty('height', this.game.world.height);
       addProperty('verticalParallax', this.game.world.verticalParallax);
     }
+    contentElement.querySelectorAll('[data-number-action]').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        const valueContainer = e.target.closest('.Property--Value'),
+              input = valueContainer.querySelector('input');
+        if (input.step.includes('.')) {
+          input.value = e.target.getAttribute('data-number-action') === '+' ? (parseFloat(input.value) + parseFloat(input.step)).toFixed(1) : (parseFloat(input.value) - parseFloat(input.step)).toFixed(1);
+        }
+        else {
+          input.value = e.target.getAttribute('data-number-action') === '+' ? parseInt(input.value) + parseInt(input.step) : parseInt(input.value) - parseInt(input.step);
+        }
+        input.dispatchEvent(new Event('change'));
+      });
+    });
     contentElement.querySelectorAll('input, select').forEach((input) => {
       input.addEventListener('change', this.updateProperty.bind(this));
     });
@@ -375,8 +403,15 @@ export class Editor {
     document.querySelectorAll('[data-action="toggle-sidebar"]').forEach((opener) => {
       opener.addEventListener('click', (e) => {
         const sidebar = e.target.closest('.Sidebar'),
+              toggleButton = e.target.hasAttribute('data-sidebar-control') ? e.target : e.target.querySelector('[data-sidebar-control]'),
               newExpanded = sidebar.getAttribute('data-expanded') === 'true' ? false : true;
-              sidebar.setAttribute('data-expanded', newExpanded);
+        sidebar.setAttribute('data-expanded', newExpanded);
+        if ((newExpanded && toggleButton.getAttribute('data-sidebar-control') === 'left') || (!newExpanded && toggleButton.getAttribute('data-sidebar-control') === 'right')) {
+          toggleButton.innerText = '<';
+        }
+        else {
+          toggleButton.innerText = '>';
+        }
       });
     });
     // Popup openers
@@ -401,6 +436,7 @@ export class Editor {
     document.querySelector('[data-action="load-level"]').addEventListener('click', (e) => {
       const select = document.querySelector('select[name="level"]');
       if (select.value === 'none') return;
+      e.target.classList.add('loading');
       if (this.game) {
         this.game.stop();
       }
@@ -419,9 +455,11 @@ export class Editor {
         document.querySelector('[data-data="level"]').innerText = this.game.world.name;
         this.initOutline();
         this.selectPropInOutline('player');
+        e.target.classList.remove('loading');
+        e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
+        document.querySelector('.Container').classList.remove('dn');
       }, { once: true });
       this.game = new Game(select.value);
-      e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
     });
     // New level
     document.querySelector('[data-action="new-level"]').addEventListener('click', (e) => {
@@ -435,6 +473,7 @@ export class Editor {
       const playButton = document.querySelector('a[data-action="play"]');
       playButton.href = '?page=game&level=' + this.game.world.id;
       this.initOutline();
+      document.querySelector('.Container').classList.remove('dn');
     });
     // Save level
     document.querySelector('[data-control="save"]').addEventListener('click', () => {
@@ -479,9 +518,44 @@ export class Editor {
         }
       });
     });
-    // Prop selector
-    document.querySelector('#canvas').addEventListener('click', (e) => {
-      this.selectProp(e);
+    // Move canvas view and select props
+    const canvasElement = document.querySelector('#canvas');
+    canvasElement.addEventListener('mousedown', () => {
+      this.cursorStatus.pressed = true;
+    }, { passive: true });
+    canvasElement.addEventListener('touchstart', (e) => {
+      this.cursorStatus.pressed = true;
+      const touch = e.targetTouches.item(0);
+      this.cursorStatus.mouseX = touch.screenX;
+      this.cursorStatus.mouseY = touch.screenY;
+    }, { passive: true });
+    document.documentElement.addEventListener('mousemove', (e) => {
+      if (!this.cursorStatus.pressed) return;
+      e.preventDefault();
+      this.cursorStatus.dragged = true;
+      this.game.setOffset('x', this.game.offset.x - e.movementX * EDITORVALUES.dragFactor);
+      this.game.setOffset('y', this.game.offset.y + e.movementY * EDITORVALUES.dragFactor);
+      this.game.refreshCenter();
+    }, { passive: false });
+    document.documentElement.addEventListener('touchmove', (e) => {
+      if (!this.cursorStatus.pressed) return;
+      e.preventDefault();
+      this.cursorStatus.dragged = true;
+      const touch = e.targetTouches.item(0);
+      this.game.setOffset('x', this.game.offset.x + (this.cursorStatus.mouseX - touch.screenX) * EDITORVALUES.dragFactor);
+      this.game.setOffset('y', this.game.offset.y - (this.cursorStatus.mouseY - touch.screenY) * EDITORVALUES.dragFactor);
+      this.game.refreshCenter();
+      this.cursorStatus.mouseX = touch.screenX;
+      this.cursorStatus.mouseY = touch.screenY;
+    }, { passive: false });
+    ['mouseup', 'touchend'].forEach((eventName) => {
+      document.documentElement.addEventListener(eventName, () => {
+        this.cursorStatus.pressed = false;
+        this.cursorStatus.dragged = false;
+      }, { passive: true });
+      canvasElement.addEventListener(eventName, (e) => {
+        if (!this.cursorStatus.dragged) this.selectProp(e);
+      });
     });
     // Create new prop
     document.querySelector('[data-action="create-prop"]').addEventListener('click', (e) => {
@@ -494,10 +568,10 @@ export class Editor {
     document.querySelectorAll('input[name^="center"]').forEach((input) => {
       input.addEventListener('change', (e) => {
         if (e.target.name === 'centerX') {
-          this.game.offset.x = e.target.value - this.game.center.x;
+          this.game.setOffset('x', e.target.value - this.game.center.x);
         }
         else if (e.target.name === 'centerY') {
-          this.game.offset.y = e.target.value - this.game.center.y;
+          this.game.setOffset('y', e.target.value - this.game.center.y);
         }
       });
     });
@@ -886,43 +960,42 @@ class Game {
   processInput() {
     const speed = EDITORVALUES.moveSpeed;
     if (this.activeControls.has('right')) {
-      this.offset = {
-        x: this.offset.x + this.deltaTime * speed,
-        y: this.offset.y
-      }
+      this.setOffset('x', this.offset.x + this.deltaTime * speed);
       this.refreshCenter();
     }
     if (this.activeControls.has('left')) {
-      this.offset = {
-        x: this.offset.x - this.deltaTime * speed,
-        y: this.offset.y
-      }
+      this.setOffset('x', this.offset.x - this.deltaTime * speed);
       this.refreshCenter();
     }
     if (this.activeControls.has('up')) {
-      this.offset = {
-        x: this.offset.x,
-        y: this.offset.y + this.deltaTime * speed
-      }
+      this.setOffset('y', this.offset.y + this.deltaTime * speed);
       this.refreshCenter();
     }
     if (this.activeControls.has('down')) {
-      this.offset = {
-        x: this.offset.x,
-        y: this.offset.y - this.deltaTime * speed
-      }
+      this.setOffset('y', this.offset.y - this.deltaTime * speed);
       this.refreshCenter();
     }
-    if (this.center.x + this.offset.x < 0) this.offset.x = -this.center.x;
-    if (this.center.x + this.offset.x > this.world.width) this.offset.x = this.world.width - this.center.x;
-    if (this.center.y + this.offset.y < 0) this.offset.y = -this.center.y;
-    if (this.center.y + this.offset.y > this.world.height) this.offset.y = this.world.height - this.center.y;
+  }
 
+  setOffset(axis, value) {
+    const min = 0,
+          max = axis === 'x' ? this.world.width : this.world.height,
+          pos = this.center[axis] + value;
+    this.offset[axis] = pos < min ? -this.center[axis] : pos > max ? max - this.center[axis] : value;
   }
 
   refreshCenter() {
     document.querySelector('input[name="centerX"]').value = Math.ceil(this.center.x + this.offset.x);
     document.querySelector('input[name="centerY"]').value = Math.ceil(this.center.y + this.offset.y);
+  }
+
+  checkCollision(p1, p2) {
+    return p1.x <= p2.x + p2.width && p1.x + p1.width >= p2.x && p1.y <= p2.y + p2.height && p1.y + p1.height >= p2.y;
+  }
+
+  checkInRange(prop) {
+    const view = this.world.view;
+    return this.checkCollision(prop, view);
   }
 
   loop() {
@@ -943,16 +1016,20 @@ class Game {
     graphics.drawBackground(this.world);
     graphics.drawProp(this.world.finish);
     for (let prop of this.world.props) {
+      if (!this.checkInRange(prop)) continue;
       graphics.drawProp(prop);
     }
     for (let coin of this.world.coinProps) {
+      if (!this.checkInRange(coin)) continue;
       graphics.drawProp(this.calcHitbox(coin));
     }
     for (let enemy of this.world.enemies) {
+      if (!this.checkInRange(enemy)) continue;
       graphics.drawMoving(enemy);
     }
     graphics.drawMoving(this.world.player);
     for (let water of this.world.water) {
+      if (!this.checkInRange(water)) continue;
       graphics.drawWater(water);
     }
     if (!this.pictureMode) {

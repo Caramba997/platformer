@@ -262,6 +262,7 @@ export class Game {
       player.speedY = player.inWater ? Math.max(VALUES.maxWaterSinkSpeed, player.speedY - this.deltaTime * this.playerSpeedShrinkYWater) : Math.max(VALUES.maxFallSpeed, player.speedY - this.deltaTime * this.playerSpeedShrinkY);
       if (player.invincible === 0) {
         for (let enemy of this.world.enemies) {
+          if (!this.checkInRangeX(enemy)) continue;
           const hitbox = this.calcHitbox(enemy);
           if (player.speedY < 0 && hitbox.y + hitbox.height <= player.lastY && hitbox.x <= player.x + player.width && hitbox.x + hitbox.width >= player.x && hitbox.y + hitbox.height >= player.y && hitbox.y <= player.y) {
             if (enemy.jumpable) {
@@ -283,6 +284,7 @@ export class Game {
       }
       for (let prop of this.world.props) {
         if (!prop.ground || prop.invisible) continue;
+        if (!this.checkInRangeX(prop)) continue;
         if (player.speedY < 0 && prop.y + prop.height <= player.lastY && prop.x <= player.x + player.width && prop.x + prop.width >= player.x && prop.y + prop.height >= player.y && prop.y <= player.y) {
           groundResult = {
             valid: true,
@@ -315,6 +317,7 @@ export class Game {
       for (let prop of this.world.props) {
         if (!prop.solid) continue;
         if (groundResult && groundResult.ground == prop) continue;
+        if (!this.checkInRangeX(prop)) continue;
         const collision = breakLoop ? this.checkCollision({ x: player.x, y: blocks.oldY, width: player.width, height: player.height }, prop) : this.checkPlayerCollision(prop);
         if (!collision) continue;
         // Top collision
@@ -375,6 +378,7 @@ export class Game {
 
   processPropActions() {
     for (let item of this.world.items) {
+      if (!this.checkInRangeX(item)) continue;
       if (item.state === VALUES.itemStates.spawn) {
         item.y += this.deltaTime * VALUES.itemSpeed;
         if (!this.checkCollision(item, item.block)) {
@@ -398,6 +402,7 @@ export class Game {
     }
     for (let shot of this.world.shots) {
       shot.x += this.deltaTime * shot.speedX;
+      if (!this.checkInRangeX(shot, 500)) shot.remove = true;
       if (shot.x < 0 || shot.x > this.world.width) {
         shot.remove = true;
         continue;
@@ -412,6 +417,7 @@ export class Game {
       }
       if (shot.remove) continue;
       for (let enemy of this.world.enemies) {
+        if (!this.checkInRangeX(enemy, 500)) continue;
         if (this.checkCollision(shotHitbox, enemy)) {
           shot.remove = true;
           if (!enemy.invincible) {
@@ -426,6 +432,7 @@ export class Game {
     }
     for (let enemy of this.world.enemies) {
       if (!enemy.moving || enemy.remove) continue;
+      if (!this.checkInRangeX(enemy, 500)) continue;
       if (enemy.physics) {
         this.processPropPhysics(enemy);
       }
@@ -469,6 +476,7 @@ export class Game {
       }
     }
     for (let prop of this.world.props) {
+      if (!this.checkInRangeX(prop, 500)) continue;
       if (prop.constructor.name === 'Spawner' && Math.abs(prop.x - this.world.player.x) < VALUES.spawnDistance) {
         if (prop.nextSpawn === 0) {
           this.world.enemies.push(new Enemy('rocket' + Date.now(), prop.x, prop.y + 13, 50, 25, 0, 0, 50, 25, 'rocket', false, true, true, prop.forward, prop.speedFactor, false, false, true, prop));
@@ -669,6 +677,7 @@ export class Game {
     if (player.invincible === 0) {
       for (let enemy of this.world.enemies) {
         if (enemy.remove) continue;
+        if (!this.checkInRangeX(enemy)) continue;
         const enemyHitbox = this.calcHitbox(enemy);
         enemyHitbox.y--;
         if (this.checkPlayerCollision(enemyHitbox)) {
@@ -679,6 +688,7 @@ export class Game {
     }
     // Check for collisions with coins
     for (let coin of this.world.coinProps) {
+      if (!this.checkInRangeX(coin)) continue;
       if (!coin.fromBlock && this.checkPlayerCollision(this.calcHitbox(coin))) {
         coin.remove = true;
         this.addCoin();
@@ -711,6 +721,31 @@ export class Game {
     for (let water of this.world.water) {
       if (this.checkCollision(hitbox, water)) return true;
     }
+  }
+
+  checkInRange(prop, offset) {
+    const view = this.world.view;
+    if (!offset) return this.checkCollision(prop, view);
+    const offsetView = {
+      x: view.x - offset,
+      y: view.y - offset,
+      width: view.width + offset,
+      height: view.height + offset
+    }
+    return this.checkCollision(prop, offsetView);
+  }
+
+  checkInRangeX(prop, offset) {
+    const checkCollisionX = (p1, p2) => {
+      return p1.x <= p2.x + p2.width && p1.x + p1.width >= p2.x;
+    }
+    const view = this.world.view;
+    if (!offset) return checkCollisionX(prop, view);
+    const offsetView = {
+      x: view.x - offset,
+      width: view.width + offset
+    }
+    return checkCollisionX(prop, offsetView);
   }
 
   handleBlockCollision(block) {
@@ -821,29 +856,37 @@ export class Game {
     const deferredRender = [];
     for (let item of this.world.items) {
       if (item.state !== VALUES.itemStates.spawn) continue;
+      if (!this.checkInRange(item)) continue;
       item.block.defer = true;
       deferredRender.push(item.block);
     }
     for (let coin of this.world.coinProps) {
       if (!coin.fromBlock) continue;
+      if (!this.checkInRange(coin)) continue;
       coin.block.defer = true;
       deferredRender.push(coin.block);
     }
     for (let enemy of this.world.enemies) {
       if (!enemy.spawner) continue;
+      if (!this.checkInRange(enemy)) continue;
       enemy.spawner.defer = true;
       deferredRender.push(enemy.spawner);
     }
     for (let prop of this.world.props) {
-      if (!prop.defer) graphics.drawProp(prop);
+      if (prop.defer) continue;
+      if (!this.checkInRange(prop)) continue;
+      graphics.drawProp(prop);
     }
     for (let coin of this.world.coinProps) {
+      if (!this.checkInRange(coin)) continue;
       graphics.drawProp(this.calcHitbox(coin));
     }
     for (let enemy of this.world.enemies) {
+      if (!this.checkInRange(enemy)) continue;
       graphics.drawMoving(enemy);
     }
     for (let item of this.world.items) {
+      if (!this.checkInRange(item)) continue;
       graphics.drawProp(item);
     }
     for (let deferred of deferredRender) {
@@ -851,10 +894,12 @@ export class Game {
       deferred.defer = false;
     }
     for (let shot of this.world.shots) {
+      if (!this.checkInRange(shot)) continue;
       graphics.drawProp(shot);
     }
     graphics.drawMoving(this.world.player);
     for (let water of this.world.water) {
+      if (!this.checkInRange(water)) continue;
       graphics.drawWater(water);
     }
   }
@@ -873,6 +918,10 @@ export class Game {
 
   gameOver() {
     this.render();
+    document.querySelector('[data-hint="game-over"]').innerText = (this.world.time <= 0) ? window.locales.getTranslation('gameOverTime') : window.locales.getTranslation('gameOverDead');
+    if (this.world.time <= 0) {
+
+    }
     this.openPopup('game-over');
     this.sounds.stop(this.world.music);
     this.sounds.play('gameover');
@@ -881,11 +930,16 @@ export class Game {
   levelFinished() {
     this.world.points += Math.ceil(this.world.time * VALUES.points.time);
     this.stats.setPoints(this.world.points);
+    const completePopup = document.querySelector('[data-popup="level-complete"]'),
+          timeElement = completePopup.querySelector('[data-result="time"]'),
+          pointsElement = completePopup.querySelector('[data-result="points"]'),
+          time = this.world.startTime - Math.floor(this.world.time),
+          points = this.world.points;
+    timeElement.innerText = window.formatter.formatTime(time);
+    pointsElement.innerText = points;
     this.openPopup('level-complete');
     const userData = window.ps.load('user');
     if (userData) {
-      const points = this.world.points,
-            time = this.world.startTime - Math.floor(this.world.time);
       window.api.post('highscore', { id: this.world.id, time: time, points: points }, (result) => {
         window.ps.save('user', JSON.stringify(result));
       }, (error) => {
