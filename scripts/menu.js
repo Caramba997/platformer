@@ -1,5 +1,5 @@
 (function() {
-  const levels = [ 'level1', 'level2', 'level3', 'level4' ];
+  const levels = [ 'level1', 'level2', 'level3', 'level4', 'level5' ];
   const levelHtml = `<a class="Level" data-href="game">
     <div class="Level__Content" data-name="{{name}}" data-complete="false" style="background-image: url(/images/{{image}}.png);">
       <div class="Level__Text">

@@ -30,6 +30,7 @@ export class Game {
 
   unload() {
     this.stop();
+    if (this.graphics.darknessWorker) this.graphics.darknessWorker.terminate();
     window.removeEventListener('keydown', this._keyDownListener);
     window.removeEventListener('keyup', this._keyUpListener);
     window.removeEventListener('contextmenu', this._contextMenuListener);
@@ -145,6 +146,7 @@ export class Game {
     this.world = new World(level);
     this.activeControls = new Set();
     window.addEventListener('world:loaded', () => {
+      this.darkness = this.world.darkness;
       this.stats.setLevel(this.world.name);
       this.stats.setCoins(this.world.coins);
       this.stats.setTime(this.world.time);
@@ -729,8 +731,8 @@ export class Game {
     const offsetView = {
       x: view.x - offset,
       y: view.y - offset,
-      width: view.width + offset,
-      height: view.height + offset
+      width: view.width + offset * 2,
+      height: view.height + offset * 2
     }
     return this.checkCollision(prop, offsetView);
   }
@@ -743,7 +745,7 @@ export class Game {
     if (!offset) return checkCollisionX(prop, view);
     const offsetView = {
       x: view.x - offset,
-      width: view.width + offset
+      width: view.width + offset * 2
     }
     return checkCollisionX(prop, offsetView);
   }
@@ -853,10 +855,12 @@ export class Game {
     graphics.setView(this.world.view);
     graphics.drawBackground(this.world);
     graphics.drawProp(this.world.finish);
-    const deferredRender = [];
+    const deferredRender = [],
+          lights = [];
     for (let item of this.world.items) {
       if (item.state !== VALUES.itemStates.spawn) continue;
-      if (!this.checkInRange(item)) continue;
+      if (!this.checkInRange(item, (this.darkness) ? item.width * 2 + VALUES.darknessRange : null)) continue;
+      if (this.darkness && item.light) lights.push({ x: item.x + item.width / 2, y: item.y + item.height / 2, r: item.width * 2});
       item.block.defer = true;
       deferredRender.push(item.block);
     }
@@ -882,7 +886,8 @@ export class Game {
       graphics.drawProp(this.calcHitbox(coin));
     }
     for (let enemy of this.world.enemies) {
-      if (!this.checkInRange(enemy)) continue;
+      if (!this.checkInRange(enemy, (this.darkness) ? enemy.width * 2 + VALUES.darknessRange : null)) continue;
+      if (this.darkness && enemy.light) lights.push({ x: enemy.x + enemy.width / 2, y: enemy.y + enemy.height / 2, r: Math.max(enemy.width, enemy.height) * 2});
       graphics.drawMoving(enemy);
     }
     for (let item of this.world.items) {
@@ -894,14 +899,17 @@ export class Game {
       deferred.defer = false;
     }
     for (let shot of this.world.shots) {
-      if (!this.checkInRange(shot)) continue;
+      if (!this.checkInRange(shot, (this.darkness) ? shot.width * 2 + VALUES.darknessRange : null)) continue;
+      if (this.darkness && shot.light) lights.push({ x: shot.x + shot.width / 2, y: shot.y + shot.height / 2, r: shot.width * 2});
       graphics.drawProp(shot);
     }
     graphics.drawMoving(this.world.player);
+    if (this.darkness && this.world.player.light) lights.push({ x: this.world.player.x + this.world.player.width / 2, y: this.world.player.y + this.world.player.height / 2, r: 200});
     for (let water of this.world.water) {
       if (!this.checkInRange(water)) continue;
       graphics.drawWater(water);
     }
+    if (this.darkness) graphics.drawDarkness(lights);
   }
 
   start() {
@@ -951,6 +959,18 @@ export class Game {
   }
 
   loop() {
+    // console.time('arr');
+    // const arr = new Uint8ClampedArray(6480000);
+    // for (let x = 0; x < 1800; x += 1) {
+    //   for (let y = 0; y < 900; y += 1) {
+    //     let i = y * 1800 * 4 + x * 4;
+    //     arr[i++] = 1;
+    //     arr[i++] = 1;
+    //     arr[i++] = 1;
+    //     i++;
+    //   }
+    // }
+    // console.timeEnd('arr');
     if (this.world.time <= 0) this.gameOver();
     if (!this.running) return;
     this.newTime = window.performance.now();

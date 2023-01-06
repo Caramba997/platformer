@@ -88,11 +88,12 @@ export class Player extends Prop {
     this.state = state;
     this.invincible = 0;
     this.shotCooldown = 0;
+    this.light = true;
   }
 }
 
 export class Enemy extends InteractableProp {
-  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround, physics, removeOnCollision, spawner) {
+  constructor(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactor, stayOnGround, physics, removeOnCollision, spawner, light) {
     super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type);
     this.invincible = invincible;
     this.jumpable = jumpable;
@@ -109,12 +110,13 @@ export class Enemy extends InteractableProp {
     this.physics = physics;
     this.removeOnCollision = removeOnCollision;
     this.spawner = spawner;
+    this.light = light;
   }
 }
 
 export class FlyingEnemy extends Enemy {
-  constructor (id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactorX, speedFactorY, startX, startY, endX, endY) {
-    super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, 1, false, false, false, null);
+  constructor (id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, speedFactorX, speedFactorY, startX, startY, endX, endY, light) {
+    super(id, x, y, width, height, hitx, hity, hitwidth, hitheight, type, invincible, jumpable, moving, initialForward, 1, false, false, false, null, light);
     this.speedFactorX = speedFactorX;
     this.speedFactorY = speedFactorY;
     this.startX = startX;
@@ -156,6 +158,7 @@ export class Item extends InteractableProp {
     this.speedY = 0.0;
     this.speedFactor = 1;
     this.forward = true;
+    this.light = true;
   }
 }
 
@@ -166,6 +169,7 @@ export class Fire extends InteractableProp {
     this.lastY = y;
     this.speedX = forward ? VALUES.fireSpeed : -VALUES.fireSpeed;
     this.speedY = 0.0;
+    this.light = true;
   }
 }
 
@@ -180,6 +184,7 @@ export class World {
       this.background = data.meta.background;
       this.music = data.meta.music;
       this.verticalParallax = data.meta.verticalParallax;
+      this.darkness = data.meta.darkness;
       this.props = [];
       for (let prop of data.staticProps) {
         const type = t.p(prop, 'type') || VALUES.propDefault;
@@ -208,10 +213,10 @@ export class World {
       this.enemies = [];
       for (let enemy of data.enemies) {
         if (t.p(enemy, 'class') === 'FlyingEnemy') {
-          this.enemies.push(new FlyingEnemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactorX'), t.p(enemy, 'speedFactorY'), t.p(enemy, 'startX'), t.p(enemy, 'startY'), t.p(enemy, 'endX'), t.p(enemy, 'endY')));
+          this.enemies.push(new FlyingEnemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactorX'), t.p(enemy, 'speedFactorY'), t.p(enemy, 'startX'), t.p(enemy, 'startY'), t.p(enemy, 'endX'), t.p(enemy, 'endY'), t.p(enemy, 'light')));
         }
         else {
-          this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner')));
+          this.enemies.push(new Enemy(t.p(enemy, 'id'), t.p(enemy, 'x'), t.p(enemy, 'y'), t.p(enemy, 'width'), t.p(enemy, 'height'), t.p(enemy.hitbox, 'x'), t.p(enemy.hitbox, 'y'), t.p(enemy.hitbox, 'width'), t.p(enemy.hitbox, 'height'), t.p(enemy, 'type'), t.p(enemy, 'invincible'), t.p(enemy, 'jumpable'), t.p(enemy, 'moving'), t.p(enemy, 'initialForward'), t.p(enemy, 'speedFactor'), t.p(enemy, 'stayOnGround'), t.p(enemy, 'physics'), t.p(enemy, 'removeOnCollision'), t.p(enemy, 'spawner'), t.p(enemy, 'light')));
         }
       }
       this.finish = new Finish(data.finish.x, data.finish.y);
@@ -238,6 +243,7 @@ export class World {
       this.background = defaults.world.background;
       this.music = defaults.world.music;
       this.verticalParallax = defaults.world.verticalParallax;
+      this.darkness = defaults.world.darkness;
       this.props = [];
       this.water = [];
       this.coinProps = [];

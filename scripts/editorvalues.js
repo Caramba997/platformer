@@ -1,5 +1,5 @@
 export const EDITORVALUES = {
-  backgroundTypes: ['forest', 'desert', 'hills', 'cave'],
+  backgroundTypes: ['forest', 'desert', 'hills', 'cave', 'darkforest'],
   blockItemTypes: ['', 'default'],
   blockTypes: ['brick', 'brickhit', 'itemblock', 'itemblockhit', 'solidblock'],
   coinTypes: ['coin'],
@@ -12,7 +12,7 @@ export const EDITORVALUES = {
   dragFactor: 3,
   enemyTypes: ['spike', 'bubble', 'desertspike', 'desertbubble', 'wingman', 'toxicplant', 'fish', 'rocket', 'mine'],
   finishTypes: ['finishflag'],
-  levels: ['level1', 'level2', 'level3', 'level4'],
+  levels: ['level1', 'level2', 'level3', 'level4', 'level5'],
   moveSpeed: 1,
   musicTypes: ['supermariomedley', 'mariobros', 'mariobrosdesert', 'mariobrosathletic', 'mariobrostower', 'mariobrosunderwater'],
   playerStates: ["normal", "super", "fire"],
@@ -90,7 +90,8 @@ export const EDITORVALUES = {
       type: "bubble",
       physics: true,
       removeOnCollision: false,
-      spawner: null
+      spawner: null,
+      light: true
     },
     flyingenemy: {
       x: 0,
@@ -109,7 +110,8 @@ export const EDITORVALUES = {
       speedFactorX: 0,
       speedFactorY: 1,
       endX: 0,
-      endY: 0
+      endY: 0,
+      light: true
     },
     coin: {
       x: 0,
@@ -176,7 +178,9 @@ export const EDITORVALUES = {
     flying: 'checkbox',
     isTop: 'checkbox',
     verticalParallax: 'checkbox',
-    stopOnPlayer: 'checkbox'
+    stopOnPlayer: 'checkbox',
+    light: 'checkbox',
+    darkness: 'checkbox'
   },
   propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'rocks', 'rockstop', 'rockstopdirt', 'rockstopsand', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem', 'water', 'watersurface'],
   skipProperties: {
@@ -198,7 +202,8 @@ export const EDITORVALUES = {
       height: 4000,
       background: 'forest',
       music: 'mariobros',
-      verticalParallax: true
+      verticalParallax: true,
+      darkness: false
     },
     finish: {
       x: 4500,

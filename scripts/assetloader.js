@@ -32,6 +32,14 @@ const textures = [
     height: "1800"
   },
   {
+    type: "darkforest",
+    src: "textures/DarkForestBackground.png",
+    imageWidth: "1600",
+    imageHeight: "1800",
+    width: "1600",
+    height: "1800"
+  },
+  {
     type: "playernormal",
     src: "textures/PlayerNormal.png",
     imageWidth: "100",
@@ -472,6 +480,12 @@ const sounds = [
   {
     type: "mariobrosunderwater",
     src: "sounds/New Super Mario Bros. Soundtrack - Underwater.mp3",
+    loop: true,
+    volume: 0.5
+  },
+  {
+    type: "mariobroshauntedhouse",
+    src: "sounds/New Super Mario Bros. Wii Music - Ghost House.mp3",
     loop: true,
     volume: 0.5
   },

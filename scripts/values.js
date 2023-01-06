@@ -22,6 +22,8 @@ export const VALUES = {
     'Left': 'left',
     'Right': 'right'
   },
+  darknessMin: 0.4,
+  darknessRange: 150,
   defaultColor: '#FF000088',
   devMode: false,
   finishGroundHeight: 50,

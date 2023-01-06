@@ -60,6 +60,9 @@ body {
     color: black;
     opacity: 0.5;
 }
+.Actions button {
+    background-color: white;
+}
 
 #controls {
     position: fixed;
@@ -83,7 +86,7 @@ body {
 }
 @media only screen and (max-width: 999px) {
     .stats__fps {
-      display: none;
+      /* display: none; */
     }
     .Hint--mobile {
         display: block;

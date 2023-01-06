@@ -177,4 +177,61 @@ export class Graphics {
       this.context.fillText(prop.id, x, y + prop.height - 5);
     }
   }
+
+  drawDarkness(lights) {
+    console.time("dark");
+    for (let light of lights) {
+      light.height = 1;
+      const transformed = this.transformToView(light);
+      light.x = transformed.x;
+      light.y = transformed.y;
+    }
+    const calcDistance = (p1, p2) => {
+      return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+    }
+    const image = this.context.getImageData(0, 0, this.view.width, this.view.height),
+          data = image.data,
+          min = VALUES.darknessMin,
+          range = VALUES.darknessRange,
+          width = this.view.width,
+          width4 = width * 4,
+          height = this.view.height,
+          step = 25;
+    
+    for (let x = 0; x < width; x += step) {
+      for (let y = 0; y < height; y += step) {
+        let l = 0;
+        for (let light of lights) {
+          const r = light.r,
+                d = calcDistance({x: x + 12, y: y + 12}, light);
+          if (d > r + range) continue;
+          l = Math.max(l, d <= r ? min : (range - (d - r)) / range * min);
+        }
+        if (l === 0) {
+          for (let sy = 0; sy < step; sy ++) {
+            let i = (y + sy) * width4 + x * 4;
+            for (let sx = 0; sx < step; sx++) {
+              data[i++] = 0;
+              data[i++] = 0;
+              data[i++] = 0;
+              i++;
+            }
+          }
+        }
+        else {
+          for (let sy = 0; sy < step; sy ++) {
+            let i = (y + sy) * width4 + x * 4;
+            for (let sx = 0; sx < step; sx++) {
+              data[i] = data[i++] * l;
+              data[i] = data[i++] * l;
+              data[i] = data[i++] * l;
+              i++;
+            }
+          }
+        }
+      }
+    }
+    this.context.putImageData(image, 0, 0);
+    console.timeEnd("dark");
+  }
 }
