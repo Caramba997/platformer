@@ -344,6 +344,14 @@ export class Game {
           if (groundResult && !this.checkPlayerCollision(groundResult.ground)) groundResult.valid = false;
           breakLoop = true;
         }
+        else if (player.speedX === 0 && player.ground && player.ground.moving) {
+          if (player.ground.speedX > 0) {
+            player.x = prop.x - player.width - 1;
+          }
+          else {
+            player.x = prop.x + prop.width + 1;
+          }
+        }
       }
       if (blocks.hits.length > 0) {
         const playerCenter = player.x + (player.width / 2);
@@ -361,15 +369,24 @@ export class Game {
       }
     }
     if (groundResult && groundResult.valid) {
-      if (groundResult.ground.bounce) {
-        player.speedY = this.activeControls.has('jump') ? this.playerInitialJumpSpeed * VALUES.bounceJumpFactor * groundResult.ground.bounceFactor : this.playerInitialJumpSpeed * VALUES.bounceFactor * groundResult.ground.bounceFactor;
+      const ground = groundResult.ground;
+      if (ground.moving && (ground.startOnEnter || ground.moveOnPlayer) && ground.speedX === 0 && ground.speedY === 0) {
+        ground.speedX = ground.speedFactorX * VALUES.propSpeed * (ground.forward ? 1 : -1);
+        ground.speedY = ground.speedFactorY * VALUES.propSpeed * (ground.forward ? 1 : -1);
+      }
+      if (player.ground && player.ground.moveOnPlayer && ground !== player.ground) {
+        player.ground.speedX = 0;
+        player.ground.speedY = 0;
+      }
+      if (ground.bounce) {
+        player.speedY = this.activeControls.has('jump') ? this.playerInitialJumpSpeed * VALUES.bounceJumpFactor * ground.bounceFactor : this.playerInitialJumpSpeed * VALUES.bounceFactor * ground.bounceFactor;
         player.grounded = false;
         this.sounds.play('jumpboost');
       }
       else {
         player.speedY = 0;
         player.grounded = groundResult.grounded;
-        player.ground = groundResult.ground;
+        player.ground = ground;
         player.y = groundResult.y;
         if (player.ground.moving) player.ground.groundedProps.add(player);
       }
@@ -496,21 +513,25 @@ export class Game {
       if (prop.speedX > 0 && prop.x >= prop.endX) {
         moveX = moveX - (prop.x - prop.endX);
         prop.speedX *= -1;
+        prop.forward = false;
         prop.x = prop.endX;
       }
       else if (prop.speedX < 0 && prop.x <= prop.startX) {
         moveX = moveX + (prop.startX - prop.x);
         prop.speedX *= -1;
+        prop.forward = true;
         prop.x = prop.startX;
       }
       if (prop.speedY > 0 && prop.y >= prop.endY) {
         moveY = moveY - (prop.y - prop.endY);
         prop.speedY *= -1;
+        prop.forward = false;
         prop.y = prop.endY;
       }
       else if (prop.speedY < 0 && prop.y <= prop.startY) {
         moveY = moveY + (prop.startY - prop.y);
         prop.speedY *= -1;
+        prop.forward = true;
         prop.y = prop.startY;
       }
       prop.groundedProps.forEach((groundedProp) => {

@@ -75,7 +75,7 @@ export class Graphics {
           else {
             this.context.save();
             this.context.scale(-1, 1);
-            this.context.drawImage(texture, sx, sy, sWidth, sHeight, -dx - prop.width, dy, dWidth, dHeight);
+            this.context.drawImage(texture, sx, sy, sWidth, sHeight, -(x - ix) - prop.width, dy, dWidth, dHeight);
             this.context.restore();
             this.context.scale(1, 1);
           }

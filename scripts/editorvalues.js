@@ -38,11 +38,14 @@ export const EDITORVALUES = {
       ground: true,
       bounce: false,
       bounceFactor: 1.0,
+      initialForward: true,
       speedFactorX: 1.0,
       speedFactorY: 0,
       endX: 200,
       endY: 0,
-      stopOnPlayer: false
+      stopOnPlayer: false,
+      startOnEnter: false,
+      moveOnPlayer: false
     },
     backgroundprop: {
       x: 0,
@@ -176,14 +179,16 @@ export const EDITORVALUES = {
     flying: 'checkbox',
     isTop: 'checkbox',
     verticalParallax: 'checkbox',
-    stopOnPlayer: 'checkbox'
+    stopOnPlayer: 'checkbox',
+    startOnEnter: 'checkbox',
+    moveOnPlayer: 'checkbox'
   },
   propTypes: ['grass', 'dirt', 'sand', 'sandground', 'cloud', 'brick', 'brickhit', 'rocks', 'rockstop', 'rockstopdirt', 'rockstopsand', 'orangeplatform', 'solidblock', 'solidblock2', 'finishground', 'pipe', 'pipetop', 'mushroomcap', 'mushroomcapblue', 'mushroomcapyellow', 'mushroomstem', 'water', 'watersurface'],
   skipProperties: {
     Player: ['type', 'width', 'height', 'speedX', 'speedY', 'grounded', 'ground', 'forward', 'invincible'],
     Finish: ['width', 'height', 'hitbox'],
     Block: ['solid', 'ground', 'bounce', 'bounceFactor'],
-    MovingProp: ['speedX', 'speedY', 'moving'],
+    MovingProp: ['speedX', 'speedY', 'moving', 'forward'],
     Enemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward'],
     FlyingEnemy: ['speedX', 'speedY', 'grounded', 'ground', 'forward', 'speedFactor', 'stayOnGround', 'physics', 'removeOnCollision', 'flying'],
     Coin: ['width', 'height', 'hitbox'],

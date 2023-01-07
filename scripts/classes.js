@@ -35,19 +35,23 @@ export class InteractableProp extends Prop {
 }
 
 export class MovingProp extends StaticProp {
-  constructor(id, x, y, width, height, type, solid, ground, bounce, bounceFactor, speedFactorX, speedFactorY, startX, startY, endX, endY, stopOnPlayer) {
+  constructor(id, x, y, width, height, type, solid, ground, bounce, bounceFactor, initialForward, speedFactorX, speedFactorY, startX, startY, endX, endY, stopOnPlayer, startOnEnter, moveOnPlayer) {
     super(id, x, y, width, height, type, solid, ground, bounce, bounceFactor);
     this.moving = true;
+    this.forward = initialForward;
     this.speedFactorX = speedFactorX;
     this.speedFactorY = speedFactorY;
-    this.speedX = speedFactorX * VALUES.propSpeed;
-    this.speedY = speedFactorY * VALUES.propSpeed;
+    this.speedX = (startOnEnter || moveOnPlayer) ? 0 : speedFactorX * VALUES.propSpeed * (initialForward ? 1 : -1);
+    this.speedY = (startOnEnter || moveOnPlayer) ? 0 : speedFactorY * VALUES.propSpeed * (initialForward ? 1 : -1);
     this.startX = startX;
     this.startY = startY;
     this.endX = endX;
     this.endY = endY;
     this.groundedProps = new Set();
     this.stopOnPlayer = stopOnPlayer;
+    this.startOnEnter = startOnEnter;
+    this.moveOnPlayer = moveOnPlayer;
+    this.initialForward = initialForward;
   }
 }
 
@@ -121,8 +125,8 @@ export class FlyingEnemy extends Enemy {
     this.startY = startY;
     this.endX = endX;
     this.endY = endY;
-    this.speedX = speedFactorX * VALUES.propSpeed;
-    this.speedY = speedFactorY * VALUES.propSpeed;
+    this.speedX = speedFactorX * VALUES.propSpeed * (initialForward ? 1 : -1);
+    this.speedY = speedFactorY * VALUES.propSpeed * (initialForward ? 1 : -1);
     this.flying = true;
   }
 }
@@ -187,7 +191,7 @@ export class World {
           this.props.push(new Block(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), type, t.p(prop, 'breakable'), t.p(prop, 'hasCoin'), t.p(prop, 'invisible'), t.p(prop, 'item')));
         }
         else if (t.p(prop, 'class') === 'MovingProp') {
-          this.props.push(new MovingProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor'), t.p(prop, 'speedFactorX'), t.p(prop, 'speedFactorY'), t.p(prop, 'startX'), t.p(prop, 'startY'), t.p(prop, 'endX'), t.p(prop, 'endY'), t.p(prop, 'stopOnPlayer')));
+          this.props.push(new MovingProp(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'bounce'), t.p(prop, 'bounceFactor'), t.p(prop, 'initialForward'), t.p(prop, 'speedFactorX'), t.p(prop, 'speedFactorY'), t.p(prop, 'startX'), t.p(prop, 'startY'), t.p(prop, 'endX'), t.p(prop, 'endY'), t.p(prop, 'stopOnPlayer'), t.p(prop, 'startOnEnter'), t.p(prop, 'moveOnPlayer')));
         }
         else if (t.p(prop, 'class') === 'Spawner') {
           this.props.push(new Spawner(t.p(prop, 'id'), t.p(prop, 'x'), t.p(prop, 'y'), t.p(prop, 'width'), t.p(prop, 'height'), type, t.p(prop, 'solid'), t.p(prop, 'ground'), t.p(prop, 'speedFactor'), t.p(prop, 'forward'), t.p(prop, 'spawnRate')));
@@ -276,6 +280,9 @@ export class World {
 
   p(prop, property) {
     let value = prop[property];
+    if (value !== undefined) return value;
+    const type = prop.class.toLowerCase();
+    if (EDITORVALUES.propDefaults[type]) value = EDITORVALUES.propDefaults[type][property];
     if (value !== undefined) return value;
     const propertyType = EDITORVALUES.propertyTypes[property];
     switch (propertyType) {
