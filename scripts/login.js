@@ -33,7 +33,7 @@
       e.target.disabled = false;
     });
   });
-  registerButton.addEventListener('click', async () => {
+  registerButton.addEventListener('click', async (e) => {
     const data = validateUserData();
     if (data === null) return;
     e.target.classList.add('loading');
