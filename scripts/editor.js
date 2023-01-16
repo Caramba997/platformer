@@ -34,8 +34,6 @@ export class Editor {
             document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
           }
         }
-        const playButton = document.querySelector('a[data-action="play"]');
-        playButton.href = '?page=game&level=' + this.game.world.id;
         document.querySelector('[data-data="level"]').innerText = this.game.world.name;
         this.initOutline();
         this.selectPropInOutline('player');
@@ -465,8 +463,6 @@ export class Editor {
         this.game.world.id = this.levelId;
         document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
       }
-      const playButton = document.querySelector('a[data-action="play"]');
-      playButton.href = '?page=game&level=dev';
       document.querySelector('[data-data="level"]').innerText = this.game.world.name;
       this.initOutline();
       this.selectPropInOutline('player');
@@ -492,8 +488,6 @@ export class Editor {
           window.ps.save('editorId', this.levelId);
           document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
         }
-        const playButton = document.querySelector('a[data-action="play"]');
-        playButton.href = '?page=game&level=dev';
         document.querySelector('[data-data="level"]').innerText = this.game.world.name;
         this.initOutline();
         this.selectPropInOutline('player');
@@ -516,8 +510,6 @@ export class Editor {
       this.selectPropInOutline('player');
       document.querySelector('[data-data="level"]').innerText = window.locales.getTranslation('newLevel');
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
-      const playButton = document.querySelector('a[data-action="play"]');
-      playButton.href = '?page=game&level=' + this.game.world.id;
       this.initOutline();
       document.querySelector('.Container').classList.remove('dn');
     });
@@ -673,8 +665,6 @@ export class Editor {
           this.game.world.id = this.levelId;
           window.ps.save('editorId', this.levelId);
           document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
-          const playButton = document.querySelector('a[data-action="play"]');
-          playButton.href = '?page=game&level=' + result._id;
         }
         e.target.classList.remove('loading');
         statusHint.innerText = window.locales.getTranslation('uploadComplete');
