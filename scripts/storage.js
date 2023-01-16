@@ -2,15 +2,25 @@ class PlatformerStorage {
   constructor() {
     this.objects = {
       sounds: 'sounds',
+      countdown: 'countdown',
       fullscreen: 'fullscreen',
+      language: 'language',
+      apiVersion: 'apiVersion',
       level: 'level',
       levelData: 'levelData',
       editorLevel: 'editorLevel',
       editorData: 'editorData',
-      language: 'language',
-      user: 'user',
-      apiVersion: 'apiVersion'
+      editorId: 'editorId',
+      editorSaved: 'editorSaved',
+      user: 'user'
     }
+    this.defaults = {
+      sounds: 'on',
+      countdown: 'true',
+      fullscreen: 'off',
+      language: 'DE'
+    }
+    this.init();
   }
 
   /**
@@ -55,11 +65,21 @@ class PlatformerStorage {
   }
 
   /**
+   * Initializes defaults if unset
+   */
+  init() {
+    if (this.load('sounds') === null) this.save('sounds', this.defaults['sounds']);
+    if (this.load('fullscreen') === null) this.save('fullscreen', this.defaults['fullscreen']);
+    if (this.load('countdown') === null) this.save('countdown', this.defaults['countdown']);
+    if (this.load('language') === null) this.save('language', this.defaults['language']);
+  }
+
+  /**
    * Deletes all user data
    */
   reset() {
     Object.entries(this.objects).forEach(([key, value]) => {
-      if (['language', 'sounds', 'fullscreen'].includes(key)) return;
+      if (['language', 'sounds', 'fullscreen', 'apiVersion'].includes(key)) return;
       localStorage.removeItem(value);
     });
     this.setCookie(window.api.loginStatusCookie, false, '0m');

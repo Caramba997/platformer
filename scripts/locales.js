@@ -83,7 +83,7 @@ const locales = {
     uploadFailes: 'Speichern fehlgeschlagen',
     createdLevels: 'Eigene Levels',
     communityLevels: 'Community-Levels',
-    loginForMoreLevels: 'Melde dich an, um deinen Fortschritt zu speichern, eigene Levels zu erstellen und Community-Levels zu spielen',
+    loginForMoreLevels: 'Melde dich an, um deinen Fortschritt zu speichern, an Bestenlisten teilzunehmen, eigene Levels zu erstellen und Community-Levels zu spielen',
     browseLevels: 'Alle anzeigen',
     browse: 'Alle Levels',
     edit: 'Bearbeiten',
@@ -97,7 +97,17 @@ const locales = {
     score: 'Score',
     thumbnailInfo: 'Du kannst aus der aktuell sichtbaren Spielszene ein Vorschaubild generieren und hochladen. Positioniere die Szene so, dass die Vorschau dein Level gut repräsentiert.',
     hintMobile: 'Auf Mobilgeräten wird Vollbild empfohlen, du kannst dies im Hauptmenü aktivieren.',
-    refreshProfile: 'Profildaten aktualisieren'
+    refreshProfile: 'Profildaten aktualisieren',
+    settings: 'Einstellungen',
+    language: 'Sprache',
+    sounds: 'Sounds',
+    generalSettings: 'Allgemein',
+    advancedSettings: 'Erweitert',
+    countdownSetting: 'Countdown bevor Spiel startet',
+    gameStart: 'Los!',
+    autosaveHint: 'Achtung: Du hast einen automatisch gespeicherten lokalen Speicherstand. Das heißt der Editor wurde nicht korrekt geschlossen und dein Fortschritt wurde eventuell nicht auf dem Server gespeichert.',
+    loadAutosave: 'Lokales Level laden',
+    exit: 'Beenden'
   },
   EN: {
     undefined: '???',
@@ -150,7 +160,7 @@ const locales = {
     pause: 'Pause',
     levelComplete: 'Level complete',
     levelCompleteText: 'Congratulations, you finished the level!',
-    centerPosition: 'Center position',
+    centerPosition: 'Marker position',
     spawner: 'Spawner',
     thumbnail: 'Create thumbnail',
     loading: 'Loading...',
@@ -160,7 +170,7 @@ const locales = {
     statusScripts: 'Loading scripts',
     statusExecution: 'Executing scripts',
     statusLoaded: 'Loading successfull',
-    keepCenter: 'Keep center position',
+    keepCenter: 'Keep marker position',
     backgroundProp: 'Background Prop',
     water: 'Water',
     login: 'Login',
@@ -171,7 +181,7 @@ const locales = {
     id: 'ID',
     noAccountYet: 'You don\'t have an account yet? Enter your credentials above and register with the following button.',
     register: 'Register',
-    logout: 'Abmelden',
+    logout: 'Logout',
     errorMissingUserData: 'You need to fill in your username and password',
     errorUsernameTaken: 'Username is already taken, try another one',
     errorLoginFailed: 'Login failed. Check your credentials or try again later',
@@ -183,7 +193,7 @@ const locales = {
     uploadFailes: 'Upload failed',
     createdLevels: 'Created levels',
     communityLevels: 'Community levels',
-    loginForMoreLevels: 'Login to save your progress, create your own levels and play community levels',
+    loginForMoreLevels: 'Login to save your progress, join highscore lists, create your own levels and play community levels',
     browseLevels: 'Browse levels',
     browse: 'Browse levels',
     edit: 'Edit',
@@ -197,16 +207,23 @@ const locales = {
     score: 'Score',
     thumbnailInfo: 'You can create and upload a thumbnail out of the currently visible scene. Adjust your scene view to provide a good impression of your level.',
     hintMobile: 'Fullscreen mode is recommended for mobile devices, you can enable it in the main menu.',
-    refreshProfile: 'Refresh profile data'
+    refreshProfile: 'Refresh profile data',
+    settings: 'Settings',
+    language: 'Language',
+    sounds: 'Sounds',
+    generalSettings: 'General',
+    advancedSettings: 'Advanced Settings',
+    countdownSetting: 'Countdown before game starts',
+    gameStart: 'Go!',
+    autosaveHint: 'Warning: You have a local autosave checkpoint. That means you may did not close the editor properly and have unsaved progress.',
+    loadAutosave: 'Load autosave',
+    exit: 'Exit'
   }
 }
 
 class Locales {
   constructor() {
     this.locales = locales;
-    if (!window.ps.load('language')) {
-      window.ps.save('language', 'DE');
-    }
     this.language = window.ps.load('language');
     this.t = this.locales[this.language];
   }

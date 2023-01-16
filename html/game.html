@@ -25,11 +25,11 @@
                         <span data-t="time"></span>: <span id="time"></span>
                     </div>
                     <div class="stats__fps">
-                        <span data-t="fps"></span>: <span id="fps"></span>
+                        <span data-t="fps"></span>: <span id="fps">0</span>
                     </div>
                 </div>
                 <div class="Actions">
-                    <button class="Action__Link" data-action="open-popup" data-control="start"><span data-t="mainMenu"></span></button>
+                    <button class="Action__Link Action__Link--Pause" data-action="open-popup" data-control="start"></button>
                 </div>
             </div>
         </div>
@@ -48,18 +48,23 @@
             <div class="controls__right--icon"></div>
         </div>
     </div>
+    <div id="countdown" class="Countdown dn">
+        <div class="Countdown--Time"></div>
+    </div>
     <div id="popups">
         <div class="Popup" data-visible="false" data-popup="start">
             <div class="Popup__Header">
-                <div class="Popup__Header--Title"><span data-t="pause"></span></div>
+                <div class="Popup__Header--Title">
+                    <span data-t="pause"></span>
+                    <button data-action="toggle-fullscreen" data-fullscreen="off"></button>
+                </div>
                 <button class="Popup__Header--Close" data-action="close-popup">X</button>
             </div>
             <hr>
             <div class="Popup__Content">
-                <p class="text-center">
-                    <span data-t="backToMainMenu"></span>
-                </p>
-                <a class="Button Button--Link" data-href="menu"><span data-t="confirm"></span></a>
+                <button class="Button mt-10" data-action="replay"><span data-t="replay"></span></button>
+                <br>
+                <a class="Button Button--Link mt-10" data-href="menu"><span data-t="mainMenu"></span></a>
                 <p class="Hint--mobile text-center" data-t="hintMobile"></p>
             </div>
         </div>

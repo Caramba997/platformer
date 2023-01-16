@@ -1,6 +1,5 @@
 export class Sounds {
   constructor() {
-    if (!window.ps.load('sounds')) window.ps.save('sounds', 'on');
     this.on = window.ps.load('sounds') === 'on';
     this.sounds = {};
     document.querySelectorAll('#sounds audio').forEach((audio) => {

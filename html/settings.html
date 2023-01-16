@@ -1,0 +1,35 @@
+<div id="head">
+  <link rel="stylesheet" href="styles/menu.css">
+  <script src="scripts/settings.js" defer></script>
+</div>
+<div id="content">
+  <div class="TopBar">
+      <h1 data-t="settings"></h1>
+      <div class="Actions">
+        <button class="Link--Editor" data-action="logout" data-t="logout"></button>
+        <a class="Link--Editor" data-href="menu" data-t="mainMenu"></a>
+      </div>
+  </div>
+  <h2 class="text-center" data-t="generalSettings"></h2>
+  <div class="Column">
+    <div class="Row Row--Setting">
+      <div class="mr-10" data-t="sounds"></div>
+      <button data-action="toggle-sound" data-sounds="on"></button>
+    </div>
+    <div class="Row Row--Setting">
+      <div class="mr-10" data-t="language"></div>
+      <select name="language">
+        <option value="DE">DE</option>
+        <option value="EN">EN</option>
+      </select>
+    </div>
+  </div>
+  <hr>
+  <h2 class="text-center" data-t="advancedSettings"></h2>
+  <div class="Column">
+    <div class="Row Row--Setting">
+      <div class="mr-10" data-t="countdownSetting"></div>
+      <input type="checkbox" data-action="toggle-countdown">
+    </div>
+  </div>
+</div>

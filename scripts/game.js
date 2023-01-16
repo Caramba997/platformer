@@ -1,5 +1,5 @@
 import { VALUES } from './values.js';
-import { Prop, StaticProp, InteractableProp, MovingProp, Water, Spawner, Finish, Player, Enemy, FlyingEnemy, Coin, Block, Item, Fire, World } from './classes.js';
+import { Enemy, Coin, Block, Item, Fire, World } from './classes.js';
 import { Graphics } from './graphics.js';
 import { Sounds } from './sounds.js';
 
@@ -8,6 +8,7 @@ export class Game {
     this.graphics = new Graphics();
     this.sounds = new Sounds();
     this.stats = new Stats();
+    this.countdownInterval = null;
     this.calcJumpParameters();
     this._keyDownListener = this.keyDownListener.bind(this);
     this._keyUpListener = this.keyUpListener.bind(this);
@@ -25,7 +26,6 @@ export class Game {
     else {
       this.loadLevel('level1');
     }
-    window.addEventListener('contextmenu', (event) => {});
   }
 
   unload() {
@@ -33,6 +33,10 @@ export class Game {
     window.removeEventListener('keydown', this._keyDownListener);
     window.removeEventListener('keyup', this._keyUpListener);
     window.removeEventListener('contextmenu', this._contextMenuListener);
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = null;
+    }
     window.ps.delete('levelData');
   }
 
@@ -47,7 +51,7 @@ export class Game {
   }
 
   contextMenuListener(e) {
-    e.preventDefault();
+    if (navigator.maxTouchPoints > 0) e.preventDefault();
   }
 
   touchListener(e) {
@@ -76,7 +80,7 @@ export class Game {
 
   keyDownListener(e) {
     const control = VALUES.controls[e.code];
-    if (!this.running || !control || this.activeControls.has(control) || e.repeat) return;
+    if (!control || this.activeControls.has(control) || e.repeat) return;
     this.activeControls.add(control);
   }
 
@@ -96,14 +100,19 @@ export class Game {
     // Popup closers
     document.querySelectorAll('[data-action="close-popup"]').forEach((opener) => {
       opener.addEventListener('click', (e) => {
-        this.closePopup(e.target.closest('.Popup').getAttribute('data-popup'));
+        this.closePopup(e.target.closest('.Popup').getAttribute('data-popup'), true);
       });
     });
     // Replay
     document.querySelectorAll('[data-action="replay"]').forEach((button) => {
       button.addEventListener('click', () => {
+        if (this.countdownInterval) {
+          clearInterval(this.countdownInterval);
+          this.countdownInterval = null;
+        }
+        this.sounds.stop(this.world.music);
         const popup = document.querySelector('.Popup[data-visible="true"]').getAttribute('data-popup');
-        this.closePopup(popup);
+        this.closePopup(popup, false);
         this.loadLevel(this.world.id);
         this.sounds.play('restart');
       });
@@ -114,9 +123,25 @@ export class Game {
         this.sounds.stop(this.world.music);
       });
     });
+    // Toggle fullscreen
+    const fullscreenButton = document.querySelector('[data-action="toggle-fullscreen"]');
+    if (window.ps.load('fullscreen')) fullscreenButton.setAttribute('data-fullscreen', window.ps.load('fullscreen'));
+    fullscreenButton.addEventListener('click', (e) => {
+      if (e.target.getAttribute('data-fullscreen') === 'on') {
+        window.ps.save('fullscreen', 'off');
+        e.target.setAttribute('data-fullscreen', 'off');
+        window.pwa.toggleFullscreen(false);
+      }
+      else {
+        window.ps.save('fullscreen', 'on');
+        e.target.setAttribute('data-fullscreen', 'on');
+        window.pwa.toggleFullscreen(true);
+      }
+    });
   }
 
   openPopup(name) {
+    this.popupOpen = true;
     this.stop();
     const popup = document.querySelector('[data-popup="' + name + '"]'),
           overlay = document.querySelector('.PageOverlay');
@@ -124,12 +149,13 @@ export class Game {
     overlay.setAttribute('data-visible', true);
   }
 
-  closePopup(name) {
+  closePopup(name, doActions) {
     const popup = document.querySelector('[data-popup="' + name + '"]'),
           overlay = document.querySelector('.PageOverlay');
     popup.setAttribute('data-visible', false);
     overlay.setAttribute('data-visible', false);
-    if (name === 'start') this.start();
+    if (!document.querySelector('.Popup[data-visible="true"]')) this.popupOpen = false;
+    if (doActions && name === 'start') this.start();
   }
 
   calcJumpParameters() {
@@ -142,15 +168,63 @@ export class Game {
   }
 
   loadLevel(level) {
-    this.world = new World(level);
-    this.activeControls = new Set();
-    window.addEventListener('world:loaded', () => {
+    const onWorldLoaded = () => {
       this.stats.setLevel(this.world.name);
       this.stats.setCoins(this.world.coins);
       this.stats.setTime(this.world.time);
       this.stats.setPoints(this.world.points);
-      this.start();
-    }, { once: true });
+      if (window.ps.load('countdown') === 'true') {
+        let counter = 3999,
+            step = 4,
+            oldTime = Date.now();
+        const countdownContainer = document.querySelector('.Countdown'),
+              countdownElement = countdownContainer.querySelector('.Countdown--Time'),
+              countdownStep = () => {
+                if (!this.countdownInterval) return;
+                if (this.activeControls.has('pause')) {
+                  this.openPopup('start');
+                  this.activeControls.delete('pause');
+                  return;
+                }
+                const newTime = Date.now();
+                if (this.popupOpen) {
+                  oldTime = newTime;
+                  return;
+                }
+                const newStep = Math.floor(counter / 1000);
+                if (newStep !== step) {
+                  step = newStep;
+                  if (step === 0) {
+                    countdownElement.innerText = window.locales.getTranslation('gameStart');
+                    this.start();
+                  }
+                  else {
+                    countdownElement.innerText = step;
+                  }
+                }
+                counter -= newTime - oldTime;
+                oldTime = newTime;
+                if (counter < 0) {
+                  clearInterval(this.countdownInterval);
+                  this.countdownInterval = null;
+                  countdownContainer.classList.add('dn');
+                }
+              };
+        this.render();
+        countdownElement.innerText = '';
+        countdownContainer.classList.remove('dn');
+        this.countdownInterval = setInterval(countdownStep, 50);
+      }
+      else {
+        this.start();
+      }
+    };
+    if (level !== 'dev') {
+      window.addEventListener('world:loaded', onWorldLoaded, { once: true });
+    }
+    this.activeControls = new Set();
+    this.world = new World(level);
+    if (level === 'dev') onWorldLoaded();
   }
 
   processInput() {
@@ -332,13 +406,13 @@ export class Game {
         if (prop.invisible) continue;
         // X-axis collisions
         if (groundResult && groundResult.ground.y + groundResult.ground.height === prop.y + prop.height) continue;
-        if (player.speedX > 0) { // Player is going forward
+        if (player.speedX > 0 && this.checkCollision({ x: player.x + player.width - 1, y: player.y, width: 1, height: player.height}, prop)) { // Player is going forward
           player.speedX = 0.0;
           player.x = prop.x - player.width - 1;
           if (groundResult && !this.checkPlayerCollision(groundResult.ground)) groundResult.valid = false;
           breakLoop = true;
         }
-        else if (player.speedX < 0) { // Player is going backward
+        else if (player.speedX < 0 && this.checkCollision({ x: player.x, y: player.y, width: 1, height: player.height}, prop)) { // Player is going backward
           player.speedX = 0.0;
           player.x = prop.x + prop.width + 1;
           if (groundResult && !this.checkPlayerCollision(groundResult.ground)) groundResult.valid = false;
@@ -670,11 +744,8 @@ export class Game {
       if (this.checkPlayerCollision(item)) {
         if (this.world.player.state !== VALUES.playerStates[item.powerup]) {
           this.setPlayerState(VALUES.playerStates[item.powerup]);
-          this.stop();
           item.remove = true;
           this.garbageCollection();
-          window.requestAnimationFrame(this.render.bind(this));
-          window.setTimeout(this.start.bind(this), VALUES.powerUpTime);
           switch (item.powerup) {
             case 'fire': {
               this.sounds.play('powerup2');
@@ -950,6 +1021,7 @@ export class Game {
 
   levelFinished() {
     this.world.points += Math.ceil(this.world.time * VALUES.points.time);
+    this.world.points += Math.ceil((this.world.player.y - this.world.finish.y) / this.world.finish.height * VALUES.points.finish);
     this.stats.setPoints(this.world.points);
     const completePopup = document.querySelector('[data-popup="level-complete"]'),
           timeElement = completePopup.querySelector('[data-result="time"]'),
@@ -1000,14 +1072,15 @@ class Stats {
     this.coinElement = document.getElementById('coins');
     this.timeElement = document.getElementById('time');
     this.pointsElement = document.getElementById('points');
-    this.fps = 0;
+    this.fpsTime = 0;
   }
 
   setFps(deltaTime) {
-    const newFps = Math.round(1000.0 / deltaTime);
-    if (Math.abs(this.fps - newFps) < 2) return;
-    this.fps = newFps;
-    this.fpsElement.innerText = this.fps;
+    this.fpsTime -= deltaTime;
+    if (this.fpsTime > 0) return;
+    const fps = Math.round(1000.0 / deltaTime);
+    this.fpsElement.innerText = fps;
+    this.fpsTime = 500;
   }
 
   setCoins(coins) {

@@ -56,9 +56,16 @@ body {
     background: none;
     padding: 2px 4px;
     border-radius: 5px;
-    border: 4px solid black;
-    color: black;
+    background: black;
     opacity: 0.5;
+}
+.Action__Link--Pause {
+    background-image: url(/images/Pause.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 2rem;
+    height: 2rem;
 }
 
 #controls {
@@ -134,4 +141,33 @@ body {
 }
 .controls__right--icon {
     background-image: url(../textures/ControlsArrowRight.png);
+}
+
+#countdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.Countdown--Time {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    text-shadow: black 0px 0px 10px;
+    touch-action: none;
+}
+
+[data-action="toggle-fullscreen"] {
+    background-image: url(/images/FullscreenOn.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 1.2rem;
+    height: 1.2rem;
+    padding: 5px;
+}
+[data-action="toggle-fullscreen"][data-fullscreen="off"] {
+    background-image: url(/images/FullscreenOff.png);
 }

@@ -123,7 +123,13 @@ body {
     color: var(--color-text);
     background: var(--color-text-highlight);
 }
+.Button span {
+    pointer-events: none;
+}
 
+.Outline__Item {
+    margin-bottom: 10px;
+}
 .Outline__Item[data-expanded="false"] .Outline__Item--Content {
     display: none;
 }
@@ -156,4 +162,16 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+[data-action="toggle-fullscreen"] {
+    background-image: url(/images/FullscreenOn.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 1.2rem;
+    height: 1.2rem;
+    padding: 5px;
+}
+[data-action="toggle-fullscreen"][data-fullscreen="off"] {
+    background-image: url(/images/FullscreenOff.png);
 }

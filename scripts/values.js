@@ -81,10 +81,11 @@ export const VALUES = {
   playerWidth: 30,
   playerWidthSuper: 50,
   points: {
-    coin: 20,
+    coin: 50,
     enemy: 200,
     item: 1000,
-    time: 0.1
+    time: 0.05,
+    finish: 1000
   },
   powerUpTime: 500,
   propDefault: 'default',

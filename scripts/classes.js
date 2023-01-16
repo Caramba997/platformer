@@ -268,6 +268,9 @@ export class World {
         loadLevelFromJson(data);
       });
     }
+    else if (level === 'dev') {
+      loadLevelFromJson(JSON.parse(ps.load('editorData')));
+    }
     else {
       window.api.post('getLevel', { _id: level }, (result) => {
         window.ps.save('levelData', JSON.stringify(result));

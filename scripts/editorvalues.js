@@ -1,4 +1,5 @@
 export const EDITORVALUES = {
+  autosaveActions: 3,
   backgroundTypes: ['forest', 'desert', 'hills', 'cave'],
   blockItemTypes: ['', 'default'],
   blockTypes: ['brick', 'brickhit', 'itemblock', 'itemblockhit', 'solidblock'],

@@ -15,6 +15,7 @@ export class Editor {
       touchX: null,
       touchY: null
     }
+    this.autosaveIn = EDITORVALUES.autosaveActions;
     this.initListeners();
     if (window.ps.load('editorLevel')) {
       document.querySelector('.Popup[data-visible="true"] [data-action="close-popup"]').click();
@@ -25,9 +26,11 @@ export class Editor {
         const levelData = window.ps.load('levelData');
         if (levelData) {
           window.ps.save('editorData', window.ps.load('levelData'));
+          this.autosaveIn = EDITORVALUES.autosaveActions;
           const levelJson = JSON.parse(levelData);
           if (levelJson._id) {
             this.levelId = levelJson._id;
+            window.ps.save('editorId', this.levelId);
             document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
           }
         }
@@ -37,8 +40,10 @@ export class Editor {
         this.initOutline();
         this.selectPropInOutline('player');
         document.querySelector('.Container').classList.remove('dn');
+        window.ps.save('editorSaved', 'true');
       }, { once: true });
       this.game = new Game(window.ps.load('editorLevel'));
+      window.ps.delete('editorLevel');
     }
     if (this.user.role === 'admin') document.querySelector('[data-action="toggle-sourcecode"]').classList.remove('dn');
     this.initControls();
@@ -51,7 +56,7 @@ export class Editor {
     window.removeEventListener('keydown', this._keyDownListener);
     window.removeEventListener('keyup', this._keyUpListener);
     window.ps.delete('editorData');
-    window.ps.delete('editorLevel');
+    window.ps.delete('editorId');
   }
 
   initControls() {
@@ -257,6 +262,7 @@ export class Editor {
     temp.firstChild.addEventListener('click', this.outlinePropClickListener.bind(this));
     propsOutline.appendChild(temp.firstChild);
     this.selectPropInOutline(clone.id);
+    this.autosave();
   }
 
   updateProperty(e) {
@@ -324,6 +330,7 @@ export class Editor {
       sidebarContent.setAttribute('data-id', value);
     }
     if (prop !== this.game.world) this.game.setCenter(prop);
+    this.autosave();
   }
 
   removeProp(e) {
@@ -341,6 +348,7 @@ export class Editor {
     }
     sidebarContent.querySelector('.Sidebar__Content--Content').innerHTML = '';
     outline.querySelector('[data-id="' + id + '"]').remove();
+    this.autosave();
   }
 
   checkValueValidity(value, type) {
@@ -417,10 +425,19 @@ export class Editor {
     // Popup openers
     document.querySelectorAll('[data-action="open-popup"]').forEach((opener) => {
       opener.addEventListener('click', (e) => {
-        const popup = document.querySelector('[data-popup="' + e.target.getAttribute('data-control') + '"]'),
+        const control = e.target.getAttribute('data-control'),
+              popup = document.querySelector('[data-popup="' + control + '"]'),
               overlay = document.querySelector('.PageOverlay');
         popup.setAttribute('data-visible', true);
         overlay.setAttribute('data-visible', true);
+        if (control === 'create') {
+          const category = e.target.getAttribute('data-create'),
+                showOptions = popup.querySelectorAll(`option[data-category${(category !== 'all') ? '="' + category + '"' : ''}]`),
+                hideOptions = popup.querySelectorAll(`option:not([data-category="${category}"])`);
+          if (category !== 'all') hideOptions.forEach((option) => { option.classList.add('dn')});
+          showOptions.forEach((option) => { option.classList.remove('dn')});
+          popup.querySelector('select[name="prop"]').value = popup.querySelector('option:not(.dn)').value;
+        }
       });
     });
     // Popup closers
@@ -431,6 +448,31 @@ export class Editor {
         popup.setAttribute('data-visible', false);
         overlay.setAttribute('data-visible', false);
       });
+    });
+    // Autosave option
+    const autosaveElement = document.querySelector('#autosave');
+    if (ps.load('editorData') && ps.load('editorSaved') === 'false') {
+      autosaveElement.classList.remove('dn');
+      window.addEventListener('world:loaded', () => {
+        autosaveElement.classList.add('dn');
+      }, { once: true });
+    }
+    // Load autosave
+    document.querySelector('[data-action="load-autosave"]').addEventListener('click', (e) => {
+      this.game = new Game('dev');
+      if (window.ps.load('editorId')) {
+        this.levelId = window.ps.load('editorId');
+        this.game.world.id = this.levelId;
+        document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
+      }
+      const playButton = document.querySelector('a[data-action="play"]');
+      playButton.href = '?page=game&level=dev';
+      document.querySelector('[data-data="level"]').innerText = this.game.world.name;
+      this.initOutline();
+      this.selectPropInOutline('player');
+      e.target.classList.remove('loading');
+      e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
+      document.querySelector('.Container').classList.remove('dn');
     });
     // Load level
     document.querySelector('[data-action="load-level"]').addEventListener('click', (e) => {
@@ -444,20 +486,21 @@ export class Editor {
         const levelData = window.ps.load('levelData');
         if (levelData) {
           window.ps.save('editorData', window.ps.load('levelData'));
+          this.autosaveIn = EDITORVALUES.autosaveActions;
           const levelJson = JSON.parse(levelData);
-          if (levelJson._id) {
-            this.levelId = levelJson._id;
-            document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
-          }
+          this.levelId = levelJson._id;
+          window.ps.save('editorId', this.levelId);
+          document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
         }
         const playButton = document.querySelector('a[data-action="play"]');
-        playButton.href = '?page=game&level=' + this.game.world.id;
+        playButton.href = '?page=game&level=dev';
         document.querySelector('[data-data="level"]').innerText = this.game.world.name;
         this.initOutline();
         this.selectPropInOutline('player');
         e.target.classList.remove('loading');
         e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
         document.querySelector('.Container').classList.remove('dn');
+        window.ps.save('editorSaved', 'true');
       }, { once: true });
       this.game = new Game(select.value);
     });
@@ -467,6 +510,9 @@ export class Editor {
         this.game.stop();
       }
       this.game = new Game(null);
+      window.ps.delete('editorId');
+      window.ps.save('editorData', JSON.stringify(this.createLevelJson()));
+      this.autosaveIn = EDITORVALUES.autosaveActions;
       this.selectPropInOutline('player');
       document.querySelector('[data-data="level"]').innerText = window.locales.getTranslation('newLevel');
       e.target.closest('.Popup').querySelector('[data-action="close-popup"]').click();
@@ -474,6 +520,11 @@ export class Editor {
       playButton.href = '?page=game&level=' + this.game.world.id;
       this.initOutline();
       document.querySelector('.Container').classList.remove('dn');
+    });
+    // Play level
+    document.querySelector('a[data-action="play"]').addEventListener('click', () => {
+      window.ps.save('editorData', JSON.stringify(this.createLevelJson()));
+      this.autosaveIn = EDITORVALUES.autosaveActions;
     });
     // Save level
     document.querySelector('[data-control="save"]').addEventListener('click', () => {
@@ -601,19 +652,26 @@ export class Editor {
       e.target.classList.add('loading');
       e.target.disabled = true;
       const levelData = JSON.stringify(this.createLevelJson()),
-            oldLevelData = window.ps.load('editorData'),
             newLevelData = {};
-      if (oldLevelData) {
-        const oldLevelJson = JSON.parse(oldLevelData);
-        if (this.game.world.id === oldLevelJson._id) newLevelData._id = oldLevelJson._id;
-      }
+      if (this.levelId && this.game.world.id === this.levelId) newLevelData._id = this.levelId;
       newLevelData.name = this.game.world.name;
       newLevelData.json = levelData;
       const statusHint = document.querySelector('.UploadStatus');
       window.api.post('uploadLevel', newLevelData, (result) => {
+        window.ps.save('editorSaved', 'true');
         window.ps.save('editorData', JSON.stringify(result));
+        this.autosaveIn = EDITORVALUES.autosaveActions;
+        if (!this.levelId) {
+          window.api.get('getUser', (result) => {
+            window.ps.save('user', JSON.stringify(result));
+          }, (error) => {
+            console.error(error);
+          });
+        }
         if (result._id) {
           this.levelId = result._id;
+          this.game.world.id = this.levelId;
+          window.ps.save('editorId', this.levelId);
           document.querySelector('[data-action="upload-thumbnail"]').disabled = false;
           const playButton = document.querySelector('a[data-action="play"]');
           playButton.href = '?page=game&level=' + result._id;
@@ -630,13 +688,6 @@ export class Editor {
           html = html.replaceAll('{{level}}', result._id);
           html = html.replaceAll('{{name}}', result.name);
           levelSelector.innerHTML += html;
-        }
-        if (!oldLevelData) {
-          window.api.get('getUser', (result) => {
-            window.ps.save('user', JSON.stringify(result));
-          }, (error) => {
-            console.error(error);
-          });
         }
         setTimeout(() => {
           e.target.disabled = false;
@@ -679,6 +730,30 @@ export class Editor {
         }, 4000);
       });
     });
+    // Toggle fullscreen
+    const fullscreenButton = document.querySelector('[data-action="toggle-fullscreen"]');
+    if (window.ps.load('fullscreen')) fullscreenButton.setAttribute('data-fullscreen', window.ps.load('fullscreen'));
+    fullscreenButton.addEventListener('click', (e) => {
+      if (e.target.getAttribute('data-fullscreen') === 'on') {
+        window.ps.save('fullscreen', 'off');
+        e.target.setAttribute('data-fullscreen', 'off');
+        window.pwa.toggleFullscreen(false);
+      }
+      else {
+        window.ps.save('fullscreen', 'on');
+        e.target.setAttribute('data-fullscreen', 'on');
+        window.pwa.toggleFullscreen(true);
+      }
+    });
+  }
+
+  autosave() {
+    window.ps.save('editorSaved', 'false');
+    this.autosaveIn--;
+    if (this.autosaveIn <= 0) {
+      this.autosaveIn = EDITORVALUES.autosaveActions;
+      window.ps.save('editorData', JSON.stringify(this.createLevelJson()));
+    }
   }
 
   createProp(type) {
@@ -761,6 +836,7 @@ export class Editor {
     temp.firstChild.addEventListener('click', this.outlinePropClickListener.bind(this));
     propsOutline.appendChild(temp.firstChild);
     this.selectPropInOutline(id);
+    this.autosave();
   }
 
   selectProp(e) {
@@ -902,15 +978,19 @@ class Game {
 
   loadLevel(level) {
     if (level) {
-      window.addEventListener('world:loaded', () => {
+      const onWorldLoaded = () => {
         this.keepCenter = false;
         this.setCenter(this.world.player);
         this.start();
         document.querySelector('input[name="centerX"]').setAttribute('max', this.world.width);
         document.querySelector('input[name="centerY"]').setAttribute('max', this.world.height);
         this.keepCenter = document.querySelector('[name="keepCenter"]').checked;
-      }, { once: true });
+      };
+      if (level !== 'dev') {
+        window.addEventListener('world:loaded', onWorldLoaded, { once: true });
+      }
       this.world = new World(level);
+      if (level === 'dev') onWorldLoaded();
     }
     else {
       this.keepCenter = false;

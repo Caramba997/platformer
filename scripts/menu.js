@@ -122,19 +122,6 @@
     });
   }
 
-  const soundButton = document.querySelector('[data-action="toggle-sound"]');
-  if (window.ps.load('sounds')) soundButton.setAttribute('data-sounds', window.ps.load('sounds'));
-  soundButton.addEventListener('click', (e) => {
-    if (e.target.getAttribute('data-sounds') === 'on') {
-      window.ps.save('sounds', 'off');
-      e.target.setAttribute('data-sounds', 'off');
-    }
-    else {
-      window.ps.save('sounds', 'on');
-      e.target.setAttribute('data-sounds', 'on');
-    }
-  });
-
   const fullscreenButton = document.querySelector('[data-action="toggle-fullscreen"]');
   if (window.ps.load('fullscreen')) fullscreenButton.setAttribute('data-fullscreen', window.ps.load('fullscreen'));
   fullscreenButton.addEventListener('click', (e) => {
@@ -147,17 +134,6 @@
       window.ps.save('fullscreen', 'on');
       e.target.setAttribute('data-fullscreen', 'on');
       window.pwa.toggleFullscreen(true);
-    }
-  });
-
-  const languageSelector = document.querySelector('select[name="language"]');
-  if (window.ps.load('language') !== languageSelector.value) {
-    languageSelector.value = window.ps.load('language');
-  }
-  languageSelector.addEventListener('change', (e) => {
-    if (e.target.value !== window.ps.load('language')) {
-      window.locales.changeLanguage(e.target.value);
-      window.locales.translatePage(document);
     }
   });
 

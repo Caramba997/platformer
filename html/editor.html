@@ -8,7 +8,7 @@
 <div id="content">
     <div class="Toolbar">
         <div class="Toolbar__Item">
-            <button data-action="open-popup" data-control="start"><span data-t="mainMenu"></span></button>
+            <button data-action="open-popup" data-control="start"><span data-t="exit"></span></button>
         </div>|
         <div class="Toolbar__Item">
             <button data-action="open-popup" data-control="select-level" data-data="level"><span data-t="selectLevel"></span></button>
@@ -20,7 +20,10 @@
             <a data-action="play" href="javascript:void(0);" target="_blank"><span data-t="play"></span></a>
         </div>|
         <div class="Toolbar__Item ml-10">
-            <button class="Button" data-action="open-popup" data-control="create"><span data-t="newProp"></span></button>
+            <button class="Button" data-action="open-popup" data-control="create" data-create="all"><span data-t="newProp"></span></button>
+        </div>
+        <div class="Toolbar__Item ml-auto mr-10">
+            <button data-action="toggle-fullscreen" data-fullscreen="off"></button>
         </div>
     </div>
     <div class="Container dn">
@@ -41,18 +44,22 @@
                     </div>
                     <div class="Outline__Item" data-expanded="false" data-outline="props">
                         <button class="Button--Outline"><span data-t="props"></span></button>
+                        <button class="Button" data-action="open-popup" data-control="create" data-create="object">+</button>
                         <div class="Outline__Item--Content"></div>
                     </div>
                     <div class="Outline__Item" data-expanded="false" data-outline="enemies">
                         <button class="Button--Outline"><span data-t="enemies"></span></button>
+                        <button class="Button" data-action="open-popup" data-control="create" data-create="enemy">+</button>
                         <div class="Outline__Item--Content"></div>
                     </div>
                     <div class="Outline__Item" data-expanded="false" data-outline="water">
                         <button class="Button--Outline"><span data-t="water"></span></button>
+                        <button class="Button" data-action="open-popup" data-control="create" data-create="water">+</button>
                         <div class="Outline__Item--Content"></div>
                     </div>
                     <div class="Outline__Item" data-expanded="false" data-outline="coinProps">
                         <button class="Button--Outline"><span data-t="coins"></span></button>
+                        <button class="Button" data-action="open-popup" data-control="create" data-create="coin">+</button>
                         <div class="Outline__Item--Content"></div>
                     </div>
                 </div>
@@ -108,6 +115,11 @@
             </div>
             <hr>
             <div class="Popup__Content">
+                <div id="autosave" class="mb-10 text-center dn">
+                    <p data-t="autosaveHint"></p>
+                    <button class="Button" data-action="load-autosave"><span data-t="loadAutosave"></span></button>
+                    <hr>
+                </div>
                 <select name="level" class="mb-10">
                     <option value="none">...</option>
                 </select>
@@ -124,14 +136,14 @@
             <hr>
             <div class="Popup__Content">
                 <select name="prop" class="mb-10">
-                    <option value="staticprop" data-t="staticProp"></option>
-                    <option value="movingprop" data-t="movingProp"></option>
-                    <option value="backgroundprop" data-t="backgroundProp"></option>
-                    <option value="water" data-t="water"></option>
-                    <option value="block" data-t="block"></option>
-                    <option value="enemy" data-t="enemy"></option>
-                    <option value="flyingenemy" data-t="flyingEnemy"></option>
-                    <option value="coin" data-t="coin"></option>
+                    <option value="staticprop" data-category="object" data-t="staticProp"></option>
+                    <option value="movingprop" data-category="object" data-t="movingProp"></option>
+                    <option value="backgroundprop" data-category="object" data-t="backgroundProp"></option>
+                    <option value="water" data-category="water" data-t="water"></option>
+                    <option value="block" data-category="object" data-t="block"></option>
+                    <option value="enemy" data-category="enemy" data-t="enemy"></option>
+                    <option value="flyingenemy" data-category="enemy" data-t="flyingEnemy"></option>
+                    <option value="coin" data-category="coin" data-t="coin"></option>
                     <option value="spawner" data-t="spawner"></option>
                 </select>
                 <button class="Button" data-action="create-prop"><span data-t="create"></span></button>
