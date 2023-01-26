@@ -526,7 +526,9 @@ export class AssetLoader {
       audio.setAttribute('data-sound', sound.type);
       if (sound.loop) audio.loop = true;
       if (sound.volume) audio.volume = sound.volume;
+      audio.preload = 'auto';
       audio.src = sound.src;
+      audio.load();
       window.sounds[sound.type] = audio;
     }
     soundContainer.setAttribute('data-initialized', 'true');
